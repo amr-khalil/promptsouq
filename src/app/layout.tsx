@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Suspense } from "react";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -35,7 +36,9 @@ export default function RootLayout({
           <ThemeProvider>
             <div className="min-h-screen flex flex-col bg-background">
               <Header />
-              <main className="flex-1">{children}</main>
+              <main className="flex-1">
+                <Suspense fallback={null}>{children}</Suspense>
+              </main>
               <Footer />
             </div>
           </ThemeProvider>
