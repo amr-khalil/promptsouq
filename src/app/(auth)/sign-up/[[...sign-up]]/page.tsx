@@ -67,11 +67,12 @@ export default function SignUp() {
       });
 
       setVerifying(true);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(JSON.stringify(err, null, 2));
+      const clerkErr = err as { errors?: Array<{ longMessage?: string; message?: string }> };
       setError(
-        err.errors?.[0]?.longMessage ||
-          err.errors?.[0]?.message ||
+        clerkErr.errors?.[0]?.longMessage ||
+          clerkErr.errors?.[0]?.message ||
           "حدث خطأ أثناء إنشاء الحساب",
       );
     } finally {
@@ -106,11 +107,12 @@ export default function SignUp() {
       } else {
         console.error("Sign-up attempt not complete:", signUpAttempt);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(JSON.stringify(err, null, 2));
+      const clerkErr = err as { errors?: Array<{ longMessage?: string; message?: string }> };
       setError(
-        err.errors?.[0]?.longMessage ||
-          err.errors?.[0]?.message ||
+        clerkErr.errors?.[0]?.longMessage ||
+          clerkErr.errors?.[0]?.message ||
           "رمز التحقق غير صحيح",
       );
     } finally {
@@ -127,7 +129,7 @@ export default function SignUp() {
         redirectUrl: "/sign-up/sso-callback",
         redirectUrlComplete: "/",
       })
-      .catch((err: any) => {
+      .catch((err: unknown) => {
         console.error(JSON.stringify(err, null, 2));
         setError("حدث خطأ أثناء إنشاء الحساب");
       });

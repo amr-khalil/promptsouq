@@ -69,11 +69,12 @@ export default function SignIn() {
       } else {
         console.error(JSON.stringify(signInAttempt, null, 2));
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(JSON.stringify(err, null, 2));
+      const clerkErr = err as { errors?: Array<{ longMessage?: string; message?: string }> };
       setError(
-        err.errors?.[0]?.longMessage ||
-          err.errors?.[0]?.message ||
+        clerkErr.errors?.[0]?.longMessage ||
+          clerkErr.errors?.[0]?.message ||
           "حدث خطأ أثناء تسجيل الدخول",
       );
     } finally {
@@ -109,11 +110,12 @@ export default function SignIn() {
       } else {
         console.error(JSON.stringify(signInAttempt, null, 2));
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(JSON.stringify(err, null, 2));
+      const clerkErr = err as { errors?: Array<{ longMessage?: string; message?: string }> };
       setError(
-        err.errors?.[0]?.longMessage ||
-          err.errors?.[0]?.message ||
+        clerkErr.errors?.[0]?.longMessage ||
+          clerkErr.errors?.[0]?.message ||
           "رمز التحقق غير صحيح",
       );
     } finally {
@@ -130,7 +132,7 @@ export default function SignIn() {
         redirectUrl: "/sign-in/sso-callback",
         redirectUrlComplete: "/",
       })
-      .catch((err: any) => {
+      .catch((err: unknown) => {
         console.error(JSON.stringify(err, null, 2));
         setError("حدث خطأ أثناء تسجيل الدخول");
       });

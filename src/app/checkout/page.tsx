@@ -8,17 +8,38 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
-import { prompts } from "@/data/mockData";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { Prompt } from "@/lib/schemas/api";
 import { CheckCircle2, CreditCard, Lock, Wallet } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Checkout() {
   const router = useRouter();
   const [paymentMethod, setPaymentMethod] = useState("card");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [cartItems, setCartItems] = useState<Prompt[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const cartItems = prompts.slice(0, 3);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await fetch("/api/prompts?sortBy=bestselling&limit=3");
+        if (!res.ok) throw new Error("فشل في تحميل البيانات");
+
+        const data = await res.json();
+        setCartItems(data.data);
+      } catch {
+        setError("حدث خطأ أثناء تحميل البيانات");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
   const subtotal = cartItems.reduce((sum, item) => sum + item.price, 0);
   const tax = subtotal * 0.05;
   const total = subtotal + tax;
@@ -43,6 +64,61 @@ export default function Checkout() {
       router.push("/profile");
     }, 2000);
   };
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          <Skeleton className="h-8 w-40 mb-8" />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-6">
+              <Card>
+                <CardContent className="p-6 space-y-4">
+                  <Skeleton className="h-5 w-32 mb-4" />
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-6 space-y-4">
+                  <Skeleton className="h-5 w-28 mb-4" />
+                  <Skeleton className="h-12 w-full" />
+                  <Skeleton className="h-12 w-full" />
+                </CardContent>
+              </Card>
+            </div>
+            <div className="lg:col-span-1">
+              <Card>
+                <CardContent className="p-6 space-y-4">
+                  <Skeleton className="h-5 w-24" />
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="flex gap-3">
+                      <Skeleton className="w-16 h-16 rounded" />
+                      <div className="flex-1">
+                        <Skeleton className="h-3 w-full mb-1" />
+                        <Skeleton className="h-4 w-16" />
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-12 text-center">
+        <p className="text-destructive text-lg mb-4">{error}</p>
+        <Button onClick={() => window.location.reload()}>
+          إعادة المحاولة
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">

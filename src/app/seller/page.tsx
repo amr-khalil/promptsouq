@@ -18,9 +18,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { categories, prompts } from "@/data/mockData";
+import type { Category, Prompt } from "@/lib/schemas/api";
 import {
   DollarSign,
   Edit,
@@ -31,10 +32,15 @@ import {
   TrendingUp,
   Upload,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function SellerDashboard() {
   const [isUploading, setIsUploading] = useState(false);
+  const [prompts, setPrompts] = useState<Prompt[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -44,6 +50,35 @@ export default function SellerDashboard() {
     tags: "",
     difficulty: "",
   });
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [promptsRes, categoriesRes] = await Promise.all([
+          fetch("/api/prompts?sortBy=bestselling&limit=3"),
+          fetch("/api/categories"),
+        ]);
+
+        if (!promptsRes.ok || !categoriesRes.ok) {
+          throw new Error("فشل في تحميل البيانات");
+        }
+
+        const [promptsData, categoriesData] = await Promise.all([
+          promptsRes.json(),
+          categoriesRes.json(),
+        ]);
+
+        setPrompts(promptsData.data);
+        setCategories(categoriesData.data);
+      } catch {
+        setError("حدث خطأ أثناء تحميل البيانات");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,7 +99,53 @@ export default function SellerDashboard() {
     }, 2000);
   };
 
-  const myListings = prompts.slice(0, 3);
+  const myListings = prompts;
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Skeleton className="h-8 w-48 mb-2" />
+        <Skeleton className="h-4 w-64 mb-8" />
+        <Skeleton className="h-10 w-80 mb-6" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Card key={i}>
+              <CardContent className="p-6">
+                <Skeleton className="h-8 w-8 mb-2" />
+                <Skeleton className="h-6 w-24 mb-1" />
+                <Skeleton className="h-3 w-20" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+        <Card>
+          <CardContent className="p-6 space-y-4">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-4 p-4 border rounded-lg">
+                <Skeleton className="w-16 h-16 rounded" />
+                <div className="flex-1">
+                  <Skeleton className="h-4 w-3/4 mb-2" />
+                  <Skeleton className="h-3 w-32" />
+                </div>
+                <Skeleton className="h-5 w-20" />
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-12 text-center">
+        <p className="text-destructive text-lg mb-4">{error}</p>
+        <Button onClick={() => window.location.reload()}>
+          إعادة المحاولة
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">

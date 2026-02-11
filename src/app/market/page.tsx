@@ -18,15 +18,21 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Slider } from "@/components/ui/slider";
-import { categories, prompts } from "@/data/mockData";
+import type { Category, Prompt } from "@/lib/schemas/api";
 import { Filter, X } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export default function Market() {
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get("category");
+
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [prompts, setPrompts] = useState<Prompt[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
     categoryParam ? [categoryParam] : [],
@@ -57,36 +63,52 @@ export default function Market() {
     setPriceRange([0, 100]);
   };
 
-  let filteredPrompts = prompts.filter((prompt) => {
-    if (
-      selectedCategories.length > 0 &&
-      !selectedCategories.includes(prompt.category)
-    ) {
-      return false;
-    }
-    if (selectedModels.length > 0 && !selectedModels.includes(prompt.aiModel)) {
-      return false;
-    }
-    if (prompt.price < priceRange[0] || prompt.price > priceRange[1]) {
-      return false;
-    }
-    return true;
-  });
+  // Fetch categories once on mount
+  useEffect(() => {
+    fetch("/api/categories")
+      .then((res) => res.json())
+      .then((data) => setCategories(data.data))
+      .catch(() => {});
+  }, []);
 
-  // Sort
-  if (sortBy === "bestselling") {
-    filteredPrompts = [...filteredPrompts].sort((a, b) => b.sales - a.sales);
-  } else if (sortBy === "newest") {
-    filteredPrompts = [...filteredPrompts]; // Already in order
-  } else if (sortBy === "rating") {
-    filteredPrompts = [...filteredPrompts].sort((a, b) => b.rating - a.rating);
-  } else if (sortBy === "price-low") {
-    filteredPrompts = [...filteredPrompts].sort((a, b) => a.price - b.price);
-  } else if (sortBy === "price-high") {
-    filteredPrompts = [...filteredPrompts].sort((a, b) => b.price - a.price);
-  }
+  // Fetch prompts when filters change
+  const fetchPrompts = useCallback(async () => {
+    setLoading(true);
+    setError("");
 
-  const FiltersContent = () => (
+    try {
+      const params = new URLSearchParams();
+      if (selectedCategories.length > 0) {
+        params.set("category", selectedCategories.join(","));
+      }
+      if (selectedModels.length > 0) {
+        params.set("aiModel", selectedModels.join(","));
+      }
+      if (priceRange[0] > 0) {
+        params.set("priceMin", String(priceRange[0]));
+      }
+      if (priceRange[1] < 100) {
+        params.set("priceMax", String(priceRange[1]));
+      }
+      params.set("sortBy", sortBy);
+
+      const res = await fetch(`/api/prompts?${params.toString()}`);
+      if (!res.ok) throw new Error("فشل في تحميل البيانات");
+
+      const data = await res.json();
+      setPrompts(data.data);
+    } catch {
+      setError("حدث خطأ أثناء تحميل البيانات");
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedCategories, selectedModels, priceRange, sortBy]);
+
+  useEffect(() => {
+    fetchPrompts();
+  }, [fetchPrompts]);
+
+  const filtersContent = (
     <div className="space-y-6">
       {/* Categories */}
       <div>
@@ -160,7 +182,7 @@ export default function Market() {
       <div className="mb-6">
         <h1 className="text-3xl md:text-4xl font-bold mb-2">سوق البرومبتات</h1>
         <p className="text-muted-foreground">
-          استكشف {filteredPrompts.length} من البرومبتات الاحترافية
+          استكشف {prompts.length} من البرومبتات الاحترافية
         </p>
       </div>
 
@@ -172,7 +194,7 @@ export default function Market() {
               <h2 className="font-bold">الفلاتر</h2>
               <Filter className="h-4 w-4" />
             </div>
-            <FiltersContent />
+            {filtersContent}
           </div>
         </aside>
 
@@ -190,7 +212,7 @@ export default function Market() {
                 <SheetTitle>الفلاتر</SheetTitle>
               </SheetHeader>
               <div className="mt-6">
-                <FiltersContent />
+                {filtersContent}
               </div>
             </SheetContent>
           </Sheet>
@@ -201,7 +223,7 @@ export default function Market() {
           {/* Sort */}
           <div className="flex items-center justify-between mb-6">
             <div className="text-sm text-muted-foreground">
-              {filteredPrompts.length} نتيجة
+              {prompts.length} نتيجة
             </div>
             <div className="flex items-center gap-2">
               <span className="text-sm">ترتيب حسب:</span>
@@ -220,14 +242,48 @@ export default function Market() {
             </div>
           </div>
 
-          {/* Prompts Grid */}
-          {filteredPrompts.length > 0 ? (
+          {/* Error State */}
+          {error && (
+            <div className="text-center py-12">
+              <p className="text-destructive text-lg mb-4">{error}</p>
+              <Button variant="outline" onClick={fetchPrompts}>
+                إعادة المحاولة
+              </Button>
+            </div>
+          )}
+
+          {/* Loading State */}
+          {loading && !error && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredPrompts.map((prompt) => (
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="border rounded-lg overflow-hidden">
+                  <Skeleton className="aspect-video" />
+                  <div className="p-4">
+                    <Skeleton className="h-5 w-16 mb-2" />
+                    <Skeleton className="h-4 w-full mb-2" />
+                    <Skeleton className="h-3 w-full mb-3" />
+                    <Skeleton className="h-3 w-24 mb-3" />
+                    <div className="flex items-center justify-between">
+                      <Skeleton className="h-5 w-16" />
+                      <Skeleton className="h-8 w-16" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Prompts Grid */}
+          {!loading && !error && prompts.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {prompts.map((prompt) => (
                 <PromptCard key={prompt.id} prompt={prompt} />
               ))}
             </div>
-          ) : (
+          )}
+
+          {/* Empty State */}
+          {!loading && !error && prompts.length === 0 && (
             <div className="text-center py-12">
               <p className="text-muted-foreground text-lg mb-4">
                 لم يتم العثور على نتائج

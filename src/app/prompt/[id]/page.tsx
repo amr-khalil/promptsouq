@@ -7,10 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { prompts, reviews } from "@/data/mockData";
+import type { Prompt, Review } from "@/lib/schemas/api";
 import {
-  AlertCircle,
   CheckCircle2,
   Heart,
   Share2,
@@ -18,30 +18,90 @@ import {
   Star,
 } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { notFound, useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function PromptDetails() {
   const { id } = useParams();
-  const prompt = prompts.find((p) => p.id === id);
+  const [prompt, setPrompt] = useState<Prompt | null>(null);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [relatedPrompts, setRelatedPrompts] = useState<Prompt[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  if (!prompt) {
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [promptRes, reviewsRes, relatedRes] = await Promise.all([
+          fetch(`/api/prompts/${id}`),
+          fetch(`/api/prompts/${id}/reviews`),
+          fetch(`/api/prompts/${id}/related`),
+        ]);
+
+        if (promptRes.status === 404) {
+          notFound();
+          return;
+        }
+
+        if (!promptRes.ok) {
+          throw new Error("فشل في تحميل البيانات");
+        }
+
+        const [promptData, reviewsData, relatedData] = await Promise.all([
+          promptRes.json(),
+          reviewsRes.json(),
+          relatedRes.json(),
+        ]);
+
+        setPrompt(promptData.data);
+        setReviews(reviewsData.data || []);
+        setRelatedPrompts(relatedData.data || []);
+      } catch {
+        setError("حدث خطأ أثناء تحميل البيانات");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Skeleton className="h-4 w-48 mb-6" />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2">
+            <Skeleton className="aspect-video rounded-lg mb-6" />
+            <Skeleton className="h-8 w-3/4 mb-4" />
+            <Skeleton className="h-4 w-48 mb-6" />
+            <Skeleton className="h-16 w-full mb-8" />
+            <Skeleton className="h-64 w-full" />
+          </div>
+          <div className="lg:col-span-1">
+            <div className="border rounded-lg p-6">
+              <Skeleton className="h-8 w-24 mb-4" />
+              <Skeleton className="h-10 w-full mb-3" />
+              <Skeleton className="h-10 w-full" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
     return (
       <div className="container mx-auto px-4 py-12 text-center">
-        <AlertCircle className="h-16 w-16 mx-auto mb-4 text-muted-foreground" />
-        <h2 className="text-2xl font-bold mb-2">البرومبت غير موجود</h2>
-        <p className="text-muted-foreground mb-4">
-          عذراً، لم نتمكن من العثور على البرومبت المطلوب.
-        </p>
-        <Button asChild>
-          <Link href="/market">العودة للسوق</Link>
+        <p className="text-destructive text-lg mb-4">{error}</p>
+        <Button onClick={() => window.location.reload()}>
+          إعادة المحاولة
         </Button>
       </div>
     );
   }
 
-  const relatedPrompts = prompts
-    .filter((p) => p.category === prompt.category && p.id !== prompt.id)
-    .slice(0, 3);
+  if (!prompt) return null;
 
   return (
     <div className="container mx-auto px-4 py-8">

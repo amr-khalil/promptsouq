@@ -3,7 +3,8 @@
 import { PromptCard } from "@/components/PromptCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { prompts } from "@/data/mockData";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { Prompt } from "@/lib/schemas/api";
 import { Search as SearchIcon, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -14,9 +15,40 @@ export default function Search() {
   const router = useRouter();
   const queryParam = searchParams.get("q") || "";
   const [searchQuery, setSearchQuery] = useState(queryParam);
+  const [results, setResults] = useState<Prompt[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     setSearchQuery(queryParam);
+  }, [queryParam]);
+
+  useEffect(() => {
+    if (!queryParam) {
+      setResults([]);
+      return;
+    }
+
+    async function fetchResults() {
+      setLoading(true);
+      setError("");
+
+      try {
+        const res = await fetch(
+          `/api/prompts/search?q=${encodeURIComponent(queryParam)}`,
+        );
+        if (!res.ok) throw new Error("فشل في البحث");
+
+        const data = await res.json();
+        setResults(data.data);
+      } catch {
+        setError("حدث خطأ أثناء البحث");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchResults();
   }, [queryParam]);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -32,17 +64,6 @@ export default function Search() {
     setSearchQuery("");
     router.push("/search");
   };
-
-  const filteredPrompts = prompts.filter((prompt) => {
-    if (!queryParam) return false;
-    const query = queryParam.toLowerCase();
-    return (
-      prompt.title.toLowerCase().includes(query) ||
-      prompt.titleEn.toLowerCase().includes(query) ||
-      prompt.description.toLowerCase().includes(query) ||
-      prompt.tags.some((tag) => tag.toLowerCase().includes(query))
-    );
-  });
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -78,7 +99,7 @@ export default function Search() {
         <div>
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-2xl font-bold">
-              نتائج البحث عن "{queryParam}"
+              نتائج البحث عن &ldquo;{queryParam}&rdquo;
             </h1>
             <Button variant="outline" onClick={clearSearch}>
               <X className="ml-2 h-4 w-4" />
@@ -86,18 +107,51 @@ export default function Search() {
             </Button>
           </div>
 
-          {filteredPrompts.length > 0 ? (
+          {error && (
+            <div className="text-center py-12">
+              <p className="text-destructive text-lg mb-4">{error}</p>
+              <Button
+                variant="outline"
+                onClick={() => window.location.reload()}
+              >
+                إعادة المحاولة
+              </Button>
+            </div>
+          )}
+
+          {loading && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="border rounded-lg overflow-hidden">
+                  <Skeleton className="aspect-video" />
+                  <div className="p-4">
+                    <Skeleton className="h-5 w-16 mb-2" />
+                    <Skeleton className="h-4 w-full mb-2" />
+                    <Skeleton className="h-3 w-full mb-3" />
+                    <div className="flex items-center justify-between">
+                      <Skeleton className="h-5 w-16" />
+                      <Skeleton className="h-8 w-16" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {!loading && !error && results.length > 0 && (
             <>
               <p className="text-muted-foreground mb-6">
-                وجدنا {filteredPrompts.length} نتيجة
+                وجدنا {results.length} نتيجة
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredPrompts.map((prompt) => (
+                {results.map((prompt) => (
                   <PromptCard key={prompt.id} prompt={prompt} />
                 ))}
               </div>
             </>
-          ) : (
+          )}
+
+          {!loading && !error && results.length === 0 && (
             <div className="text-center py-12">
               <SearchIcon className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
               <h2 className="text-2xl font-bold mb-2">لم نعثر على نتائج</h2>

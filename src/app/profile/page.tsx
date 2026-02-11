@@ -5,8 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { prompts } from "@/data/mockData";
+import type { Prompt } from "@/lib/schemas/api";
 import {
   Bell,
   Download,
@@ -17,10 +18,80 @@ import {
   User,
   Wallet,
 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function Profile() {
-  const userPurchases = prompts.slice(0, 4);
-  const savedPrompts = prompts.slice(4, 7);
+  const [allPrompts, setAllPrompts] = useState<Prompt[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await fetch("/api/prompts");
+        if (!res.ok) throw new Error("فشل في تحميل البيانات");
+
+        const data = await res.json();
+        setAllPrompts(data.data);
+      } catch {
+        setError("حدث خطأ أثناء تحميل البيانات");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  const userPurchases = allPrompts.slice(0, 4);
+  const savedPrompts = allPrompts.slice(4, 7);
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <div className="lg:col-span-1">
+            <Card>
+              <CardContent className="p-6 text-center">
+                <Skeleton className="w-24 h-24 mx-auto mb-4 rounded-full" />
+                <Skeleton className="h-5 w-24 mx-auto mb-1" />
+                <Skeleton className="h-3 w-32 mx-auto mb-2" />
+                <Skeleton className="h-5 w-16 mx-auto" />
+              </CardContent>
+            </Card>
+          </div>
+          <div className="lg:col-span-3">
+            <Skeleton className="h-10 w-64 mb-6" />
+            <Card>
+              <CardContent className="p-6 space-y-4">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="flex items-center gap-4 p-4 border rounded-lg">
+                    <Skeleton className="w-20 h-20 rounded" />
+                    <div className="flex-1">
+                      <Skeleton className="h-4 w-3/4 mb-2" />
+                      <Skeleton className="h-3 w-32" />
+                    </div>
+                    <Skeleton className="h-8 w-20" />
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-12 text-center">
+        <p className="text-destructive text-lg mb-4">{error}</p>
+        <Button onClick={() => window.location.reload()}>
+          إعادة المحاولة
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">

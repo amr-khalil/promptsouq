@@ -1,4 +1,4 @@
-import { Prompt } from "@/data/mockData";
+import type { Prompt } from "@/lib/schemas/api";
 import { ShoppingCart, Star } from "lucide-react";
 import Link from "next/link";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
