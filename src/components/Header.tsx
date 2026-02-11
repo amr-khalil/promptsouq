@@ -1,5 +1,12 @@
 "use client";
 
+import {
+  SignInButton,
+  SignUpButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from "@clerk/nextjs";
 import { Menu, Search, ShoppingCart, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -73,14 +80,22 @@ export function Header() {
                 <ShoppingCart className="h-5 w-5" />
               </Link>
             </Button>
-            <Button variant="ghost" size="icon" asChild>
-              <Link href="/profile">
-                <User className="h-5 w-5" />
-              </Link>
-            </Button>
-            <Button asChild>
-              <Link href="/signin">تسجيل الدخول</Link>
-            </Button>
+            <SignedIn>
+              <Button variant="ghost" size="icon" asChild>
+                <Link href="/profile">
+                  <User className="h-5 w-5" />
+                </Link>
+              </Button>
+              <UserButton />
+            </SignedIn>
+            <SignedOut>
+              <SignInButton>
+                <Button variant="ghost">تسجيل الدخول</Button>
+              </SignInButton>
+              <SignUpButton>
+                <Button>إنشاء حساب</Button>
+              </SignUpButton>
+            </SignedOut>
           </nav>
 
           {/* Mobile Menu */}
@@ -125,12 +140,27 @@ export function Header() {
                     <Button variant="ghost" className="justify-start" asChild>
                       <Link href="/seller">لوحة البائع</Link>
                     </Button>
-                    <Button variant="ghost" className="justify-start" asChild>
-                      <Link href="/profile">الملف الشخصي</Link>
-                    </Button>
-                    <Button className="w-full" asChild>
-                      <Link href="/signin">تسجيل الدخول</Link>
-                    </Button>
+                    <SignedIn>
+                      <Button variant="ghost" className="justify-start" asChild>
+                        <Link href="/profile">الملف الشخصي</Link>
+                      </Button>
+                      <div className="flex justify-center py-2">
+                        <UserButton />
+                      </div>
+                    </SignedIn>
+                    <SignedOut>
+                      <SignInButton>
+                        <Button
+                          variant="ghost"
+                          className="w-full justify-start"
+                        >
+                          تسجيل الدخول
+                        </Button>
+                      </SignInButton>
+                      <SignUpButton>
+                        <Button className="w-full">إنشاء حساب</Button>
+                      </SignUpButton>
+                    </SignedOut>
                   </div>
                 </div>
               </SheetContent>
