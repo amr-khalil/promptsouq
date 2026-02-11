@@ -124,3 +124,10 @@ Future additions: Supabase anon key, Stripe publishable/secret keys.
 4. **UI last** — Mobile-first; React Hook Form + zodResolver for forms
 5. **Verify** — `npm run lint && npm run build` after every task
 6. **Test** — Playwright E2E after user-facing changes
+
+## Active Technologies
+- TypeScript 5.x (strict mode) + Next.js 16.x (App Router), React 19.x, Zod 4.x (001-api-mock-data)
+- In-memory mock data arrays (no database this phase) (001-api-mock-data)
+
+## Recent Changes
+- 001-api-mock-data: Added TypeScript 5.x (strict mode) + Next.js 16.x (App Router), React 19.x, Zod 4.x
