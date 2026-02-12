@@ -73,7 +73,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/profile"
+                  href="/dashboard"
                   className="text-muted-foreground hover:text-foreground transition-colors"
                 >
                   حسابي

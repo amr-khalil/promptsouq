@@ -5,6 +5,12 @@ type CategoryRow = typeof categories.$inferSelect;
 type ReviewRow = typeof reviews.$inferSelect;
 type TestimonialRow = typeof testimonials.$inferSelect;
 
+interface PurchaseRow {
+  prompt: PromptRow;
+  purchasedAt: Date;
+  priceAtPurchase: number;
+}
+
 export function mapPromptRow(row: PromptRow) {
   return {
     id: row.id,
@@ -28,6 +34,7 @@ export function mapPromptRow(row: PromptRow) {
     difficulty: row.difficulty,
     samples: row.samples,
     fullContent: row.fullContent ?? undefined,
+    instructions: row.instructions ?? undefined,
   };
 }
 
@@ -41,9 +48,29 @@ export function mapCategoryRow(row: CategoryRow) {
   };
 }
 
+export function mapPurchaseRow(row: PurchaseRow) {
+  return {
+    id: row.prompt.id,
+    title: row.prompt.title,
+    titleEn: row.prompt.titleEn,
+    thumbnail: row.prompt.thumbnail,
+    aiModel: row.prompt.aiModel,
+    price: row.prompt.price,
+    category: row.prompt.category,
+    seller: {
+      name: row.prompt.sellerName,
+      avatar: row.prompt.sellerAvatar,
+    },
+    purchasedAt: row.purchasedAt.toISOString(),
+    priceAtPurchase: row.priceAtPurchase,
+  };
+}
+
 export function mapReviewRow(row: ReviewRow) {
   return {
     id: row.id.toString(),
+    promptId: row.promptId,
+    userId: row.userId,
     userName: row.userName,
     userAvatar: row.userAvatar,
     rating: row.rating,

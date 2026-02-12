@@ -1,8 +1,9 @@
 import { db } from "@/db";
-import { orderItems, orders } from "@/db/schema";
-import { purchaseQuerySchema } from "@/lib/schemas/api";
+import { orderItems, orders, prompts } from "@/db/schema";
+import { mapPurchaseRow } from "@/lib/mappers";
+import { apiErrorResponse, purchaseQuerySchema } from "@/lib/schemas/api";
 import { auth } from "@clerk/nextjs/server";
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -24,6 +25,7 @@ export async function GET(request: NextRequest) {
     const parsed = purchaseQuerySchema.safeParse(rawParams);
     const promptId = parsed.success ? parsed.data.promptId : undefined;
 
+    // Check mode: return whether user owns a specific prompt
     if (promptId) {
       const rows = await db
         .select({ promptId: orderItems.promptId })
@@ -40,18 +42,31 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ purchased: rows.length > 0 });
     }
 
+    // List mode: return all purchased prompts with details
     const rows = await db
-      .select({ promptId: orderItems.promptId })
+      .select({
+        prompt: prompts,
+        purchasedAt: orders.createdAt,
+        priceAtPurchase: orderItems.priceAtPurchase,
+      })
       .from(orderItems)
       .innerJoin(orders, eq(orders.id, orderItems.orderId))
-      .where(eq(orders.userId, userId));
+      .innerJoin(prompts, eq(prompts.id, orderItems.promptId))
+      .where(eq(orders.userId, userId))
+      .orderBy(desc(orders.createdAt));
 
-    const purchases = [...new Set(rows.map((r) => r.promptId))];
+    // Deduplicate by promptId (keep earliest purchase)
+    const seen = new Set<string>();
+    const unique = rows.filter((r) => {
+      if (seen.has(r.prompt.id)) return false;
+      seen.add(r.prompt.id);
+      return true;
+    });
 
-    return NextResponse.json({ purchases });
+    return NextResponse.json({ data: unique.map(mapPurchaseRow) });
   } catch {
     return NextResponse.json(
-      { error: "حدث خطأ داخلي" },
+      apiErrorResponse("INTERNAL_ERROR", "حدث خطأ داخلي"),
       { status: 500 },
     );
   }

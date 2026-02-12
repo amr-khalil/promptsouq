@@ -16,7 +16,7 @@ async function seed() {
 
   // Truncate all tables (reviews first for FK constraints)
   console.log("Truncating tables...");
-  await db.execute(sql`TRUNCATE reviews, prompts, categories, testimonials RESTART IDENTITY CASCADE`);
+  await db.execute(sql`TRUNCATE reviews, favorites, prompts, categories, testimonials RESTART IDENTITY CASCADE`);
 
   // Seed categories
   console.log("Seeding categories...");
@@ -52,6 +52,8 @@ async function seed() {
       tags: ["تسويق", "محتوى", "إعلانات", "SEO"],
       difficulty: "متقدم",
       samples: ["مثال على محتوى تسويقي لمنتج تقني...", "مثال على إعلان جذاب لخدمة رقمية..."],
+      fullContent: "أنت كاتب محتوى تسويقي محترف. اكتب [نوع_المحتوى] عن [الموضوع] يستهدف [الجمهور_المستهدف]. استخدم أسلوب [النبرة] مع التركيز على [الفائدة_الرئيسية]. يجب أن يتضمن المحتوى عنوان جذاب، مقدمة مشوقة، 3-5 نقاط رئيسية، ودعوة لاتخاذ إجراء.",
+      instructions: "1. استبدل [نوع_المحتوى] بالنوع المطلوب (إعلان، منشور، بريد إلكتروني)\n2. حدد [الموضوع] بدقة\n3. عرّف [الجمهور_المستهدف] (مثال: رواد أعمال، طلاب)\n4. اختر [النبرة] المناسبة (رسمي، ودي، حماسي)\n5. حدد [الفائدة_الرئيسية] التي تريد إبرازها",
     },
     {
       title: "مولد صور فنية بأسلوب عربي",
@@ -71,6 +73,8 @@ async function seed() {
       tags: ["فن", "تصميم", "عربي", "midjourney"],
       difficulty: "مبتدئ",
       samples: ["صورة لزخارف إسلامية معاصرة...", "صورة لمدينة عربية مستقبلية..."],
+      fullContent: "[SUBJECT] in traditional Arabic art style, intricate geometric patterns, gold and deep blue color palette, [MEDIUM] rendering, [LIGHTING] lighting, highly detailed, 8k resolution --ar [ASPECT_RATIO] --style raw",
+      instructions: "1. استبدل [SUBJECT] بالموضوع المطلوب (مسجد، قصر، سوق)\n2. اختر [MEDIUM] (digital painting, watercolor, oil painting)\n3. حدد [LIGHTING] (golden hour, dramatic, soft ambient)\n4. اختر [ASPECT_RATIO] (16:9 للمناظر، 1:1 للمربع، 9:16 للعمودي)",
     },
     {
       title: "مساعد كتابة الأبحاث الأكاديمية",
@@ -195,6 +199,7 @@ async function seed() {
   await db.insert(reviews).values([
     {
       promptId: firstPromptId,
+      userId: "seed-user-1",
       userName: "عبدالله محمد",
       userAvatar: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=100",
       rating: 5,
@@ -203,6 +208,7 @@ async function seed() {
     },
     {
       promptId: firstPromptId,
+      userId: "seed-user-2",
       userName: "منى العتيبي",
       userAvatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100",
       rating: 4,
@@ -211,6 +217,7 @@ async function seed() {
     },
     {
       promptId: firstPromptId,
+      userId: "seed-user-3",
       userName: "سعيد الأحمدي",
       userAvatar: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=100",
       rating: 5,

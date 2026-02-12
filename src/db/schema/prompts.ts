@@ -23,6 +23,7 @@ export const prompts = pgTable("prompts", {
   difficulty: text("difficulty").notNull(),
   samples: text("samples").array().notNull().default([]),
   fullContent: text("full_content"),
+  instructions: text("instructions"),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
