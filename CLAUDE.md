@@ -128,6 +128,8 @@ Future additions: Supabase anon key, Stripe publishable/secret keys.
 ## Active Technologies
 - TypeScript 5.x (strict mode) + Next.js 16.x (App Router), React 19.x, Zod 4.x (001-api-mock-data)
 - In-memory mock data arrays (no database this phase) (001-api-mock-data)
+- TypeScript 5.x (strict mode), Node.js 18+ + Next.js 16.x (App Router), React 19.x, Drizzle ORM (new), postgres.js (new), drizzle-kit (new, dev), Zod 4.x (002-supabase-db-migration)
+- Supabase Postgres 17.x (project: `dyaflmsawxpqgmyojtbc`, region: eu-central-1) via connection pooler (transaction mode) (002-supabase-db-migration)
 
 ## Recent Changes
 - 001-api-mock-data: Added TypeScript 5.x (strict mode) + Next.js 16.x (App Router), React 19.x, Zod 4.x
