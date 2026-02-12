@@ -1,5 +1,8 @@
-import { prompts } from "@/data/mockData";
+import { db } from "@/db";
+import { prompts } from "@/db/schema";
+import { mapPromptRow } from "@/lib/mappers";
 import { apiErrorResponse, searchQuerySchema } from "@/lib/schemas/api";
+import { ilike, or, sql } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -22,17 +25,22 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const q = parsed.data.q.toLowerCase();
+    const pattern = `%${parsed.data.q}%`;
 
-    const matching = prompts.filter(
-      (prompt) =>
-        prompt.title.toLowerCase().includes(q) ||
-        prompt.titleEn.toLowerCase().includes(q) ||
-        prompt.description.toLowerCase().includes(q) ||
-        prompt.tags.some((tag) => tag.toLowerCase().includes(q)),
-    );
+    const rows = await db
+      .select()
+      .from(prompts)
+      .where(
+        or(
+          ilike(prompts.title, pattern),
+          ilike(prompts.titleEn, pattern),
+          ilike(prompts.description, pattern),
+          ilike(prompts.descriptionEn, pattern),
+          ilike(sql`array_to_string(${prompts.tags}, ' ')`, pattern),
+        ),
+      );
 
-    return NextResponse.json({ data: matching });
+    return NextResponse.json({ data: rows.map(mapPromptRow) });
   } catch {
     return NextResponse.json(
       apiErrorResponse("INTERNAL_ERROR", "حدث خطأ داخلي في الخادم"),

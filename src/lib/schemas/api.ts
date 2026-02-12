@@ -38,6 +38,7 @@ export const categorySchema = z.object({
 
 export const reviewSchema = z.object({
   id: z.string(),
+  promptId: z.string().optional(),
   userName: z.string(),
   userAvatar: z.string(),
   rating: z.number(),
