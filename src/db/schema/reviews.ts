@@ -1,9 +1,9 @@
-import { integer, pgTable, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { integer, pgTable, serial, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { prompts } from "./prompts";
 
 export const reviews = pgTable("reviews", {
   id: serial("id").primaryKey(),
-  promptId: integer("prompt_id")
+  promptId: uuid("prompt_id")
     .notNull()
     .references(() => prompts.id),
   userName: text("user_name").notNull(),

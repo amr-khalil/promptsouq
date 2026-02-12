@@ -1,98 +1,48 @@
 "use client";
 
 import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton";
-import type { Prompt } from "@/lib/schemas/api";
-import { ArrowRight, ShoppingBag, Trash2 } from "lucide-react";
+import { useCartStore } from "@/stores/cart-store";
+import { AlertTriangle, ArrowRight, ShoppingBag, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function Cart() {
-  const [cartItems, setCartItems] = useState<Prompt[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const { items, removeItem } = useCartStore();
+  const [staleIds, setStaleIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const res = await fetch("/api/prompts?sortBy=bestselling&limit=3");
-        if (!res.ok) throw new Error("فشل في تحميل البيانات");
-
-        const data = await res.json();
-        setCartItems(data.data);
-      } catch {
-        setError("حدث خطأ أثناء تحميل البيانات");
-      } finally {
-        setLoading(false);
+    if (items.length === 0) return;
+    Promise.all(
+      items.map((item) =>
+        fetch(`/api/prompts/${item.promptId}`).then((res) => ({
+          promptId: item.promptId,
+          exists: res.ok,
+        })),
+      ),
+    ).then((results) => {
+      const missing = results
+        .filter((r) => !r.exists)
+        .map((r) => r.promptId);
+      if (missing.length > 0) {
+        setStaleIds(new Set(missing));
       }
-    }
+    });
+  }, [items]);
 
-    fetchData();
-  }, []);
-
-  const removeItem = (id: string) => {
-    setCartItems(cartItems.filter((item) => item.id !== id));
-  };
-
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price, 0);
+  const subtotal = items.reduce((sum, item) => sum + item.price, 0);
   const tax = subtotal * 0.05;
   const total = subtotal + tax;
 
-  if (loading) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <Skeleton className="h-8 w-32 mb-8" />
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <Card>
-              <CardContent className="p-6 space-y-6">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="flex gap-4">
-                    <Skeleton className="w-24 h-24 rounded" />
-                    <div className="flex-1">
-                      <Skeleton className="h-4 w-3/4 mb-2" />
-                      <Skeleton className="h-3 w-24 mb-3" />
-                      <Skeleton className="h-5 w-16" />
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          </div>
-          <div className="lg:col-span-1">
-            <Card>
-              <CardContent className="p-6">
-                <Skeleton className="h-6 w-32 mb-6" />
-                <div className="space-y-3">
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-6 w-full" />
-                </div>
-                <Skeleton className="h-10 w-full mt-6" />
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </div>
-    );
+  function handleRemove(promptId: string) {
+    removeItem(promptId);
+    toast.success("تم الحذف من السلة");
   }
 
-  if (error) {
-    return (
-      <div className="container mx-auto px-4 py-12 text-center">
-        <p className="text-destructive text-lg mb-4">{error}</p>
-        <Button onClick={() => window.location.reload()}>
-          إعادة المحاولة
-        </Button>
-      </div>
-    );
-  }
-
-  if (cartItems.length === 0) {
+  if (items.length === 0) {
     return (
       <div className="container mx-auto px-4 py-12">
         <div className="max-w-2xl mx-auto text-center">
@@ -119,8 +69,8 @@ export default function Cart() {
           <Card>
             <CardContent className="p-6">
               <div className="space-y-6">
-                {cartItems.map((item) => (
-                  <div key={item.id}>
+                {items.map((item, index) => (
+                  <div key={item.promptId}>
                     <div className="flex gap-4">
                       <ImageWithFallback
                         src={item.thumbnail}
@@ -128,23 +78,25 @@ export default function Cart() {
                         className="w-24 h-24 rounded object-cover"
                       />
                       <div className="flex-1">
-                        <Link href={`/prompt/${item.id}`}>
+                        <Link href={`/prompt/${item.promptId}`}>
                           <h3 className="font-bold mb-2 hover:text-primary transition-colors">
                             {item.title}
                           </h3>
                         </Link>
-                        <div className="flex items-center gap-2 mb-3">
-                          <Badge variant="secondary">{item.aiModel}</Badge>
-                          <span className="text-sm text-muted-foreground">
-                            {item.category}
-                          </span>
-                        </div>
+                        {staleIds.has(item.promptId) && (
+                          <div className="flex items-center gap-1 text-sm text-amber-600 mb-2">
+                            <AlertTriangle className="h-4 w-4" />
+                            <span>هذا المنتج لم يعد متوفراً</span>
+                          </div>
+                        )}
                         <div className="flex items-center justify-between">
-                          <div className="font-bold text-lg">${item.price}</div>
+                          <div className="font-bold text-lg">
+                            ${item.price}
+                          </div>
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => removeItem(item.id)}
+                            onClick={() => handleRemove(item.promptId)}
                             className="text-destructive hover:text-destructive"
                           >
                             <Trash2 className="h-4 w-4 ml-2" />
@@ -153,7 +105,7 @@ export default function Cart() {
                         </div>
                       </div>
                     </div>
-                    {item.id !== cartItems[cartItems.length - 1].id && (
+                    {index !== items.length - 1 && (
                       <Separator className="mt-6" />
                     )}
                   </div>

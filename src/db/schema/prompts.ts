@@ -1,8 +1,8 @@
-import { integer, pgTable, real, serial, text, timestamp } from "drizzle-orm/pg-core";
+import { integer, pgTable, real, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { categories } from "./categories";
 
 export const prompts = pgTable("prompts", {
-  id: serial("id").primaryKey(),
+  id: uuid("id").defaultRandom().primaryKey(),
   title: text("title").notNull(),
   titleEn: text("title_en").notNull(),
   description: text("description").notNull(),

@@ -10,6 +10,8 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Prompt, Review } from "@/lib/schemas/api";
+import { useCartStore } from "@/stores/cart-store";
+import { useAuth } from "@clerk/nextjs";
 import {
   CheckCircle2,
   Heart,
@@ -18,16 +20,50 @@ import {
   Star,
 } from "lucide-react";
 import Link from "next/link";
-import { notFound, useParams } from "next/navigation";
+import { notFound, useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function PromptDetails() {
   const { id } = useParams();
+  const router = useRouter();
   const [prompt, setPrompt] = useState<Prompt | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [relatedPrompts, setRelatedPrompts] = useState<Prompt[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [purchased, setPurchased] = useState(false);
+  const { addItem, isInCart } = useCartStore();
+  const { isSignedIn } = useAuth();
+
+  function handleAddToCart() {
+    if (!prompt) return;
+    if (isInCart(prompt.id)) {
+      toast.info("هذا المنتج موجود بالفعل في السلة");
+      return;
+    }
+    addItem({
+      promptId: prompt.id,
+      title: prompt.title,
+      price: prompt.price,
+      thumbnail: prompt.thumbnail,
+    });
+    toast.success("تمت الإضافة إلى السلة");
+  }
+
+  function handleBuyNow() {
+    if (!prompt) return;
+    if (!isInCart(prompt.id)) {
+      addItem({
+        promptId: prompt.id,
+        title: prompt.title,
+        price: prompt.price,
+        thumbnail: prompt.thumbnail,
+      });
+    }
+    toast.success("جارٍ التوجيه للدفع...");
+    router.push("/checkout");
+  }
 
   useEffect(() => {
     async function fetchData() {
@@ -65,6 +101,16 @@ export default function PromptDetails() {
 
     fetchData();
   }, [id]);
+
+  useEffect(() => {
+    if (!isSignedIn || !id) return;
+    fetch(`/api/user/purchases?promptId=${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.purchased) setPurchased(true);
+      })
+      .catch(() => {});
+  }, [isSignedIn, id]);
 
   if (loading) {
     return (
@@ -235,6 +281,18 @@ export default function PromptDetails() {
                   <h3 className="font-bold mb-2">النموذج الموصى به</h3>
                   <p className="text-muted-foreground">{prompt.aiModel}</p>
                 </div>
+
+                {purchased && prompt.fullContent && (
+                  <>
+                    <Separator />
+                    <div>
+                      <h3 className="font-bold mb-2">محتوى البرومبت الكامل</h3>
+                      <div className="bg-muted p-4 rounded-lg font-mono text-sm whitespace-pre-wrap">
+                        {prompt.fullContent}
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </TabsContent>
 
@@ -312,18 +370,31 @@ export default function PromptDetails() {
                   <div className="flex flex-wrap gap-2 mb-4">
                     <Badge>{prompt.aiModel}</Badge>
                     <Badge variant="outline">{prompt.difficulty}</Badge>
+                    {purchased && (
+                      <Badge className="bg-green-600 text-white">
+                        <CheckCircle2 className="h-3 w-3 ml-1" />
+                        تم الشراء
+                      </Badge>
+                    )}
                   </div>
                 </div>
 
-                <div className="space-y-3">
-                  <Button className="w-full" size="lg">
-                    <ShoppingCart className="ml-2 h-5 w-5" />
-                    شراء الآن
-                  </Button>
-                  <Button className="w-full" size="lg" variant="outline">
-                    إضافة للسلة
-                  </Button>
-                </div>
+                {!purchased && (
+                  <div className="space-y-3">
+                    <Button className="w-full" size="lg" onClick={handleBuyNow}>
+                      <ShoppingCart className="ml-2 h-5 w-5" />
+                      شراء الآن
+                    </Button>
+                    <Button
+                      className="w-full"
+                      size="lg"
+                      variant="outline"
+                      onClick={handleAddToCart}
+                    >
+                      إضافة للسلة
+                    </Button>
+                  </div>
+                )}
 
                 <Separator className="my-6" />
 

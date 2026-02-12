@@ -94,6 +94,25 @@ export const relatedQuerySchema = z.object({
   limit: z.coerce.number().int().positive().optional().default(3),
 });
 
+// ─── UUID & Checkout Schemas ─────────────────────────────────────
+
+export const uuidParamSchema = z.string().uuid("معرّف غير صالح");
+
+export const checkoutRequestSchema = z.object({
+  items: z
+    .array(
+      z.object({
+        promptId: z.string().uuid("معرّف غير صالح"),
+      }),
+    )
+    .min(1, "السلة فارغة")
+    .max(50),
+});
+
+export const purchaseQuerySchema = z.object({
+  promptId: z.string().uuid().optional(),
+});
+
 // ─── Error Response Helper ────────────────────────────────────────
 
 export function apiErrorResponse(

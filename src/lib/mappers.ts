@@ -7,7 +7,7 @@ type TestimonialRow = typeof testimonials.$inferSelect;
 
 export function mapPromptRow(row: PromptRow) {
   return {
-    id: row.id.toString(),
+    id: row.id,
     title: row.title,
     titleEn: row.titleEn,
     description: row.description,

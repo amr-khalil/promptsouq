@@ -1,7 +1,7 @@
 import { db } from "@/db";
 import { prompts, reviews } from "@/db/schema";
 import { mapReviewRow } from "@/lib/mappers";
-import { apiErrorResponse } from "@/lib/schemas/api";
+import { apiErrorResponse, uuidParamSchema } from "@/lib/schemas/api";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -11,12 +11,12 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const numericId = parseInt(id, 10);
+    const parsed = uuidParamSchema.safeParse(id);
 
-    if (isNaN(numericId)) {
+    if (!parsed.success) {
       return NextResponse.json(
-        apiErrorResponse("NOT_FOUND", "البرومبت غير موجود"),
-        { status: 404 },
+        apiErrorResponse("VALIDATION_ERROR", "معرّف غير صالح"),
+        { status: 400 },
       );
     }
 
@@ -24,7 +24,7 @@ export async function GET(
     const promptRows = await db
       .select({ id: prompts.id })
       .from(prompts)
-      .where(eq(prompts.id, numericId))
+      .where(eq(prompts.id, parsed.data))
       .limit(1);
 
     if (promptRows.length === 0) {
@@ -34,11 +34,10 @@ export async function GET(
       );
     }
 
-    // Get reviews for this specific prompt (fixes FR-013 bug)
     const rows = await db
       .select()
       .from(reviews)
-      .where(eq(reviews.promptId, numericId));
+      .where(eq(reviews.promptId, parsed.data));
 
     return NextResponse.json({ data: rows.map(mapReviewRow) });
   } catch {

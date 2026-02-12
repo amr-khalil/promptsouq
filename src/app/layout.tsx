@@ -1,6 +1,7 @@
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { Toaster } from "@/components/ui/sonner";
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -41,6 +42,7 @@ export default function RootLayout({
               </main>
               <Footer />
             </div>
+            <Toaster position="top-center" dir="rtl" />
           </ThemeProvider>
         </body>
       </html>

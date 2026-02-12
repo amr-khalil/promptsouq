@@ -1,7 +1,7 @@
 import { db } from "@/db";
 import { prompts } from "@/db/schema";
 import { mapPromptRow } from "@/lib/mappers";
-import { apiErrorResponse } from "@/lib/schemas/api";
+import { apiErrorResponse, uuidParamSchema } from "@/lib/schemas/api";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -11,19 +11,19 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const numericId = parseInt(id, 10);
+    const parsed = uuidParamSchema.safeParse(id);
 
-    if (isNaN(numericId)) {
+    if (!parsed.success) {
       return NextResponse.json(
-        apiErrorResponse("NOT_FOUND", "البرومبت غير موجود"),
-        { status: 404 },
+        apiErrorResponse("VALIDATION_ERROR", "معرّف غير صالح"),
+        { status: 400 },
       );
     }
 
     const rows = await db
       .select()
       .from(prompts)
-      .where(eq(prompts.id, numericId))
+      .where(eq(prompts.id, parsed.data))
       .limit(1);
 
     if (rows.length === 0) {

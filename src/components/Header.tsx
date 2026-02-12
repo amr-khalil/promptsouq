@@ -7,6 +7,7 @@ import {
   SignedOut,
   UserButton,
 } from "@clerk/nextjs";
+import { useCartItemCount } from "@/hooks/use-cart";
 import { Menu, Search, ShoppingCart, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -19,6 +20,7 @@ import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 export function Header() {
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
+  const cartCount = useCartItemCount();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,9 +77,14 @@ export function Header() {
               <Link href="/seller">لوحة البائع</Link>
             </Button>
             <ThemeToggle />
-            <Button variant="ghost" size="icon" asChild>
+            <Button variant="ghost" size="icon" asChild className="relative">
               <Link href="/cart">
                 <ShoppingCart className="h-5 w-5" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
               </Link>
             </Button>
             <SignedIn>
@@ -101,9 +108,14 @@ export function Header() {
           {/* Mobile Menu */}
           <div className="flex md:hidden items-center gap-2">
             <ThemeToggle />
-            <Button variant="ghost" size="icon" asChild className="shrink-0">
+            <Button variant="ghost" size="icon" asChild className="shrink-0 relative">
               <Link href="/cart">
                 <ShoppingCart className="h-5 w-5" />
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                    {cartCount}
+                  </span>
+                )}
               </Link>
             </Button>
 
