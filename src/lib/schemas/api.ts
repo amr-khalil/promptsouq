@@ -26,6 +26,7 @@ export const promptSchema = z.object({
   difficulty: z.enum(["مبتدئ", "متقدم"]),
   samples: z.array(z.string()),
   fullContent: z.string().optional(),
+  instructions: z.string().optional(),
 });
 
 export const categorySchema = z.object({
@@ -39,6 +40,7 @@ export const categorySchema = z.object({
 export const reviewSchema = z.object({
   id: z.string(),
   promptId: z.string().optional(),
+  userId: z.string().optional(),
   userName: z.string(),
   userAvatar: z.string(),
   rating: z.number(),
@@ -113,10 +115,47 @@ export const purchaseQuerySchema = z.object({
   promptId: z.string().uuid().optional(),
 });
 
+// ─── Review Submission Schema ─────────────────────────────────────
+
+export const reviewSubmitSchema = z.object({
+  rating: z.number().int().min(1, "يجب اختيار تقييم").max(5, "الحد الأقصى 5 نجوم"),
+  comment: z.string().max(1000, "التعليق طويل جداً"),
+});
+
+// ─── Favorites Schemas ────────────────────────────────────────────
+
+export const favoriteRequestSchema = z.object({
+  promptId: z.string().uuid("معرّف غير صالح"),
+});
+
+export const favoriteCheckQuerySchema = z.object({
+  promptIds: z.string().min(1, "يجب توفير معرّفات البرومبتات"),
+});
+
+// ─── Purchase List Item Schema ────────────────────────────────────
+
+const purchaseSellerSchema = z.object({
+  name: z.string(),
+  avatar: z.string(),
+});
+
+export const purchaseListItemSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  titleEn: z.string(),
+  thumbnail: z.string(),
+  aiModel: z.string(),
+  price: z.number(),
+  category: z.string(),
+  seller: purchaseSellerSchema,
+  purchasedAt: z.string(),
+  priceAtPurchase: z.number(),
+});
+
 // ─── Error Response Helper ────────────────────────────────────────
 
 export function apiErrorResponse(
-  code: "NOT_FOUND" | "VALIDATION_ERROR" | "INTERNAL_ERROR",
+  code: "NOT_FOUND" | "VALIDATION_ERROR" | "INTERNAL_ERROR" | "FORBIDDEN" | "CONFLICT",
   message: string,
   details?: Record<string, unknown>,
 ) {

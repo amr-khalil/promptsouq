@@ -1,5 +1,6 @@
 "use client";
 
+import { FavoriteButton } from "@/components/dashboard/FavoriteButton";
 import { PromptCard } from "@/components/PromptCard";
 import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -14,7 +15,6 @@ import { useCartStore } from "@/stores/cart-store";
 import { useAuth } from "@clerk/nextjs";
 import {
   CheckCircle2,
-  Heart,
   Share2,
   ShoppingCart,
   Star,
@@ -33,6 +33,7 @@ export default function PromptDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [purchased, setPurchased] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(false);
   const { addItem, isInCart } = useCartStore();
   const { isSignedIn } = useAuth();
 
@@ -108,6 +109,12 @@ export default function PromptDetails() {
       .then((res) => res.json())
       .then((data) => {
         if (data.purchased) setPurchased(true);
+      })
+      .catch(() => {});
+    fetch(`/api/favorites/check?promptIds=${id}`)
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.data?.[id as string]) setIsFavorited(true);
       })
       .catch(() => {});
   }, [isSignedIn, id]);
@@ -204,9 +211,10 @@ export default function PromptDetails() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button variant="outline" size="icon">
-                  <Heart className="h-4 w-4" />
-                </Button>
+                <FavoriteButton
+                  promptId={prompt.id}
+                  isFavorited={isFavorited}
+                />
                 <Button variant="outline" size="icon">
                   <Share2 className="h-4 w-4" />
                 </Button>

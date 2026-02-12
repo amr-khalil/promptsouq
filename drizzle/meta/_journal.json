@@ -15,6 +15,13 @@
       "when": 1770900881518,
       "tag": "0001_moaning_mac_gargan",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1770913884683,
+      "tag": "0002_short_meltdown",
+      "breakpoints": true
     }
   ]
 }

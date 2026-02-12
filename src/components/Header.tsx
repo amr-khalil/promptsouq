@@ -89,7 +89,7 @@ export function Header() {
             </Button>
             <SignedIn>
               <Button variant="ghost" size="icon" asChild>
-                <Link href="/profile">
+                <Link href="/dashboard">
                   <User className="h-5 w-5" />
                 </Link>
               </Button>
@@ -154,7 +154,7 @@ export function Header() {
                     </Button>
                     <SignedIn>
                       <Button variant="ghost" className="justify-start" asChild>
-                        <Link href="/profile">الملف الشخصي</Link>
+                        <Link href="/dashboard">لوحة التحكم</Link>
                       </Button>
                       <div className="flex justify-center py-2">
                         <UserButton />
