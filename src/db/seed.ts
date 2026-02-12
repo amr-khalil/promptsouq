@@ -31,9 +31,9 @@ async function seed() {
     { slug: "design", name: "التصميم", nameEn: "Design", icon: "Sparkles", count: 178 },
   ]);
 
-  // Seed prompts
+  // Seed prompts (UUIDs auto-generated)
   console.log("Seeding prompts...");
-  await db.insert(prompts).values([
+  const insertedPrompts = await db.insert(prompts).values([
     {
       title: "برومبت كتابة محتوى تسويقي احترافي",
       titleEn: "Professional Marketing Content Writer",
@@ -186,13 +186,15 @@ async function seed() {
       difficulty: "متقدم",
       samples: [],
     },
-  ]);
+  ]).returning({ id: prompts.id });
 
-  // Seed reviews (all assigned to prompt ID 1 per R-009)
+  const firstPromptId = insertedPrompts[0].id;
+
+  // Seed reviews (all assigned to first prompt)
   console.log("Seeding reviews...");
   await db.insert(reviews).values([
     {
-      promptId: 1,
+      promptId: firstPromptId,
       userName: "عبدالله محمد",
       userAvatar: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=100",
       rating: 5,
@@ -200,7 +202,7 @@ async function seed() {
       comment: "برومبت رائع جداً! ساعدني في تحسين محتوى التسويق بشكل كبير.",
     },
     {
-      promptId: 1,
+      promptId: firstPromptId,
       userName: "منى العتيبي",
       userAvatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100",
       rating: 4,
@@ -208,7 +210,7 @@ async function seed() {
       comment: "جيد جداً، لكن كنت أتمنى أن يكون هناك المزيد من الأمثلة.",
     },
     {
-      promptId: 1,
+      promptId: firstPromptId,
       userName: "سعيد الأحمدي",
       userAvatar: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?w=100",
       rating: 5,

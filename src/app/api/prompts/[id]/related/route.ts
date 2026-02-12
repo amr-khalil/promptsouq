@@ -1,7 +1,11 @@
 import { db } from "@/db";
 import { prompts } from "@/db/schema";
 import { mapPromptRow } from "@/lib/mappers";
-import { apiErrorResponse, relatedQuerySchema } from "@/lib/schemas/api";
+import {
+  apiErrorResponse,
+  relatedQuerySchema,
+  uuidParamSchema,
+} from "@/lib/schemas/api";
 import { and, eq, ne } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -11,19 +15,19 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const numericId = parseInt(id, 10);
+    const parsed = uuidParamSchema.safeParse(id);
 
-    if (isNaN(numericId)) {
+    if (!parsed.success) {
       return NextResponse.json(
-        apiErrorResponse("NOT_FOUND", "البرومبت غير موجود"),
-        { status: 404 },
+        apiErrorResponse("VALIDATION_ERROR", "معرّف غير صالح"),
+        { status: 400 },
       );
     }
 
     const currentRows = await db
       .select()
       .from(prompts)
-      .where(eq(prompts.id, numericId))
+      .where(eq(prompts.id, parsed.data))
       .limit(1);
 
     if (currentRows.length === 0) {
@@ -38,8 +42,8 @@ export async function GET(
       rawParams[key] = value;
     }
 
-    const parsed = relatedQuerySchema.safeParse(rawParams);
-    const limit = parsed.success ? parsed.data.limit : 3;
+    const queryParsed = relatedQuerySchema.safeParse(rawParams);
+    const limit = queryParsed.success ? queryParsed.data.limit : 3;
 
     const related = await db
       .select()
@@ -47,7 +51,7 @@ export async function GET(
       .where(
         and(
           eq(prompts.category, currentRows[0].category),
-          ne(prompts.id, numericId),
+          ne(prompts.id, parsed.data),
         ),
       )
       .limit(limit);
