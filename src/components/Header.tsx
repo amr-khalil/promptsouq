@@ -1,5 +1,6 @@
 "use client";
 
+import { useCartItemCount } from "@/hooks/use-cart";
 import {
   SignInButton,
   SignUpButton,
@@ -7,14 +8,12 @@ import {
   SignedOut,
   UserButton,
 } from "@clerk/nextjs";
-import { useCartItemCount } from "@/hooks/use-cart";
-import { Menu, Search, ShoppingCart, User } from "lucide-react";
+import { Menu, ShoppingCart, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "./ui/button";
-import { Input } from "./ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 
 export function Header() {
@@ -36,18 +35,15 @@ export function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 shrink-0">
             <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-blue-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold">PS</span>
+              <img src="/logo.png" alt="Logo" className="w-8 h-8" />
             </div>
             <div className="hidden sm:block">
-              <div className="font-bold text-lg">PromptSouq</div>
-              <div className="text-xs text-muted-foreground">
-                سوق البرومبتات
-              </div>
+              <div className="font-bold text-lg">سوق البرومبتات</div>
             </div>
           </Link>
 
           {/* Search Bar - Desktop */}
-          <form
+          {/* <form
             onSubmit={handleSearch}
             className="hidden md:flex flex-1 max-w-2xl"
           >
@@ -66,17 +62,19 @@ export function Header() {
                 <Search className="h-4 w-4" />
               </button>
             </div>
-          </form>
+          </form> */}
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-2">
             <Button variant="ghost" asChild>
-              <Link href="/market">السوق</Link>
+              <Link href="/"> الرئيسية</Link>
             </Button>
             <Button variant="ghost" asChild>
-              <Link href="/seller">لوحة البائع</Link>
+              <Link href="/market">تصفح الأوامر</Link>
             </Button>
-            <ThemeToggle />
+            <Button variant="ghost" asChild>
+              <Link href="/sell">بيع الأوامر</Link>
+            </Button>
             <Button variant="ghost" size="icon" asChild className="relative">
               <Link href="/cart">
                 <ShoppingCart className="h-5 w-5" />
@@ -108,7 +106,12 @@ export function Header() {
           {/* Mobile Menu */}
           <div className="flex md:hidden items-center gap-2">
             <ThemeToggle />
-            <Button variant="ghost" size="icon" asChild className="shrink-0 relative">
+            <Button
+              variant="ghost"
+              size="icon"
+              asChild
+              className="shrink-0 relative"
+            >
               <Link href="/cart">
                 <ShoppingCart className="h-5 w-5" />
                 {cartCount > 0 && (
@@ -127,33 +130,15 @@ export function Header() {
               </SheetTrigger>
               <SheetContent side="right" className="w-[300px]">
                 <div className="flex flex-col gap-4 mt-8">
-                  <form onSubmit={handleSearch} className="w-full">
-                    <div className="relative">
-                      <Input
-                        type="search"
-                        placeholder="ابحث عن برومبت..."
-                        className="w-full pr-10"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                      />
-                      <button
-                        type="submit"
-                        className="absolute left-3 top-1/2 -translate-y-1/2"
-                      >
-                        <Search className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </form>
-
                   <div className="flex flex-col gap-2">
-                    <Button variant="ghost" className="justify-start" asChild>
-                      <Link href="/market">السوق</Link>
+                    <Button variant="ghost" asChild>
+                      <Link href="/market">تصفح الأوامر</Link>
                     </Button>
-                    <Button variant="ghost" className="justify-start" asChild>
-                      <Link href="/seller">لوحة البائع</Link>
+                    <Button variant="ghost" asChild>
+                      <Link href="/sell">بيع الأوامر</Link>
                     </Button>
                     <SignedIn>
-                      <Button variant="ghost" className="justify-start" asChild>
+                      <Button variant="ghost" asChild>
                         <Link href="/dashboard">لوحة التحكم</Link>
                       </Button>
                       <div className="flex justify-center py-2">
@@ -162,10 +147,7 @@ export function Header() {
                     </SignedIn>
                     <SignedOut>
                       <SignInButton>
-                        <Button
-                          variant="ghost"
-                          className="w-full justify-start"
-                        >
+                        <Button variant="ghost" className="w-full">
                           تسجيل الدخول
                         </Button>
                       </SignInButton>

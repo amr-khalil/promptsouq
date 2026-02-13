@@ -77,9 +77,7 @@ export default function Home() {
     return (
       <div className="container mx-auto px-4 py-20 text-center">
         <p className="text-destructive text-lg mb-4">{error}</p>
-        <Button onClick={() => window.location.reload()}>
-          إعادة المحاولة
-        </Button>
+        <Button onClick={() => window.location.reload()}>إعادة المحاولة</Button>
       </div>
     );
   }
