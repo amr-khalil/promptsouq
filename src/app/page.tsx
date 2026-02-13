@@ -1,9 +1,11 @@
 "use client";
 
+import Hero from "@/components/Hero";
 import { PromptCard } from "@/components/PromptCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useCartItemCount } from "@/hooks/use-cart";
 import type { Category, Prompt, Testimonial } from "@/lib/schemas/api";
 import {
   Briefcase,
@@ -20,6 +22,7 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const iconMap: Record<string, React.ElementType> = {
@@ -82,41 +85,22 @@ export default function Home() {
     );
   }
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const router = useRouter();
+  const cartCount = useCartItemCount();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+
   return (
     <div>
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-950/20 dark:to-blue-950/20 py-20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              سوق البرومبتات العربي
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600">
-                PromptSouq
-              </span>
-            </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground mb-8">
-              اشترِ وبيع برومبتات قوية للذكاء الاصطناعي بسهولة
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" asChild className="text-lg">
-                <Link href="/market">
-                  <ShoppingBag className="ml-2 h-5 w-5" />
-                  تسوق الآن
-                </Link>
-              </Button>
-              <Button size="lg" variant="outline" asChild className="text-lg">
-                <Link href="/seller">
-                  <Zap className="ml-2 h-5 w-5" />
-                  ابدأ البيع
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
+      <Hero />
       {/* Categories Section */}
-      <section className="py-16 container mx-auto px-4">
+      {/* <section className="py-16 container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             الفئات الشائعة
@@ -159,7 +143,7 @@ export default function Home() {
                 );
               })}
         </div>
-      </section>
+      </section> */}
 
       {/* Trending Prompts */}
       <section className="py-16 bg-muted/30">

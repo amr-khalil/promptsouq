@@ -12,7 +12,6 @@ import { Menu, ShoppingCart, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ThemeToggle } from "./ThemeToggle";
 import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 
@@ -41,28 +40,6 @@ export function Header() {
               <div className="font-bold text-lg">سوق البرومبتات</div>
             </div>
           </Link>
-
-          {/* Search Bar - Desktop */}
-          {/* <form
-            onSubmit={handleSearch}
-            className="hidden md:flex flex-1 max-w-2xl"
-          >
-            <div className="relative w-full">
-              <Input
-                type="search"
-                placeholder="ابحث عن برومبت..."
-                className="w-full pr-10"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <button
-                type="submit"
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-              >
-                <Search className="h-4 w-4" />
-              </button>
-            </div>
-          </form> */}
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-2">
@@ -105,7 +82,6 @@ export function Header() {
 
           {/* Mobile Menu */}
           <div className="flex md:hidden items-center gap-2">
-            <ThemeToggle />
             <Button
               variant="ghost"
               size="icon"
