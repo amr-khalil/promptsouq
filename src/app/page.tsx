@@ -1,9 +1,9 @@
 "use client";
 
 import CategoryBrowser from "@/components/CategoryBrowser";
+import FeaturedSellers from "@/components/FeaturedSellers";
 import Hero from "@/components/Hero";
 import { GamingPromptCard } from "@/components/GamingPromptCard";
-import { PromptCard } from "@/components/PromptCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -51,7 +51,7 @@ export default function Home() {
       try {
         const [categoriesRes, promptsRes, testimonialsRes] = await Promise.all([
           fetch("/api/categories"),
-          fetch("/api/prompts?sortBy=bestselling&limit=6"),
+          fetch("/api/prompts?sortBy=bestselling&limit=8"),
           fetch("/api/testimonials"),
         ]);
 
@@ -201,44 +201,10 @@ export default function Home() {
                 ))}
           </div>
         </div>
-
-        {/* Trending Prompts */}
-        <div className="container mx-auto px-4 mt-8">
-          {/* Section Header */}
-          <div className="mb-6 flex flex-col items-start gap-2">
-            <h2 className="text-2xl font-bold text-white">أوامر شائعة</h2>
-            <div className="h-1 w-24 rounded-full bg-purple-600"></div>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-            {loading
-              ? Array.from({ length: 5 }).map((_, i) => (
-                  <Card key={i} className="overflow-hidden">
-                    <Skeleton className="aspect-video" />
-                    <CardContent className="p-4">
-                      <Skeleton className="h-5 w-16 mb-2" />
-                      <Skeleton className="h-4 w-full mb-2" />
-                      <Skeleton className="h-3 w-full mb-3" />
-                      <Skeleton className="h-3 w-24 mb-3" />
-                      <div className="flex items-center justify-between">
-                        <Skeleton className="h-5 w-16" />
-                        <Skeleton className="h-8 w-16" />
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
-              : trendingPrompts.map((prompt) => (
-                  <PromptCard key={prompt.id} prompt={prompt} />
-                ))}
-          </div>
-
-          <div className="text-center mt-8">
-            <Button size="lg" variant="outline" asChild>
-              <Link href="/market">عرض جميع البرومبتات</Link>
-            </Button>
-          </div>
-        </div>
       </section>
+
+      {/* Featured Sellers */}
+      <FeaturedSellers />
 
       {/* Category Browser */}
       <section className="container mx-auto px-4">

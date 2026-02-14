@@ -1,6 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
+import { BorderBeam } from "@/components/ui/border-beam";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, X } from "lucide-react";
@@ -72,7 +73,9 @@ export default function SearchInput({
     if (onSearch) {
       onSearch(query.trim());
     } else if (navigateOnSearch) {
-      router.push(`${navigateOnSearch}?search=${encodeURIComponent(query.trim())}`);
+      router.push(
+        `${navigateOnSearch}?search=${encodeURIComponent(query.trim())}`,
+      );
     }
   };
 
@@ -117,11 +120,11 @@ export default function SearchInput({
   return (
     <div ref={containerRef} className={`relative ${className}`}>
       <form onSubmit={handleSubmit}>
-        <div className="relative">
+        <div className="relative overflow-hidden rounded-lg">
           <Input
             type="text"
             placeholder={placeholder}
-            className="w-full pr-10 pl-24 h-12 text-base"
+            className="w-full pr-10 pl-24 h-12 text-base border-transparent bg-background"
             value={query}
             onChange={(e) => handleInputChange(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -133,7 +136,7 @@ export default function SearchInput({
             <button
               type="button"
               onClick={handleClear}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground z-10"
             >
               <X className="h-4 w-4" />
             </button>
@@ -141,11 +144,20 @@ export default function SearchInput({
           <Button
             type="submit"
             variant="neonGradient"
-            className="absolute left-1 top-1/2 -translate-y-1/2 h-10 px-4"
+            className="absolute left-1 top-1/2 -translate-y-1/2 h-10 px-4 z-10"
           >
             <Search className="h-4 w-4 ml-1" />
             بحث
           </Button>
+          <BorderBeam
+            size={1300}
+            duration={6}
+            delay={3}
+            borderWidth={2}
+            colorFrom="#a855f7"
+            colorTo="#6366f1"
+            reverse
+          />
         </div>
       </form>
 
@@ -175,7 +187,10 @@ export default function SearchInput({
                     <span className="text-sm font-medium truncate">
                       {s.title}
                     </span>
-                    <Badge variant="secondary" className="mr-2 shrink-0 text-xs">
+                    <Badge
+                      variant="secondary"
+                      className="mr-2 shrink-0 text-xs"
+                    >
                       {s.aiModel}
                     </Badge>
                   </button>
