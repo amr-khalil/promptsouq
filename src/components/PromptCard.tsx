@@ -49,7 +49,10 @@ export function PromptCard({ prompt }: PromptCardProps) {
 
   return (
     <>
-      <div className="card-border-glow aspect-square">
+      <div
+        className="card-border-glow aspect-square cursor-pointer"
+        onClick={handlePreview}
+      >
         <Card className="flex h-full w-full flex-col gap-0 overflow-hidden rounded-lg border-0 bg-[#0f0e17] py-0 text-white shadow-xl ring-1 ring-white/10">
           {/* حاوية شبكة الصور */}
           <div className="relative min-h-0 flex-1">

@@ -24,7 +24,9 @@ function useAdminPendingCount(isAdmin: boolean) {
 
     const fetchCount = async () => {
       try {
-        const res = await fetch("/api/admin/prompts?status=pending&countOnly=true");
+        const res = await fetch(
+          "/api/admin/prompts?status=pending&countOnly=true",
+        );
         if (res.ok && !cancelled) {
           const json = await res.json();
           setCount(json.data?.count ?? 0);
@@ -37,7 +39,10 @@ function useAdminPendingCount(isAdmin: boolean) {
     fetchCount();
     // Poll every 5 minutes
     const interval = setInterval(fetchCount, 300_000);
-    return () => { cancelled = true; clearInterval(interval); };
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
   }, [isAdmin]);
 
   return count;
@@ -46,24 +51,27 @@ function useAdminPendingCount(isAdmin: boolean) {
 export function Header() {
   const cartCount = useCartItemCount();
   const { user } = useUser();
-  const isAdmin = (user?.publicMetadata as { role?: string } | undefined)?.role === "admin";
+  const isAdmin =
+    (user?.publicMetadata as { role?: string } | undefined)?.role === "admin";
   const pendingCount = useAdminPendingCount(isAdmin);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between gap-4">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 shrink-0">
-            <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-blue-500 rounded-lg flex items-center justify-center">
-              <img src="/logo.png" alt="Logo" className="w-8 h-8" />
-            </div>
-            <div className="hidden sm:block">
-              <div className="font-bold text-lg">سوق البرومبتات</div>
-            </div>
-          </Link>
+        <div className="flex h-16 items-center gap-4">
+          {/* Logo - Left */}
+          <div className="flex-1 flex items-center">
+            <Link href="/" className="flex items-center gap-2 shrink-0">
+              <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-blue-500 rounded-lg flex items-center justify-center">
+                <img src="/logo.png" alt="Logo" className="w-8 h-8" />
+              </div>
+              <div className="hidden sm:block">
+                <div className="font-bold text-lg">سوق البرومبتات</div>
+              </div>
+            </Link>
+          </div>
 
-          {/* Desktop Navigation */}
+          {/* Center Navigation */}
           <nav className="hidden md:flex items-center gap-2">
             <Button variant="ghost" asChild>
               <Link href="/"> الرئيسية</Link>
@@ -74,6 +82,10 @@ export function Header() {
             <Button variant="ghost" asChild>
               <Link href="/sell">بيع الأوامر</Link>
             </Button>
+          </nav>
+
+          {/* Right Actions */}
+          <div className="flex-1 hidden md:flex items-center justify-end gap-2">
             <Button variant="ghost" size="icon" asChild className="relative">
               <Link href="/cart">
                 <ShoppingCart className="h-5 w-5" />
@@ -86,7 +98,12 @@ export function Header() {
             </Button>
             <SignedIn>
               {isAdmin && (
-                <Button variant="ghost" size="icon" asChild className="relative">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  asChild
+                  className="relative"
+                >
                   <Link href="/admin/review">
                     <Shield className="h-5 w-5" />
                     {pendingCount > 0 && (
@@ -112,7 +129,7 @@ export function Header() {
                 <Button variant={"neonGradient"}>إنشاء حساب</Button>
               </SignUpButton>
             </SignedOut>
-          </nav>
+          </div>
 
           {/* Mobile Menu */}
           <div className="flex md:hidden items-center gap-2">
@@ -149,7 +166,11 @@ export function Header() {
                     </Button>
                     <SignedIn>
                       {isAdmin && (
-                        <Button variant="ghost" asChild className="justify-start">
+                        <Button
+                          variant="ghost"
+                          asChild
+                          className="justify-start"
+                        >
                           <Link href="/admin/review">
                             <Shield className="h-4 w-4 me-2" />
                             مراجعة البرومبتات
