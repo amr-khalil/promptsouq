@@ -134,6 +134,8 @@ Future additions: Supabase anon key, Stripe publishable/secret keys.
 - Supabase Postgres 17.x (project: `dyaflmsawxpqgmyojtbc`, region: eu-central-1) + localStorage (cart) (003-cart-stripe-checkout)
 - TypeScript 5.x (strict mode) + Next.js 16.x (App Router), React 19.x, Drizzle ORM, Clerk 6.x (@clerk/nextjs), Zustand, Zod 4.x, shadcn/ui (New York), Tailwind CSS 4.x, Lucide React, Sonner (toast) (004-user-dashboard-purchases)
 - Supabase Postgres 17.x (project: `dyaflmsawxpqgmyojtbc`, region: eu-central-1) via Drizzle ORM + postgres.js (`prepare: false`) (004-user-dashboard-purchases)
+- TypeScript 5.x (strict mode) + Next.js 16.x (App Router), React 19.x, Drizzle ORM, Stripe SDK (Connect), Clerk 6.x, Zod 4.x, React Hook Form 7.x, shadcn/ui, Zustand, Sonner (006-sell-prompt)
+- TypeScript 5.x (strict mode) + Next.js 16.x (App Router), React 19.x + Drizzle ORM, postgres.js, Zod 4.x, Clerk 6.x, shadcn/ui, Tailwind CSS 4.x, Lucide React, Sonner (toast), Zustand (cart) (007-market-search-seed)
 
 ## Recent Changes
 - 001-api-mock-data: Added TypeScript 5.x (strict mode) + Next.js 16.x (App Router), React 19.x, Zod 4.x

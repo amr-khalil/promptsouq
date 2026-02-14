@@ -1,6 +1,7 @@
-import type { categories, prompts, reviews, testimonials } from "@/db/schema";
+import type { categories, prompts, reviews, sellerProfiles, testimonials } from "@/db/schema";
 
 type PromptRow = typeof prompts.$inferSelect;
+type SellerProfileRow = typeof sellerProfiles.$inferSelect;
 type CategoryRow = typeof categories.$inferSelect;
 type ReviewRow = typeof reviews.$inferSelect;
 type TestimonialRow = typeof testimonials.$inferSelect;
@@ -87,5 +88,65 @@ export function mapTestimonialRow(row: TestimonialRow) {
     content: row.content,
     avatar: row.avatar,
     rating: row.rating,
+  };
+}
+
+// ─── Seller-Related Mappers ──────────────────────────────────────
+
+export function mapSellerPromptRow(row: PromptRow) {
+  return {
+    id: row.id,
+    title: row.title,
+    titleEn: row.titleEn,
+    aiModel: row.aiModel,
+    generationType: row.generationType,
+    status: row.status,
+    price: row.price,
+    sales: row.sales,
+    thumbnail: row.thumbnail,
+    rejectionReason: row.rejectionReason ?? null,
+    createdAt: row.createdAt.toISOString(),
+  };
+}
+
+export function mapAdminPromptRow(row: PromptRow) {
+  return {
+    id: row.id,
+    title: row.title,
+    titleEn: row.titleEn,
+    description: row.description,
+    descriptionEn: row.descriptionEn,
+    price: row.price,
+    category: row.category,
+    aiModel: row.aiModel,
+    generationType: row.generationType,
+    modelVersion: row.modelVersion,
+    maxTokens: row.maxTokens,
+    temperature: row.temperature,
+    difficulty: row.difficulty,
+    tags: row.tags,
+    thumbnail: row.thumbnail,
+    fullContent: row.fullContent ?? undefined,
+    instructions: row.instructions ?? undefined,
+    exampleOutputs: row.exampleOutputs,
+    examplePrompts: row.examplePrompts,
+    seller: {
+      id: row.sellerId,
+      name: row.sellerName,
+      avatar: row.sellerAvatar,
+    },
+    status: row.status,
+    rejectionReason: row.rejectionReason ?? null,
+    createdAt: row.createdAt.toISOString(),
+  };
+}
+
+export function mapSellerProfileRow(row: SellerProfileRow) {
+  return {
+    hasAccount: !!row.stripeAccountId,
+    chargesEnabled: row.chargesEnabled,
+    payoutsEnabled: row.payoutsEnabled,
+    detailsSubmitted: row.detailsSubmitted,
+    isFullyOnboarded: row.chargesEnabled && row.payoutsEnabled,
   };
 }

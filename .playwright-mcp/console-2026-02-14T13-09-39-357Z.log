@@ -1,0 +1,50 @@
+[     267ms] [ERROR] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <ClerkProvider publishableKey="pk_test_Yn..." proxyUrl="" domain="" isSatellite={false} signInUrl="/sign-in" ...>
+      <ClerkProviderBase publishableKey="pk_test_Yn..." proxyUrl="" domain="" isSatellite={false} signInUrl="/sign-in" ...>
+        <ClerkContextProvider initialState={null} isomorphicClerkOptions={{...}}>
+          <OrganizationProvider organization={undefined}>
+            <SWRConfigCompat swrConfig={undefined}>
+              <SWRConfig value={undefined}>
+                <__experimental_CheckoutProvider value={undefined}>
+                  <RouterTelemetry>
+                  <ClerkJSScript>
+                  <html
+                    lang="ar"
+                    dir="rtl"
+-                   className="light"
+-                   style={{color-scheme:"light"}}
+                  >
+ @ http://localhost:3000/_next/static/chunks/a5004_next_dist_481ca6bb._.js:3127
+[     652ms] [WARNING] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview @ http://localhost:3000/_next/static/chunks/a5004_next_dist_481ca6bb._.js:2297
+[    7988ms] [ERROR] Failed to load resource: the server responded with a status of 422 () @ https://bright-possum-60.clerk.accounts.dev/v1/client/sign_ins?__clerk_api_version=2025-11-10&_clerk_js_version=5.122.1&__clerk_db_jwt=dvb_39aZ09BSobbeuAv52yqn7pQbjO7:0
+[    7991ms] [ERROR] {
+  "clerkError": true,
+  "code": "api_response_error",
+  "status": 422,
+  "errors": [
+    {
+      "code": "form_identifier_not_found",
+      "message": "Couldn't find your account.",
+      "longMessage": "Couldn't find your account.",
+      "meta": {
+        "paramName": "identifier"
+      }
+    }
+  ]
+} @ http://localhost:3000/_next/static/chunks/a5004_next_dist_481ca6bb._.js:3127
+[  109399ms] [WARNING] Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}. @ http://localhost:3000/_next/static/chunks/a5004_next_dist_481ca6bb._.js:2297
+[  109400ms] [WARNING] Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}. @ http://localhost:3000/_next/static/chunks/a5004_next_dist_481ca6bb._.js:2297
+[  114707ms] [WARNING] Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}. @ http://localhost:3000/_next/static/chunks/a5004_next_dist_481ca6bb._.js:2297
+[  114709ms] [WARNING] Warning: Missing `Description` or `aria-describedby={undefined}` for {DialogContent}. @ http://localhost:3000/_next/static/chunks/a5004_next_dist_481ca6bb._.js:2297

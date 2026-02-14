@@ -2,7 +2,7 @@ import { db } from "@/db";
 import { prompts } from "@/db/schema";
 import { mapPromptRow } from "@/lib/mappers";
 import { apiErrorResponse, searchQuerySchema } from "@/lib/schemas/api";
-import { ilike, or, sql } from "drizzle-orm";
+import { and, eq, ilike, or, sql } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -31,12 +31,15 @@ export async function GET(request: NextRequest) {
       .select()
       .from(prompts)
       .where(
-        or(
-          ilike(prompts.title, pattern),
-          ilike(prompts.titleEn, pattern),
-          ilike(prompts.description, pattern),
-          ilike(prompts.descriptionEn, pattern),
-          ilike(sql`array_to_string(${prompts.tags}, ' ')`, pattern),
+        and(
+          eq(prompts.status, "approved"),
+          or(
+            ilike(prompts.title, pattern),
+            ilike(prompts.titleEn, pattern),
+            ilike(prompts.description, pattern),
+            ilike(prompts.descriptionEn, pattern),
+            ilike(sql`array_to_string(${prompts.tags}, ' ')`, pattern),
+          ),
         ),
       );
 

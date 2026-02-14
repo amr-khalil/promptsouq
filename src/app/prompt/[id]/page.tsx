@@ -20,7 +20,7 @@ import {
   Star,
 } from "lucide-react";
 import Link from "next/link";
-import { notFound, useParams, useRouter } from "next/navigation";
+import { notFound, useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -36,6 +36,15 @@ export default function PromptDetails() {
   const [isFavorited, setIsFavorited] = useState(false);
   const { addItem, isInCart } = useCartStore();
   const { isSignedIn } = useAuth();
+  const searchParams = useSearchParams();
+
+  // T038: Store referral source from ?ref= query param
+  useEffect(() => {
+    const ref = searchParams.get("ref");
+    if (ref && id) {
+      sessionStorage.setItem(`ref_${id}`, ref);
+    }
+  }, [searchParams, id]);
 
   function handleAddToCart() {
     if (!prompt) return;

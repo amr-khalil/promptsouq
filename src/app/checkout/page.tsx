@@ -37,6 +37,12 @@ export default function Checkout() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           items: items.map((item) => ({ promptId: item.promptId })),
+          referralSources: Object.fromEntries(
+            items.map((item) => {
+              const ref = sessionStorage.getItem(`ref_${item.promptId}`);
+              return [item.promptId, ref === "direct" ? "direct" : "marketplace"];
+            }),
+          ),
         }),
       });
 

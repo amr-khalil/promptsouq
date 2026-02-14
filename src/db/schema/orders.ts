@@ -1,6 +1,7 @@
 import {
   integer,
   pgTable,
+  real,
   serial,
   text,
   timestamp,
@@ -36,4 +37,10 @@ export const orderItems = pgTable("order_items", {
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
+
+  // Commission tracking
+  referralSource: text("referral_source"),
+  commissionRate: real("commission_rate"),
+  sellerPayoutAmount: integer("seller_payout_amount"),
+  sellerStripeAccountId: text("seller_stripe_account_id"),
 });
