@@ -1,9 +1,11 @@
 "use client";
 
 import { PromptCard } from "@/components/PromptCard";
+import SearchInput from "@/components/SearchInput";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
   SelectContent,
@@ -19,278 +21,460 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Slider } from "@/components/ui/slider";
-import type { Category, Prompt } from "@/lib/schemas/api";
-import { Filter, X } from "lucide-react";
-import { useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import type { Prompt } from "@/lib/schemas/api";
+import { Filter, Loader2, RotateCcw, Search, X } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+// ─── Constants ────────────────────────────────────────────────────
+
+const AI_MODELS = [
+  { value: "all", label: "الكل" },
+  { value: "ChatGPT", label: "ChatGPT" },
+  { value: "Claude", label: "Claude" },
+  { value: "Midjourney", label: "Midjourney" },
+  { value: "DALL·E", label: "DALL·E" },
+  { value: "Stable Diffusion", label: "Stable Diffusion" },
+  { value: "Gemini", label: "Gemini" },
+  { value: "Copilot", label: "Copilot" },
+];
+
+const GENERATION_TYPES = [
+  { value: "all", label: "الكل" },
+  { value: "text", label: "نص" },
+  { value: "image", label: "صورة" },
+  { value: "code", label: "كود" },
+  { value: "marketing", label: "تسويق" },
+  { value: "design", label: "تصميم" },
+];
+
+const SORT_OPTIONS = [
+  { value: "trending", label: "الأكثر رواجاً" },
+  { value: "popular", label: "الأكثر شعبية" },
+  { value: "newest", label: "الأحدث" },
+  { value: "price-low", label: "السعر: من الأقل" },
+  { value: "price-high", label: "السعر: من الأعلى" },
+  { value: "relevant", label: "الأكثر صلة" },
+  { value: "rating", label: "الأعلى تقييماً" },
+];
+
+const PAGE_SIZE = 20;
+
+// ─── Component ────────────────────────────────────────────────────
 
 export default function Market() {
   const searchParams = useSearchParams();
-  const categoryParam = searchParams.get("category");
+  const router = useRouter();
 
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [prompts, setPrompts] = useState<Prompt[]>([]);
+  // Derive state from URL
+  const searchQuery = searchParams.get("search") ?? "";
+  const generationType = searchParams.get("generationType") ?? "all";
+  const aiModel = searchParams.get("aiModel") ?? "all";
+  const sortBy = searchParams.get("sortBy") ?? (searchQuery ? "relevant" : "trending");
+
+  // Local state for data
+  const [allPrompts, setAllPrompts] = useState<Prompt[]>([]);
+  const [total, setTotal] = useState(0);
+  const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState("");
+  const fetchIdRef = useRef(0);
 
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(
-    categoryParam ? [categoryParam] : [],
+  // Build URL params for API
+  const buildApiParams = useCallback(
+    (currentOffset: number) => {
+      const params = new URLSearchParams();
+      if (searchQuery) params.set("search", searchQuery);
+      if (generationType !== "all") params.set("generationType", generationType);
+      if (aiModel !== "all") params.set("aiModel", aiModel);
+      params.set("sortBy", sortBy);
+      params.set("limit", String(PAGE_SIZE));
+      params.set("offset", String(currentOffset));
+      return params;
+    },
+    [searchQuery, generationType, aiModel, sortBy],
   );
-  const [selectedModels, setSelectedModels] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState([0, 100]);
-  const [sortBy, setSortBy] = useState("bestselling");
 
-  const aiModels = ["ChatGPT", "Midjourney", "DALL·E"];
-
-  const toggleCategory = (categoryId: string) => {
-    setSelectedCategories((prev) =>
-      prev.includes(categoryId)
-        ? prev.filter((c) => c !== categoryId)
-        : [...prev, categoryId],
-    );
-  };
-
-  const toggleModel = (model: string) => {
-    setSelectedModels((prev) =>
-      prev.includes(model) ? prev.filter((m) => m !== model) : [...prev, model],
-    );
-  };
-
-  const clearFilters = () => {
-    setSelectedCategories([]);
-    setSelectedModels([]);
-    setPriceRange([0, 100]);
-  };
-
-  // Fetch categories once on mount
-  useEffect(() => {
-    fetch("/api/categories")
-      .then((res) => res.json())
-      .then((data) => setCategories(data.data))
-      .catch(() => {});
-  }, []);
-
-  // Fetch prompts when filters change
+  // Fetch prompts (initial or on filter change)
   const fetchPrompts = useCallback(async () => {
+    const id = ++fetchIdRef.current;
     setLoading(true);
     setError("");
+    setOffset(0);
 
     try {
-      const params = new URLSearchParams();
-      if (selectedCategories.length > 0) {
-        params.set("category", selectedCategories.join(","));
-      }
-      if (selectedModels.length > 0) {
-        params.set("aiModel", selectedModels.join(","));
-      }
-      if (priceRange[0] > 0) {
-        params.set("priceMin", String(priceRange[0]));
-      }
-      if (priceRange[1] < 100) {
-        params.set("priceMax", String(priceRange[1]));
-      }
-      params.set("sortBy", sortBy);
-
+      const params = buildApiParams(0);
       const res = await fetch(`/api/prompts?${params.toString()}`);
       if (!res.ok) throw new Error("فشل في تحميل البيانات");
-
       const data = await res.json();
-      setPrompts(data.data);
+      if (id !== fetchIdRef.current) return;
+      setAllPrompts(data.data ?? []);
+      setTotal(data.total ?? data.data?.length ?? 0);
     } catch {
+      if (id !== fetchIdRef.current) return;
       setError("حدث خطأ أثناء تحميل البيانات");
     } finally {
-      setLoading(false);
+      if (id === fetchIdRef.current) setLoading(false);
     }
-  }, [selectedCategories, selectedModels, priceRange, sortBy]);
+  }, [buildApiParams]);
 
+  // Load more
+  const loadMore = async () => {
+    const nextOffset = offset + PAGE_SIZE;
+    setLoadingMore(true);
+    try {
+      const params = buildApiParams(nextOffset);
+      const res = await fetch(`/api/prompts?${params.toString()}`);
+      if (!res.ok) throw new Error("فشل");
+      const data = await res.json();
+      setAllPrompts((prev) => [...prev, ...(data.data ?? [])]);
+      setOffset(nextOffset);
+    } catch {
+      // silently fail
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
+  // Re-fetch on filter/sort/search change
   useEffect(() => {
     fetchPrompts();
   }, [fetchPrompts]);
 
+  // ─── URL helpers ────────────────────────────────────────────────
+
+  function updateURL(updates: Record<string, string | null>) {
+    const params = new URLSearchParams(searchParams.toString());
+    for (const [key, value] of Object.entries(updates)) {
+      if (value === null || value === "all" || value === "") {
+        params.delete(key);
+      } else {
+        params.set(key, value);
+      }
+    }
+    // Reset offset on filter changes
+    params.delete("offset");
+    router.replace(`/market?${params.toString()}`, { scroll: false });
+  }
+
+  function handleSearch(query: string) {
+    updateURL({
+      search: query || null,
+      sortBy: query ? "relevant" : null,
+    });
+  }
+
+  function handleGenerationTypeChange(value: string) {
+    updateURL({ generationType: value === "all" ? null : value });
+  }
+
+  function handleModelChange(value: string) {
+    updateURL({ aiModel: value === "all" ? null : value });
+  }
+
+  function handleSortChange(value: string) {
+    updateURL({ sortBy: value === "trending" && !searchQuery ? null : value });
+  }
+
+  function removeFilter(key: string) {
+    updateURL({ [key]: null });
+  }
+
+  function resetAll() {
+    router.replace("/market", { scroll: false });
+  }
+
+  // ─── Active filters ─────────────────────────────────────────────
+
+  const activeFilters: { key: string; label: string }[] = [];
+  if (generationType !== "all") {
+    const found = GENERATION_TYPES.find((t) => t.value === generationType);
+    activeFilters.push({ key: "generationType", label: found?.label ?? generationType });
+  }
+  if (aiModel !== "all") {
+    const found = AI_MODELS.find((m) => m.value === aiModel);
+    activeFilters.push({ key: "aiModel", label: found?.label ?? aiModel });
+  }
+  if (searchQuery) {
+    activeFilters.push({ key: "search", label: `"${searchQuery}"` });
+  }
+
+  const hasMore = allPrompts.length < total;
+
+  // ─── Filter sidebar content ─────────────────────────────────────
+
   const filtersContent = (
     <div className="space-y-6">
-      {/* Categories */}
+      {/* Generation Type */}
       <div>
-        <h3 className="font-bold mb-3">الفئات</h3>
-        <div className="space-y-2">
-          {categories.map((category) => (
-            <div key={category.id} className="flex items-center">
-              <Checkbox
-                id={`cat-${category.id}`}
-                checked={selectedCategories.includes(category.id)}
-                onCheckedChange={() => toggleCategory(category.id)}
+        <h3 className="font-bold mb-3 text-white">النوع</h3>
+        <RadioGroup
+          value={generationType}
+          onValueChange={handleGenerationTypeChange}
+          className="space-y-2"
+        >
+          {GENERATION_TYPES.map((type) => (
+            <div key={type.value} className="flex items-center gap-2">
+              <RadioGroupItem
+                value={type.value}
+                id={`type-${type.value}`}
+                className="border-gray-600 text-purple-500"
               />
               <Label
-                htmlFor={`cat-${category.id}`}
-                className="mr-2 cursor-pointer"
+                htmlFor={`type-${type.value}`}
+                className="cursor-pointer text-gray-300"
               >
-                {category.name} ({category.count})
+                {type.label}
               </Label>
             </div>
           ))}
-        </div>
+        </RadioGroup>
       </div>
 
-      {/* AI Models */}
+      {/* AI Model */}
       <div>
-        <h3 className="font-bold mb-3">نموذج الذكاء الاصطناعي</h3>
-        <div className="space-y-2">
-          {aiModels.map((model) => (
-            <div key={model} className="flex items-center">
-              <Checkbox
-                id={`model-${model}`}
-                checked={selectedModels.includes(model)}
-                onCheckedChange={() => toggleModel(model)}
+        <h3 className="font-bold mb-3 text-white">النموذج</h3>
+        <RadioGroup
+          value={aiModel}
+          onValueChange={handleModelChange}
+          className="space-y-2"
+        >
+          {AI_MODELS.map((model) => (
+            <div key={model.value} className="flex items-center gap-2">
+              <RadioGroupItem
+                value={model.value}
+                id={`model-${model.value}`}
+                className="border-gray-600 text-purple-500"
               />
-              <Label htmlFor={`model-${model}`} className="mr-2 cursor-pointer">
-                {model}
+              <Label
+                htmlFor={`model-${model.value}`}
+                className="cursor-pointer text-gray-300"
+              >
+                {model.label}
               </Label>
             </div>
           ))}
-        </div>
+        </RadioGroup>
       </div>
 
-      {/* Price Range */}
-      <div>
-        <h3 className="font-bold mb-3">نطاق السعر</h3>
-        <div className="px-2">
-          <Slider
-            min={0}
-            max={100}
-            step={5}
-            value={priceRange}
-            onValueChange={setPriceRange}
-            className="mb-2"
-          />
-          <div className="flex justify-between text-sm text-muted-foreground">
-            <span>${priceRange[0]}</span>
-            <span>${priceRange[1]}</span>
-          </div>
-        </div>
-      </div>
-
-      <Button variant="outline" className="w-full" onClick={clearFilters}>
-        <X className="ml-2 h-4 w-4" />
-        مسح الفلاتر
+      {/* Reset */}
+      <Button
+        variant="outline"
+        className="w-full border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white"
+        onClick={resetAll}
+      >
+        <RotateCcw className="ml-2 h-4 w-4" />
+        إعادة تعيين
       </Button>
     </div>
   );
 
+  // ─── Render ─────────────────────────────────────────────────────
+
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-6">
-        <h1 className="text-3xl md:text-4xl font-bold mb-2">سوق البرومبتات</h1>
-        <p className="text-muted-foreground">
-          استكشف {prompts.length} من البرومبتات الاحترافية
-        </p>
-      </div>
-
-      <div className="flex flex-col md:flex-row gap-4">
-        {/* Filters Sidebar - Desktop */}
-        <aside className="hidden md:block w-64 shrink-0">
-          <div className="sticky top-20 border rounded-lg p-4 bg-card">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-bold">الفلاتر</h2>
-              <Filter className="h-4 w-4" />
-            </div>
-            {filtersContent}
+    <div className="dark bg-gray-950 min-h-screen">
+      {/* Hero */}
+      <section className="bg-gray-950 border-b border-gray-800">
+        <div className="container mx-auto px-4 py-12 text-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
+            سوق البرومبتات
+          </h1>
+          <p className="text-gray-400 mb-8 text-lg">
+            اكتشف أفضل برومبتات الذكاء الاصطناعي
+          </p>
+          <div className="max-w-2xl mx-auto">
+            <SearchInput
+              key={searchQuery}
+              onSearch={handleSearch}
+              defaultValue={searchQuery}
+              placeholder="ابحث عن برومبت..."
+            />
           </div>
-        </aside>
-
-        {/* Mobile Filters */}
-        <div className="md:hidden">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline" className="w-full">
-                <Filter className="ml-2 h-4 w-4" />
-                الفلاتر
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[300px]">
-              <SheetHeader>
-                <SheetTitle>الفلاتر</SheetTitle>
-              </SheetHeader>
-              <div className="mt-6">{filtersContent}</div>
-            </SheetContent>
-          </Sheet>
         </div>
+      </section>
 
-        {/* Main Content */}
-        <div className="flex-1">
-          {/* Sort */}
-          <div className="flex items-center justify-between mb-6">
-            <div className="text-sm text-muted-foreground">
-              {prompts.length} نتيجة
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-6">
+        <div className="flex flex-col md:flex-row gap-6">
+          {/* Filters Sidebar - Desktop */}
+          <aside className="hidden md:block w-56 shrink-0">
+            <div className="sticky top-20 rounded-lg border border-gray-800 bg-gray-900 p-4">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-bold text-white">الفلاتر</h2>
+                <Filter className="h-4 w-4 text-gray-400" />
+              </div>
+              {filtersContent}
             </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm">ترتيب حسب:</span>
-              <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="bestselling">الأكثر مبيعاً</SelectItem>
-                  <SelectItem value="newest">الأحدث</SelectItem>
-                  <SelectItem value="rating">الأعلى تقييماً</SelectItem>
-                  <SelectItem value="price-low">السعر: من الأقل</SelectItem>
-                  <SelectItem value="price-high">السعر: من الأعلى</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          </aside>
+
+          {/* Mobile Filters */}
+          <div className="md:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full border-gray-700 text-gray-300 hover:bg-gray-800"
+                >
+                  <Filter className="ml-2 h-4 w-4" />
+                  الفلاتر
+                  {activeFilters.length > 0 && (
+                    <Badge className="mr-2 bg-purple-600 text-white">
+                      {activeFilters.length}
+                    </Badge>
+                  )}
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[300px] bg-gray-900 border-gray-800">
+                <SheetHeader>
+                  <SheetTitle className="text-white">الفلاتر</SheetTitle>
+                </SheetHeader>
+                <div className="mt-6">{filtersContent}</div>
+              </SheetContent>
+            </Sheet>
           </div>
 
-          {/* Error State */}
-          {error && (
-            <div className="text-center py-12">
-              <p className="text-destructive text-lg mb-4">{error}</p>
-              <Button variant="outline" onClick={fetchPrompts}>
-                إعادة المحاولة
-              </Button>
+          {/* Results Area */}
+          <div className="flex-1 min-w-0">
+            {/* Sort + Active Filters */}
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+              <div className="text-sm text-gray-400">
+                {loading ? "جاري التحميل..." : `عرض ${allPrompts.length} من ${total}`}
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-400">ترتيب:</span>
+                <Select value={sortBy} onValueChange={handleSortChange}>
+                  <SelectTrigger className="w-[180px] border-gray-700 bg-gray-900 text-gray-200">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-900 border-gray-700">
+                    {SORT_OPTIONS.filter(
+                      (o) => o.value !== "relevant" || searchQuery,
+                    ).map((option) => (
+                      <SelectItem
+                        key={option.value}
+                        value={option.value}
+                        className="text-gray-200 focus:bg-gray-800 focus:text-white"
+                      >
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-          )}
 
-          {/* Loading State */}
-          {loading && !error && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="border rounded-lg overflow-hidden">
-                  <Skeleton className="aspect-video" />
-                  <div className="p-4">
-                    <Skeleton className="h-5 w-16 mb-2" />
-                    <Skeleton className="h-4 w-full mb-2" />
-                    <Skeleton className="h-3 w-full mb-3" />
-                    <Skeleton className="h-3 w-24 mb-3" />
-                    <div className="flex items-center justify-between">
-                      <Skeleton className="h-5 w-16" />
-                      <Skeleton className="h-8 w-16" />
+            {/* Active Filter Chips */}
+            {activeFilters.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2 mb-4">
+                {activeFilters.map((f) => (
+                  <Badge
+                    key={f.key}
+                    variant="secondary"
+                    className="bg-gray-800 text-gray-200 hover:bg-gray-700 gap-1 pl-1"
+                  >
+                    {f.label}
+                    <button
+                      onClick={() => removeFilter(f.key)}
+                      className="hover:text-white"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                ))}
+                <button
+                  onClick={resetAll}
+                  className="text-xs text-purple-400 hover:text-purple-300"
+                >
+                  مسح الكل
+                </button>
+              </div>
+            )}
+
+            {/* Error State */}
+            {error && (
+              <div className="text-center py-12">
+                <p className="text-red-400 text-lg mb-4">{error}</p>
+                <Button
+                  variant="outline"
+                  onClick={fetchPrompts}
+                  className="border-gray-700 text-gray-300"
+                >
+                  إعادة المحاولة
+                </Button>
+              </div>
+            )}
+
+            {/* Loading State */}
+            {loading && !error && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="rounded-lg overflow-hidden bg-gray-900 border border-gray-800"
+                  >
+                    <Skeleton className="aspect-square bg-gray-800" />
+                    <div className="p-3">
+                      <Skeleton className="h-4 w-full mb-2 bg-gray-800" />
+                      <Skeleton className="h-4 w-16 bg-gray-800" />
                     </div>
                   </div>
+                ))}
+              </div>
+            )}
+
+            {/* Prompts Grid */}
+            {!loading && !error && allPrompts.length > 0 && (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {allPrompts.map((prompt) => (
+                    <PromptCard key={prompt.id} prompt={prompt} />
+                  ))}
                 </div>
-              ))}
-            </div>
-          )}
 
-          {/* Prompts Grid */}
-          {!loading && !error && prompts.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {prompts.map((prompt) => (
-                <PromptCard key={prompt.id} prompt={prompt} />
-              ))}
-            </div>
-          )}
+                {/* Load More */}
+                {hasMore && (
+                  <div className="text-center mt-8">
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      onClick={loadMore}
+                      disabled={loadingMore}
+                      className="border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white min-w-[200px]"
+                    >
+                      {loadingMore ? (
+                        <>
+                          <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                          جاري التحميل...
+                        </>
+                      ) : (
+                        "عرض المزيد"
+                      )}
+                    </Button>
+                  </div>
+                )}
+              </>
+            )}
 
-          {/* Empty State */}
-          {!loading && !error && prompts.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground text-lg mb-4">
-                لم يتم العثور على نتائج
-              </p>
-              <Button variant="outline" onClick={clearFilters}>
-                مسح الفلاتر
-              </Button>
-            </div>
-          )}
+            {/* Empty State */}
+            {!loading && !error && allPrompts.length === 0 && (
+              <div className="text-center py-16">
+                <Search className="h-12 w-12 text-gray-600 mx-auto mb-4" />
+                <p className="text-gray-400 text-lg mb-2">لا توجد نتائج</p>
+                <p className="text-gray-500 text-sm mb-6">
+                  حاول تعديل الفلاتر أو البحث بكلمات مختلفة
+                </p>
+                <Button
+                  variant="outline"
+                  onClick={resetAll}
+                  className="border-gray-700 text-gray-300"
+                >
+                  <RotateCcw className="ml-2 h-4 w-4" />
+                  إعادة تعيين الفلاتر
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

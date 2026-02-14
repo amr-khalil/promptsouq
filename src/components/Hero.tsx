@@ -1,24 +1,11 @@
 "use client";
 
+import SearchInput from "@/components/SearchInput";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useCartItemCount } from "@/hooks/use-cart";
-import { Search, ShoppingBag, Zap } from "lucide-react";
+import { ShoppingBag, Zap } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 function Hero() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const router = useRouter();
-  const cartCount = useCartItemCount();
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
-    }
-  };
   return (
     <section className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-950/20 dark:to-blue-950/20 py-20">
       {/* CTA */}
@@ -35,10 +22,7 @@ function Hero() {
                 أوامر احترافية
               </span>{" "}
             </h1>
-            <p
-              className="text-xl md:text-
-            xl text-muted-foreground my-8"
-            >
+            <p className="text-xl md:text-xl text-muted-foreground my-8">
               اشترِ وبيع برومبتات قوية للذكاء الاصطناعي بسهولة
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-start">
@@ -46,7 +30,7 @@ function Hero() {
                 variant={"neonGradient"}
                 size="lg"
                 asChild
-                className="text-lg "
+                className="text-lg"
               >
                 <Link href="/market">
                   <ShoppingBag className="ml-2 h-5 w-5" />
@@ -70,29 +54,9 @@ function Hero() {
           </div>
         </div>
       </div>
-      {/* Search Bar - Desktop */}
-      <div className="w-full">
-        <form
-          onSubmit={handleSearch}
-          className=" w-full mt-10 mx-auto max-w-2xl"
-        >
-          <div className="relative w-full">
-            <Input
-              type="search"
-              placeholder="ابحث عن برومبت..."
-              className="w-full pr-10"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-            <Button
-              variant="neonGradient"
-              type="submit"
-              className="absolute left-0 top-1/2 -translate-y-1/2 rounded-sm cursor-pointer"
-            >
-              <Search className="h-4 w-4" />
-            </Button>
-          </div>
-        </form>
+      {/* Search Bar */}
+      <div className="w-full mt-10 mx-auto max-w-2xl px-4">
+        <SearchInput navigateOnSearch="/market" />
       </div>
     </section>
   );

@@ -67,8 +67,12 @@ export type Testimonial = z.infer<typeof testimonialSchema>;
 // ─── Query Parameter Schemas ──────────────────────────────────────
 
 export const promptsQuerySchema = z.object({
+  search: z.string().max(200).optional(),
   category: z.string().optional(),
   aiModel: z.string().optional(),
+  generationType: z
+    .enum(["text", "image", "code", "marketing", "design"])
+    .optional(),
   priceMin: z.coerce
     .number()
     .min(0, { message: "الحد الأدنى للسعر يجب أن يكون 0 أو أكثر" })
@@ -78,14 +82,24 @@ export const promptsQuerySchema = z.object({
     .min(0, { message: "الحد الأقصى للسعر يجب أن يكون 0 أو أكثر" })
     .optional(),
   sortBy: z
-    .enum(["bestselling", "newest", "rating", "price-low", "price-high"])
-    .optional()
-    .default("bestselling"),
-  limit: z.coerce
-    .number()
-    .int()
-    .positive({ message: "الحد يجب أن يكون رقم صحيح موجب" })
+    .enum([
+      "trending",
+      "popular",
+      "newest",
+      "price-low",
+      "price-high",
+      "relevant",
+      "rating",
+      "bestselling",
+    ])
     .optional(),
+  limit: z.coerce.number().int().min(1).max(100).optional(),
+  offset: z.coerce.number().int().min(0).optional(),
+});
+
+export const suggestionsQuerySchema = z.object({
+  q: z.string().min(2, "يجب إدخال حرفين على الأقل").max(100),
+  limit: z.coerce.number().int().min(1).max(10).optional(),
 });
 
 export const searchQuerySchema = z.object({
@@ -150,6 +164,76 @@ export const purchaseListItemSchema = z.object({
   seller: purchaseSellerSchema,
   purchasedAt: z.string(),
   priceAtPurchase: z.number(),
+});
+
+// ─── Prompt Submission Schema (Sell Flow) ─────────────────────────
+
+export const promptSubmissionSchema = z.object({
+  title: z.string().min(1, "عنوان البرومبت مطلوب").max(60, "العنوان يجب ألا يتجاوز 60 حرفاً"),
+  titleEn: z.string().max(60),
+  description: z.string().min(1, "الوصف مطلوب").max(500, "الوصف يجب ألا يتجاوز 500 حرف"),
+  descriptionEn: z.string().max(500),
+  price: z.number().min(1.99, "الحد الأدنى للسعر 1.99$").max(99.99, "الحد الأقصى للسعر 99.99$"),
+  category: z.string().min(1, "التصنيف مطلوب"),
+  aiModel: z.string().min(1, "نموذج الذكاء الاصطناعي مطلوب"),
+  generationType: z.enum(["text", "image", "code", "marketing", "design"], {
+    message: "نوع المحتوى غير صالح",
+  }),
+  modelVersion: z.string().optional(),
+  maxTokens: z.number().int().min(1).max(128000).optional().nullable(),
+  temperature: z.number().min(0).max(2).optional().nullable(),
+  difficulty: z.enum(["مبتدئ", "متقدم"], { message: "مستوى الصعوبة غير صالح" }),
+  tags: z.array(z.string()).min(1, "يجب إضافة وسم واحد على الأقل").max(10, "الحد الأقصى 10 وسوم"),
+  thumbnail: z.string().min(1, "الصورة المصغرة مطلوبة"),
+  fullContent: z
+    .string()
+    .min(1, "محتوى البرومبت مطلوب")
+    .max(32768, "محتوى البرومبت طويل جداً")
+    .refine((val) => /\[.+?\]/.test(val), {
+      message: "يجب أن يحتوي البرومبت على متغير واحد على الأقل بين [أقواس مربعة]",
+    }),
+  instructions: z.string().max(2000, "التعليمات طويلة جداً").optional(),
+  exampleOutputs: z
+    .array(z.string().min(1, "مثال المخرجات لا يمكن أن يكون فارغاً"))
+    .length(4, "يجب تقديم 4 أمثلة بالضبط"),
+  examplePrompts: z
+    .array(z.record(z.string(), z.string()))
+    .length(4, "يجب تقديم 4 أمثلة للمتغيرات بالضبط"),
+});
+
+export type PromptSubmission = z.infer<typeof promptSubmissionSchema>;
+
+// ─── Seller Dashboard Schemas ─────────────────────────────────────
+
+export const sellerPromptsQuerySchema = z.object({
+  status: z.enum(["pending", "approved", "rejected"]).optional(),
+  search: z.string().optional(),
+  sortBy: z.enum(["newest", "oldest"]).optional().default("newest"),
+});
+
+// ─── Admin Review Schemas ─────────────────────────────────────────
+
+export const adminPromptsQuerySchema = z.object({
+  status: z.enum(["pending", "approved", "rejected"]).optional().default("pending"),
+  limit: z.coerce.number().int().positive().optional().default(20),
+});
+
+export const adminReviewSchema = z
+  .object({
+    action: z.enum(["approve", "reject"], { message: "الإجراء غير صالح" }),
+    reason: z.string().max(500, "سبب الرفض طويل جداً").optional(),
+  })
+  .refine((data) => data.action !== "reject" || (data.reason && data.reason.length > 0), {
+    message: "يجب تقديم سبب عند رفض البرومبت",
+    path: ["reason"],
+  });
+
+export type AdminReview = z.infer<typeof adminReviewSchema>;
+
+// ─── Stripe Connect Schema ────────────────────────────────────────
+
+export const connectAccountSchema = z.object({
+  country: z.string().length(2, "رمز الدولة يجب أن يكون حرفين"),
 });
 
 // ─── Error Response Helper ────────────────────────────────────────

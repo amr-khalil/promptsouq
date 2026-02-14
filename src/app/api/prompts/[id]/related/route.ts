@@ -50,6 +50,7 @@ export async function GET(
       .from(prompts)
       .where(
         and(
+          eq(prompts.status, "approved"),
           eq(prompts.category, currentRows[0].category),
           ne(prompts.id, parsed.data),
         ),

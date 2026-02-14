@@ -6,7 +6,6 @@ import { PromptCard } from "@/components/PromptCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useCartItemCount } from "@/hooks/use-cart";
 import type { Category, Prompt, Testimonial } from "@/lib/schemas/api";
 import {
   Briefcase,
@@ -23,7 +22,6 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const iconMap: Record<string, React.ElementType> = {
@@ -85,17 +83,6 @@ export default function Home() {
       </div>
     );
   }
-
-  const [searchQuery, setSearchQuery] = useState("");
-  const router = useRouter();
-  const cartCount = useCartItemCount();
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
-    }
-  };
 
   return (
     <div>

@@ -7,14 +7,47 @@ import {
   SignedIn,
   SignedOut,
   UserButton,
+  useUser,
 } from "@clerk/nextjs";
-import { Menu, ShoppingCart, User } from "lucide-react";
+import { Menu, Shield, ShoppingCart, User } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 
+function useAdminPendingCount(isAdmin: boolean) {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!isAdmin) return;
+    let cancelled = false;
+
+    const fetchCount = async () => {
+      try {
+        const res = await fetch("/api/admin/prompts?status=pending&countOnly=true");
+        if (res.ok && !cancelled) {
+          const json = await res.json();
+          setCount(json.data?.count ?? 0);
+        }
+      } catch {
+        // Ignore
+      }
+    };
+
+    fetchCount();
+    // Poll every 5 minutes
+    const interval = setInterval(fetchCount, 300_000);
+    return () => { cancelled = true; clearInterval(interval); };
+  }, [isAdmin]);
+
+  return count;
+}
+
 export function Header() {
   const cartCount = useCartItemCount();
+  const { user } = useUser();
+  const isAdmin = (user?.publicMetadata as { role?: string } | undefined)?.role === "admin";
+  const pendingCount = useAdminPendingCount(isAdmin);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -52,6 +85,18 @@ export function Header() {
               </Link>
             </Button>
             <SignedIn>
+              {isAdmin && (
+                <Button variant="ghost" size="icon" asChild className="relative">
+                  <Link href="/admin/review">
+                    <Shield className="h-5 w-5" />
+                    {pendingCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                        {pendingCount}
+                      </span>
+                    )}
+                  </Link>
+                </Button>
+              )}
               <Button variant="ghost" size="icon" asChild>
                 <Link href="/dashboard">
                   <User className="h-5 w-5" />
@@ -103,6 +148,19 @@ export function Header() {
                       <Link href="/sell">بيع الأوامر</Link>
                     </Button>
                     <SignedIn>
+                      {isAdmin && (
+                        <Button variant="ghost" asChild className="justify-start">
+                          <Link href="/admin/review">
+                            <Shield className="h-4 w-4 me-2" />
+                            مراجعة البرومبتات
+                            {pendingCount > 0 && (
+                              <span className="ms-auto bg-destructive text-destructive-foreground text-xs font-bold rounded-full h-5 min-w-5 px-1.5 flex items-center justify-center">
+                                {pendingCount}
+                              </span>
+                            )}
+                          </Link>
+                        </Button>
+                      )}
                       <Button variant="ghost" asChild>
                         <Link href="/dashboard">لوحة التحكم</Link>
                       </Button>
