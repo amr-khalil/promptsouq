@@ -2,13 +2,16 @@
 
 import CategoryBrowser from "@/components/CategoryBrowser";
 import Hero from "@/components/Hero";
+import { GamingPromptCard } from "@/components/GamingPromptCard";
 import { PromptCard } from "@/components/PromptCard";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Category, Prompt, Testimonial } from "@/lib/schemas/api";
 import {
   Briefcase,
+  ChevronRight,
   GraduationCap,
   Image,
   MessageSquare,
@@ -41,6 +44,7 @@ export default function Home() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [activeFilter, setActiveFilter] = useState("الكل");
 
   useEffect(() => {
     async function fetchData() {
@@ -133,20 +137,53 @@ export default function Home() {
         </div>
       </section> */}
 
-      {/* Featured Prompts */}
-      <section className="py-16 bg-muted/30">
+      {/* Featured Prompts - Gaming Style */}
+      <section className="py-16 bg-[#0f0f16]">
         <div className="container mx-auto px-4">
-          {/* Section Header */}
-          <div className="mb-6 flex flex-col items-start gap-2">
-            <h2 className="text-2xl font-bold text-white">أوامر مميزة</h2>
-            <div className="h-1 w-24 rounded-full bg-purple-600"></div>
+          {/* Header Section */}
+          <div className="mb-8 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+            <div>
+              <h2 className="flex items-center gap-2 text-3xl font-bold text-white tracking-tight">
+                <ChevronRight className="h-6 w-6 text-yellow-500 stroke-3" />
+                <span className="text-yellow-400">أوامر</span> مميزة
+              </h2>
+              <div className="mt-3 flex gap-6 text-sm font-medium text-slate-400">
+                <button className="text-yellow-400 border-b-2 border-yellow-400 pb-1 hover:text-yellow-300 transition-colors">
+                  جديد.
+                </button>
+                <button className="hover:text-white transition-colors pb-1 border-b-2 border-transparent hover:border-slate-700">
+                  الأكثر مشاهدة.
+                </button>
+              </div>
+            </div>
+
+            {/* Filter Pills */}
+            <div className="flex flex-wrap gap-2">
+              {["الكل", "ChatGPT", "Midjourney", "DALL-E", "Claude", "Gemini"].map(
+                (filter) => (
+                  <Badge
+                    key={filter}
+                    onClick={() => setActiveFilter(filter)}
+                    className={`cursor-pointer px-5 py-2 text-sm font-medium rounded-full transition-all border-0
+                      ${
+                        activeFilter === filter
+                          ? "bg-yellow-500 text-black hover:bg-yellow-400 shadow-[0_0_15px_-3px_rgba(234,179,8,0.5)]"
+                          : "bg-[#1f1f2e] text-slate-400 hover:bg-[#2a2a3d] hover:text-white"
+                      }`}
+                  >
+                    {filter}
+                  </Badge>
+                )
+              )}
+            </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+          {/* Products Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {loading
-              ? Array.from({ length: 5 }).map((_, i) => (
-                  <Card key={i} className="overflow-hidden">
-                    <Skeleton className="aspect-video" />
+              ? Array.from({ length: 8 }).map((_, i) => (
+                  <Card key={i} className="overflow-hidden bg-[#161621]">
+                    <Skeleton className="h-44 w-full" />
                     <CardContent className="p-4">
                       <Skeleton className="h-5 w-16 mb-2" />
                       <Skeleton className="h-4 w-full mb-2" />
@@ -160,7 +197,7 @@ export default function Home() {
                   </Card>
                 ))
               : trendingPrompts.map((prompt) => (
-                  <PromptCard key={prompt.id} prompt={prompt} />
+                  <GamingPromptCard key={prompt.id} prompt={prompt} />
                 ))}
           </div>
         </div>
