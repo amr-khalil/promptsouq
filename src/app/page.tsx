@@ -64,7 +64,13 @@ export default function Home() {
           ]);
 
         setCategories(categoriesData.data);
-        setTrendingPrompts(promptsData.data);
+        setTrendingPrompts([
+          ...promptsData.data,
+          ...promptsData.data,
+          ...promptsData.data,
+          ...promptsData.data,
+          ...promptsData.data,
+        ]);
         setTestimonials(testimonialsData.data);
       } catch {
         setError("حدث خطأ أثناء تحميل البيانات. يرجى المحاولة مرة أخرى.");
@@ -157,9 +163,9 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
             {loading
-              ? Array.from({ length: 6 }).map((_, i) => (
+              ? Array.from({ length: 5 }).map((_, i) => (
                   <Card key={i} className="overflow-hidden">
                     <Skeleton className="aspect-video" />
                     <CardContent className="p-4">

@@ -43,10 +43,10 @@ function Hero() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-start">
               <Button
-                variant={"gradient"}
+                variant={"neonGradient"}
                 size="lg"
                 asChild
-                className="text-lg"
+                className="text-lg "
               >
                 <Link href="/market">
                   <ShoppingBag className="ml-2 h-5 w-5" />
@@ -85,7 +85,7 @@ function Hero() {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
             <Button
-              variant="gradient"
+              variant="neonGradient"
               type="submit"
               className="absolute left-0 top-1/2 -translate-y-1/2 rounded-sm cursor-pointer"
             >

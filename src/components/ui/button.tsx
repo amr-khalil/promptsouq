@@ -21,7 +21,14 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         gradient:
           "bg-gradient-to-r from-[#9333ea] to-[#6366f1] text-white rounded-full hover:opacity-90 transition-opacity",
+        neonGradient:
+          "bg-gradient-to-r from-[#9333ea] via-[#7c3aed] to-[#6366f1] " +
+          "text-white border-none rounded-full font-bold tracking-wide " +
+          "shadow-[0_0_50px_rgba(147,51,234,0.4)] " + // Subtle glow
+          "hover:shadow-[0_0_100px_rgba(147,51,234,0.6)] " + // Stronger hover glow
+          "hover:brightness-110 transition-all duration-300",
       },
+
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
         xs: "h-6 gap-1 rounded-md px-2 text-xs has-[>svg]:px-1.5 [&_svg:not([class*='size-'])]:size-3",

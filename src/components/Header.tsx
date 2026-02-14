@@ -10,22 +10,11 @@ import {
 } from "@clerk/nextjs";
 import { Menu, ShoppingCart, User } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 
 export function Header() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const router = useRouter();
   const cartCount = useCartItemCount();
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
-    }
-  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -75,7 +64,7 @@ export function Header() {
                 <Button variant="ghost">تسجيل الدخول</Button>
               </SignInButton>
               <SignUpButton>
-                <Button>إنشاء حساب</Button>
+                <Button variant={"neonGradient"}>إنشاء حساب</Button>
               </SignUpButton>
             </SignedOut>
           </nav>

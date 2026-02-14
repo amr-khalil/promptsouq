@@ -186,7 +186,7 @@ export default function Market() {
         </p>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-6">
+      <div className="flex flex-col md:flex-row gap-4">
         {/* Filters Sidebar - Desktop */}
         <aside className="hidden md:block w-64 shrink-0">
           <div className="sticky top-20 border rounded-lg p-4 bg-card">
@@ -211,9 +211,7 @@ export default function Market() {
               <SheetHeader>
                 <SheetTitle>الفلاتر</SheetTitle>
               </SheetHeader>
-              <div className="mt-6">
-                {filtersContent}
-              </div>
+              <div className="mt-6">{filtersContent}</div>
             </SheetContent>
           </Sheet>
         </div>
