@@ -1,5 +1,6 @@
 "use client";
 
+import CategoryBrowser from "@/components/CategoryBrowser";
 import Hero from "@/components/Hero";
 import { PromptCard } from "@/components/PromptCard";
 import { Button } from "@/components/ui/button";
@@ -64,13 +65,7 @@ export default function Home() {
           ]);
 
         setCategories(categoriesData.data);
-        setTrendingPrompts([
-          ...promptsData.data,
-          ...promptsData.data,
-          ...promptsData.data,
-          ...promptsData.data,
-          ...promptsData.data,
-        ]);
+        setTrendingPrompts([...promptsData.data]);
         setTestimonials(testimonialsData.data);
       } catch {
         setError("حدث خطأ أثناء تحميل البيانات. يرجى المحاولة مرة أخرى.");
@@ -151,16 +146,44 @@ export default function Home() {
         </div>
       </section> */}
 
-      {/* Trending Prompts */}
+      {/* Featured Prompts */}
       <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              البرومبتات الرائجة
-            </h2>
-            <p className="text-muted-foreground text-lg">
-              الأكثر مبيعاً هذا الأسبوع
-            </p>
+          {/* Section Header */}
+          <div className="mb-6 flex flex-col items-start gap-2">
+            <h2 className="text-2xl font-bold text-white">أوامر مميزة</h2>
+            <div className="h-1 w-24 rounded-full bg-purple-600"></div>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+            {loading
+              ? Array.from({ length: 5 }).map((_, i) => (
+                  <Card key={i} className="overflow-hidden">
+                    <Skeleton className="aspect-video" />
+                    <CardContent className="p-4">
+                      <Skeleton className="h-5 w-16 mb-2" />
+                      <Skeleton className="h-4 w-full mb-2" />
+                      <Skeleton className="h-3 w-full mb-3" />
+                      <Skeleton className="h-3 w-24 mb-3" />
+                      <div className="flex items-center justify-between">
+                        <Skeleton className="h-5 w-16" />
+                        <Skeleton className="h-8 w-16" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))
+              : trendingPrompts.map((prompt) => (
+                  <PromptCard key={prompt.id} prompt={prompt} />
+                ))}
+          </div>
+        </div>
+
+        {/* Trending Prompts */}
+        <div className="container mx-auto px-4 mt-8">
+          {/* Section Header */}
+          <div className="mb-6 flex flex-col items-start gap-2">
+            <h2 className="text-2xl font-bold text-white">أوامر شائعة</h2>
+            <div className="h-1 w-24 rounded-full bg-purple-600"></div>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
@@ -191,6 +214,11 @@ export default function Home() {
             </Button>
           </div>
         </div>
+      </section>
+
+      {/* Category Browser */}
+      <section className="container mx-auto px-4">
+        <CategoryBrowser />
       </section>
 
       {/* How It Works */}

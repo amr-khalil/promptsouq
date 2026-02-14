@@ -23,7 +23,7 @@ function Hero() {
     <section className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-950/20 dark:to-blue-950/20 py-20">
       {/* CTA */}
       <div className="container mx-auto px-4">
-        <div className="flex flex-row items-center text-center gap-8 max-w-3xl mx-auto">
+        <div className="flex flex-row items-center text-center gap-8 mx-auto">
           <div className="mx-auto text-right">
             <h1 className="text-3xl md:text-3xl font-extrabold leading-tight tracking-tight">
               أطلق العنان لقوة <br />
