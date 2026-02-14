@@ -4,18 +4,16 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Cairo } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// add cairo arabic font from google fonts
+export const mainFont = Cairo({
+  variable: "--font-main",
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal"],
 });
 
 export const metadata: Metadata = {
@@ -31,9 +29,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="ar" dir="rtl">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
+        <body className={`${mainFont.variable} antialiased`}>
           <ThemeProvider>
             <div className="min-h-screen flex flex-col bg-background">
               <Header />
