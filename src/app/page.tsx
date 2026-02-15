@@ -38,6 +38,7 @@ const iconMap: Record<string, React.ElementType> = {
 export default function Home() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [trendingPrompts, setTrendingPrompts] = useState<Prompt[]>([]);
+  const [freePrompts, setFreePrompts] = useState<Prompt[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -46,25 +47,28 @@ export default function Home() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [categoriesRes, promptsRes, testimonialsRes] = await Promise.all([
+        const [categoriesRes, promptsRes, freeRes, testimonialsRes] = await Promise.all([
           fetch("/api/categories"),
           fetch("/api/prompts?sortBy=bestselling&limit=8"),
+          fetch("/api/prompts?priceType=free&limit=10"),
           fetch("/api/testimonials"),
         ]);
 
-        if (!categoriesRes.ok || !promptsRes.ok || !testimonialsRes.ok) {
+        if (!categoriesRes.ok || !promptsRes.ok || !freeRes.ok || !testimonialsRes.ok) {
           throw new Error("فشل في تحميل البيانات");
         }
 
-        const [categoriesData, promptsData, testimonialsData] =
+        const [categoriesData, promptsData, freeData, testimonialsData] =
           await Promise.all([
             categoriesRes.json(),
             promptsRes.json(),
+            freeRes.json(),
             testimonialsRes.json(),
           ]);
 
         setCategories(categoriesData.data);
         setTrendingPrompts([...promptsData.data]);
+        setFreePrompts(freeData.data ?? []);
         setTestimonials(testimonialsData.data);
       } catch {
         setError("حدث خطأ أثناء تحميل البيانات. يرجى المحاولة مرة أخرى.");
@@ -219,6 +223,57 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Free Prompts Section */}
+      {freePrompts.length > 0 && (
+        <section className="py-16 bg-[#0f0f16] border-t border-emerald-900/30">
+          <div className="container mx-auto px-4">
+            <div className="mb-8 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+              <div>
+                <h2 className="flex items-center gap-2 text-3xl font-bold text-white tracking-tight">
+                  <ChevronRight className="h-6 w-6 text-emerald-500 stroke-3" />
+                  <span className="text-emerald-400">برومبتات</span> مجانية
+                </h2>
+                <p className="mt-2 text-sm text-slate-400">
+                  جرّب برومبتات احترافية مجاناً — سجل دخولك واستفد
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {loading
+                ? Array.from({ length: 4 }).map((_, i) => (
+                    <Card key={i} className="overflow-hidden bg-[#161621]">
+                      <Skeleton className="h-44 w-full" />
+                      <CardContent className="p-4">
+                        <Skeleton className="h-5 w-16 mb-2" />
+                        <Skeleton className="h-4 w-full mb-2" />
+                        <Skeleton className="h-3 w-24 mb-3" />
+                        <Skeleton className="h-8 w-full" />
+                      </CardContent>
+                    </Card>
+                  ))
+                : freePrompts.map((prompt) => (
+                    <GamingPromptCard key={prompt.id} prompt={prompt} />
+                  ))}
+            </div>
+
+            <div className="mt-10 flex justify-center">
+              <Button
+                asChild
+                variant="outline"
+                size="lg"
+                className="border-emerald-500/30 bg-[#1f1f2e] text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300 hover:border-emerald-400 px-8 py-3 text-base font-medium rounded-full transition-all shadow-[0_0_15px_-5px_rgba(16,185,129,0.3)] hover:shadow-[0_0_20px_-3px_rgba(16,185,129,0.5)]"
+              >
+                <Link href="/market?priceType=free">
+                  عرض الكل
+                  <ChevronRight className="mr-2 h-5 w-5 rotate-180" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Featured Sellers */}
       <FeaturedSellers />

@@ -19,6 +19,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import type { PromptSubmission } from "@/lib/schemas/api";
 import type { Category } from "@/lib/schemas/api";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Upload, X } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -69,6 +71,7 @@ export function PromptDetailsStep({ form }: PromptDetailsStepProps) {
   const titleValue = form.watch("title");
   const descValue = form.watch("description");
   const thumbnailValue = form.watch("thumbnail");
+  const isFree = form.watch("isFree");
 
   const addTagsFromInput = useCallback(() => {
     const currentTags = form.getValues("tags") ?? [];
@@ -220,29 +223,48 @@ export function PromptDetailsStep({ form }: PromptDetailsStepProps) {
         )}
       />
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
-        <FormField
-          control={form.control}
-          name="price"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>السعر ($)</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  min={1.99}
-                  max={99.99}
-                  step={0.01}
-                  placeholder="6.99"
-                  dir="ltr"
-                  {...field}
-                  onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+      <div className="flex items-center gap-3 rounded-lg border p-4">
+        <Switch
+          id="isFree"
+          checked={isFree}
+          onCheckedChange={(checked) => {
+            form.setValue("isFree", checked, { shouldValidate: true });
+            if (checked) {
+              form.setValue("price", 0, { shouldValidate: true });
+              form.clearErrors("price");
+            }
+          }}
         />
+        <Label htmlFor="isFree" className="cursor-pointer">
+          برومبت مجاني
+        </Label>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+        {!isFree && (
+          <FormField
+            control={form.control}
+            name="price"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>السعر ($)</FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    min={1.99}
+                    max={99.99}
+                    step={0.01}
+                    placeholder="6.99"
+                    dir="ltr"
+                    {...field}
+                    onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         <FormField
           control={form.control}

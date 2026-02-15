@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Prompt } from "@/lib/schemas/api";
-import { Filter, Loader2, RotateCcw, Search, X } from "lucide-react";
+import { Filter, Gift, Loader2, RotateCcw, Search, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -70,6 +70,7 @@ export default function Market() {
   const searchQuery = searchParams.get("search") ?? "";
   const generationType = searchParams.get("generationType") ?? "all";
   const aiModel = searchParams.get("aiModel") ?? "all";
+  const priceType = searchParams.get("priceType") ?? "all";
   const sortBy = searchParams.get("sortBy") ?? (searchQuery ? "relevant" : "trending");
 
   // Local state for data
@@ -88,12 +89,13 @@ export default function Market() {
       if (searchQuery) params.set("search", searchQuery);
       if (generationType !== "all") params.set("generationType", generationType);
       if (aiModel !== "all") params.set("aiModel", aiModel);
+      if (priceType !== "all") params.set("priceType", priceType);
       params.set("sortBy", sortBy);
       params.set("limit", String(PAGE_SIZE));
       params.set("offset", String(currentOffset));
       return params;
     },
-    [searchQuery, generationType, aiModel, sortBy],
+    [searchQuery, generationType, aiModel, priceType, sortBy],
   );
 
   // Fetch prompts (initial or on filter change)
@@ -173,6 +175,10 @@ export default function Market() {
     updateURL({ aiModel: value === "all" ? null : value });
   }
 
+  function handlePriceTypeChange(value: string) {
+    updateURL({ priceType: value === "all" ? null : value });
+  }
+
   function handleSortChange(value: string) {
     updateURL({ sortBy: value === "trending" && !searchQuery ? null : value });
   }
@@ -195,6 +201,12 @@ export default function Market() {
   if (aiModel !== "all") {
     const found = AI_MODELS.find((m) => m.value === aiModel);
     activeFilters.push({ key: "aiModel", label: found?.label ?? aiModel });
+  }
+  if (priceType !== "all") {
+    activeFilters.push({
+      key: "priceType",
+      label: priceType === "free" ? "مجاني" : "مدفوع",
+    });
   }
   if (searchQuery) {
     activeFilters.push({ key: "search", label: `"${searchQuery}"` });
@@ -258,6 +270,32 @@ export default function Market() {
         </RadioGroup>
       </div>
 
+      {/* Price Type */}
+      <div>
+        <h3 className="font-bold mb-3 text-white">السعر</h3>
+        <div className="flex gap-2">
+          {[
+            { value: "all", label: "الكل" },
+            { value: "free", label: "مجاني" },
+            { value: "paid", label: "مدفوع" },
+          ].map((option) => (
+            <Button
+              key={option.value}
+              variant={priceType === option.value ? "default" : "outline"}
+              size="sm"
+              className={
+                priceType === option.value
+                  ? "bg-purple-600 text-white hover:bg-purple-700"
+                  : "border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white"
+              }
+              onClick={() => handlePriceTypeChange(option.value)}
+            >
+              {option.label}
+            </Button>
+          ))}
+        </div>
+      </div>
+
       {/* Reset */}
       <Button
         variant="outline"
@@ -293,6 +331,34 @@ export default function Market() {
           </div>
         </div>
       </section>
+
+      {/* Free Prompts Banner */}
+      {activeFilters.length === 0 && !loading && (
+        <div className="container mx-auto px-4 pt-6">
+          <div className="flex items-center justify-between gap-4 rounded-lg border border-emerald-800/40 bg-gradient-to-l from-emerald-950/50 to-gray-900 p-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-600/20">
+                <Gift className="h-5 w-5 text-emerald-400" />
+              </div>
+              <div>
+                <p className="font-bold text-white text-sm">
+                  برومبتات مجانية متاحة!
+                </p>
+                <p className="text-xs text-gray-400">
+                  اكتشف مجموعة من البرومبتات المجانية الاحترافية
+                </p>
+              </div>
+            </div>
+            <Button
+              size="sm"
+              className="shrink-0 bg-emerald-600 text-white hover:bg-emerald-700"
+              onClick={() => handlePriceTypeChange("free")}
+            >
+              عرض المجانية
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-6">

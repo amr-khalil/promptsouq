@@ -1,6 +1,7 @@
-import type { categories, prompts, reviews, sellerProfiles, testimonials } from "@/db/schema";
+import type { categories, freePromptAccess, prompts, reviews, sellerProfiles, testimonials } from "@/db/schema";
 
 type PromptRow = typeof prompts.$inferSelect;
+type FreePromptAccessRow = typeof freePromptAccess.$inferSelect;
 type SellerProfileRow = typeof sellerProfiles.$inferSelect;
 type CategoryRow = typeof categories.$inferSelect;
 type ReviewRow = typeof reviews.$inferSelect;
@@ -37,6 +38,7 @@ export function mapPromptRow(row: PromptRow) {
     samples: row.samples,
     fullContent: row.fullContent ?? undefined,
     instructions: row.instructions ?? undefined,
+    isFree: row.price === 0,
   };
 }
 
@@ -65,6 +67,23 @@ export function mapPurchaseRow(row: PurchaseRow) {
     },
     purchasedAt: row.purchasedAt.toISOString(),
     priceAtPurchase: row.priceAtPurchase,
+  };
+}
+
+export function mapFreeAccessRow(row: { freeAccess: FreePromptAccessRow; prompt: PromptRow }) {
+  return {
+    id: row.prompt.id,
+    title: row.prompt.title,
+    titleEn: row.prompt.titleEn,
+    thumbnail: row.prompt.thumbnail,
+    aiModel: row.prompt.aiModel,
+    category: row.prompt.category,
+    seller: {
+      name: row.prompt.sellerName,
+      avatar: row.prompt.sellerAvatar,
+      rating: row.prompt.sellerRating,
+    },
+    accessedAt: row.freeAccess.accessedAt.toISOString(),
   };
 }
 

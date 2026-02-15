@@ -24,6 +24,7 @@ export const useCartStore = create<CartState>()(
       items: [],
       addItem: (item) =>
         set((state) => {
+          if (item.price === 0) return state;
           if (state.items.some((i) => i.promptId === item.promptId)) {
             return state;
           }

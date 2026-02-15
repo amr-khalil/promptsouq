@@ -22,6 +22,7 @@ const step1Fields: (keyof PromptSubmission)[] = [
   "aiModel",
   "title",
   "description",
+  "isFree",
   "price",
   "category",
   "difficulty",
@@ -40,6 +41,7 @@ const defaultValues: PromptSubmission = {
   titleEn: "",
   description: "",
   descriptionEn: "",
+  isFree: false,
   price: 0,
   category: "",
   aiModel: "",
@@ -92,7 +94,7 @@ export default function SellPage() {
     defaultValues,
   });
 
-  // Restore draft and step when returning from Stripe onboarding
+  // Restore draft and step when returning from Stripe onboarding (paid flow only)
   useEffect(() => {
     const step = searchParams.get("step");
     if (step === "3") {
@@ -109,10 +111,54 @@ export default function SellPage() {
     saveDraft(form.getValues());
   }, [form]);
 
+  const isFree = form.watch("isFree");
+
+  // For free prompts: step 1 → step 2 → submit → confirmation (step 3)
+  // For paid prompts: step 1 → step 2 → step 3 (payout) → submit → confirmation (step 4)
+  const confirmationStep = isFree ? 3 : 4;
+  const submitStep = isFree ? 2 : 3;
+
+  const submitPrompt = async () => {
+    const valid = await form.trigger();
+    if (!valid) {
+      toast.error("يرجى مراجعة جميع الحقول المطلوبة");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const data = form.getValues();
+      const res = await fetch("/api/prompts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) {
+        const json = await res.json();
+        toast.error(json.error?.message ?? "حدث خطأ في رفع البرومبت");
+        return;
+      }
+
+      clearDraft();
+      setCurrentStep(confirmationStep);
+      toast.success("تم رفع البرومبت بنجاح!");
+    } catch {
+      toast.error("حدث خطأ في الاتصال بالخادم");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const handleNext = async () => {
     if (currentStep === 1) {
       const valid = await form.trigger(step1Fields);
       if (!valid) return;
+      // Manual price check for paid prompts (superRefine doesn't run on partial trigger)
+      if (!form.getValues("isFree") && form.getValues("price") < 1.99) {
+        form.setError("price", { message: "الحد الأدنى للسعر 1.99$" });
+        return;
+      }
       setCurrentStep(2);
     } else if (currentStep === 2) {
       const valid = await form.trigger(step2Fields);
@@ -120,39 +166,16 @@ export default function SellPage() {
         toast.error("يرجى مراجعة حقول ملف البرومبت");
         return;
       }
-      saveCurrentDraft();
-      setCurrentStep(3);
-    } else if (currentStep === 3) {
-      // Submit the form
-      const valid = await form.trigger();
-      if (!valid) {
-        toast.error("يرجى مراجعة جميع الحقول المطلوبة");
-        return;
+      if (isFree) {
+        // Free: submit directly after step 2
+        await submitPrompt();
+      } else {
+        saveCurrentDraft();
+        setCurrentStep(3);
       }
-
-      setSubmitting(true);
-      try {
-        const data = form.getValues();
-        const res = await fetch("/api/prompts", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
-
-        if (!res.ok) {
-          const json = await res.json();
-          toast.error(json.error?.message ?? "حدث خطأ في رفع البرومبت");
-          return;
-        }
-
-        clearDraft();
-        setCurrentStep(4);
-        toast.success("تم رفع البرومبت بنجاح!");
-      } catch {
-        toast.error("حدث خطأ في الاتصال بالخادم");
-      } finally {
-        setSubmitting(false);
-      }
+    } else if (currentStep === 3 && !isFree) {
+      // Paid: submit after payout step
+      await submitPrompt();
     }
   };
 
@@ -178,7 +201,7 @@ export default function SellPage() {
       </div>
 
       <div className="mb-8">
-        <StepIndicator currentStep={currentStep} />
+        <StepIndicator currentStep={currentStep} isFree={isFree} />
       </div>
 
       <div className="rounded-lg border bg-card p-6">
@@ -189,10 +212,10 @@ export default function SellPage() {
           </form>
         </Form>
 
-        {currentStep === 3 && <PayoutStep />}
-        {currentStep === 4 && <ConfirmationStep onReset={handleReset} />}
+        {currentStep === 3 && !isFree && <PayoutStep />}
+        {currentStep === confirmationStep && <ConfirmationStep onReset={handleReset} />}
 
-        {currentStep < 4 && (
+        {currentStep < confirmationStep && (
           <div className="mt-6 flex justify-between">
             {currentStep > 1 ? (
               <Button variant="outline" onClick={handleBack}>
@@ -207,8 +230,8 @@ export default function SellPage() {
               {submitting && (
                 <Loader2 className="h-4 w-4 animate-spin me-2" />
               )}
-              {currentStep === 3 ? "رفع البرومبت" : "التالي"}
-              {!submitting && currentStep < 3 && (
+              {currentStep === submitStep ? "رفع البرومبت" : "التالي"}
+              {!submitting && currentStep < submitStep && (
                 <ArrowLeft className="h-4 w-4 ms-2" />
               )}
             </Button>

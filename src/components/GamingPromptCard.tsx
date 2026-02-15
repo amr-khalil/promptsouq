@@ -63,11 +63,12 @@ const GamingCard = ({
 export function GamingPromptCard({ prompt }: GamingPromptCardProps) {
   const { addItem, isInCart } = useCartStore();
   const inCart = isInCart(prompt.id);
+  const isFree = prompt.isFree || prompt.price === 0;
 
   function handleAddToCart(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
-    if (inCart) return;
+    if (isFree || inCart) return;
     addItem({
       promptId: prompt.id,
       title: prompt.title,
@@ -181,15 +182,23 @@ export function GamingPromptCard({ prompt }: GamingPromptCardProps) {
             </div>
           </div>
 
-          {/* Price Button - Full Width Purple Pill */}
+          {/* Price Button - Full Width Pill */}
           <div className="mt-4">
-            <Button
-              className="w-full bg-[#5F3DEF] hover:bg-[#4a3df5] text-white font-bold rounded-full h-9 shadow-[0_4px_14px_0_rgba(95,61,239,0.39)] hover:shadow-[0_6px_20px_rgba(95,61,239,0.23)] hover:-translate-y-0.5 transition-all"
-              onClick={handleAddToCart}
-              disabled={inCart}
-            >
-              {inCart ? "في السلة" : `$${prompt.price}`}
-            </Button>
+            {isFree ? (
+              <Button
+                className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-full h-9 shadow-[0_4px_14px_0_rgba(16,185,129,0.39)] hover:shadow-[0_6px_20px_rgba(16,185,129,0.23)] hover:-translate-y-0.5 transition-all"
+              >
+                مجاني — عرض
+              </Button>
+            ) : (
+              <Button
+                className="w-full bg-[#5F3DEF] hover:bg-[#4a3df5] text-white font-bold rounded-full h-9 shadow-[0_4px_14px_0_rgba(95,61,239,0.39)] hover:shadow-[0_6px_20px_rgba(95,61,239,0.23)] hover:-translate-y-0.5 transition-all"
+                onClick={handleAddToCart}
+                disabled={inCart}
+              >
+                {inCart ? "في السلة" : `$${prompt.price}`}
+              </Button>
+            )}
           </div>
         </div>
       </GamingCard>

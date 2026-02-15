@@ -2,6 +2,7 @@
 
 import { FavoriteButton } from "@/components/dashboard/FavoriteButton";
 import { PromptCard } from "@/components/PromptCard";
+import { ContentLockOverlay } from "@/components/prompt/ContentLockOverlay";
 import { PromptGallery } from "@/components/PromptGallery";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -21,7 +22,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { notFound, useParams, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 export default function PromptDetails() {
@@ -127,6 +128,18 @@ export default function PromptDetails() {
       })
       .catch(() => {});
   }, [isSignedIn, id]);
+
+  // Track free prompt access (fire-and-forget)
+  const accessTrackedRef = useRef(false);
+  useEffect(() => {
+    if (!isSignedIn || !prompt?.isFree || prompt.contentLocked || accessTrackedRef.current) return;
+    accessTrackedRef.current = true;
+    fetch("/api/free-access", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ promptId: prompt.id }),
+    }).catch(() => {});
+  }, [isSignedIn, prompt]);
 
   if (loading) {
     return (
@@ -304,7 +317,14 @@ export default function PromptDetails() {
                   <p className="text-muted-foreground">{prompt.aiModel}</p>
                 </div>
 
-                {purchased && prompt.fullContent && (
+                {prompt.contentLocked && (
+                  <>
+                    <Separator />
+                    <ContentLockOverlay />
+                  </>
+                )}
+
+                {!prompt.contentLocked && (purchased || prompt.isFree) && prompt.fullContent && (
                   <>
                     <Separator />
                     <div>
@@ -319,7 +339,9 @@ export default function PromptDetails() {
             </TabsContent>
 
             <TabsContent value="samples" className="mt-6">
-              {prompt.samples.length > 0 ? (
+              {prompt.contentLocked ? (
+                <ContentLockOverlay />
+              ) : prompt.samples.length > 0 ? (
                 <div className="space-y-4">
                   {prompt.samples.map((sample, index) => (
                     <Card key={index}>
@@ -388,7 +410,13 @@ export default function PromptDetails() {
             <Card>
               <CardContent className="p-6">
                 <div className="mb-6">
-                  <div className="text-3xl font-bold mb-2">${prompt.price}</div>
+                  <div className="flex items-center gap-3 mb-2">
+                    {prompt.isFree ? (
+                      <Badge className="bg-green-600 px-3 py-1 text-base text-white hover:bg-green-700">مجاني</Badge>
+                    ) : (
+                      <span className="text-3xl font-bold">${prompt.price}</span>
+                    )}
+                  </div>
                   <div className="flex flex-wrap gap-2 mb-4">
                     <Badge>{prompt.aiModel}</Badge>
                     <Badge variant="outline">{prompt.difficulty}</Badge>
@@ -401,7 +429,7 @@ export default function PromptDetails() {
                   </div>
                 </div>
 
-                {!purchased && (
+                {!purchased && !prompt.isFree && (
                   <div className="space-y-3">
                     <Button className="w-full" size="lg" onClick={handleBuyNow}>
                       <ShoppingCart className="ml-2 h-5 w-5" />

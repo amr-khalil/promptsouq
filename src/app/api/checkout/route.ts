@@ -45,6 +45,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Reject free prompts in cart
+    const freePrompt = promptRows.find((p) => p.price === 0);
+    if (freePrompt) {
+      return NextResponse.json(
+        { error: "البرومبتات المجانية لا تحتاج إلى سلة" },
+        { status: 400 },
+      );
+    }
+
     // Find unique seller IDs to look up Stripe accounts
     const sellerIds = [
       ...new Set(promptRows.map((p) => p.sellerId).filter(Boolean)),

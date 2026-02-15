@@ -92,9 +92,9 @@ export async function POST(
       );
     }
 
-    // Verify prompt exists
+    // Verify prompt exists and get price
     const [prompt] = await db
-      .select({ id: prompts.id })
+      .select({ id: prompts.id, price: prompts.price })
       .from(prompts)
       .where(eq(prompts.id, id))
       .limit(1);
@@ -106,19 +106,22 @@ export async function POST(
       );
     }
 
-    // Verify purchase ownership
-    const [purchase] = await db
-      .select({ promptId: orderItems.promptId })
-      .from(orderItems)
-      .innerJoin(orders, eq(orders.id, orderItems.orderId))
-      .where(and(eq(orders.userId, userId), eq(orderItems.promptId, id)))
-      .limit(1);
+    // Free prompts: any authenticated user can review (skip purchase check)
+    if (prompt.price > 0) {
+      // Verify purchase ownership for paid prompts
+      const [purchase] = await db
+        .select({ promptId: orderItems.promptId })
+        .from(orderItems)
+        .innerJoin(orders, eq(orders.id, orderItems.orderId))
+        .where(and(eq(orders.userId, userId), eq(orderItems.promptId, id)))
+        .limit(1);
 
-    if (!purchase) {
-      return NextResponse.json(
-        apiErrorResponse("FORBIDDEN", "يجب شراء البرومبت أولاً"),
-        { status: 403 },
-      );
+      if (!purchase) {
+        return NextResponse.json(
+          apiErrorResponse("FORBIDDEN", "يجب شراء البرومبت أولاً"),
+          { status: 403 },
+        );
+      }
     }
 
     // Check for existing review

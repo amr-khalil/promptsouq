@@ -1,5 +1,6 @@
 export { categories } from "./categories";
 export { favorites } from "./favorites";
+export { freePromptAccess } from "./free-prompt-access";
 export { orders, orderItems } from "./orders";
 export { prompts } from "./prompts";
 export { reviews } from "./reviews";
