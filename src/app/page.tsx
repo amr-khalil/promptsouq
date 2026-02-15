@@ -3,6 +3,7 @@
 import FeaturedSellers from "@/components/FeaturedSellers";
 import { GamingPromptCard } from "@/components/GamingPromptCard";
 import Hero from "@/components/Hero";
+import HowToSell from "@/components/HowToSell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,12 +17,9 @@ import {
   MessageSquare,
   Palette,
   PenTool,
-  Search,
-  ShoppingBag,
   Sparkles,
   Star,
   TrendingUp,
-  Zap,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -225,55 +223,8 @@ export default function Home() {
       {/* Featured Sellers */}
       <FeaturedSellers />
 
-      {/* How It Works */}
-      <section className="py-16 container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">كيف يعمل؟</h2>
-          <p className="text-muted-foreground text-lg">
-            ثلاث خطوات بسيطة للبدء
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          <Card>
-            <CardContent className="p-8 text-center">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-                <Search className="h-8 w-8 text-purple-600" />
-              </div>
-              <h3 className="font-bold text-xl mb-3">١. تصفح</h3>
-              <p className="text-muted-foreground">
-                ابحث عن البرومبت المناسب من بين مئات البرومبتات المتاحة في مختلف
-                الفئات
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-8 text-center">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                <ShoppingBag className="h-8 w-8 text-blue-600" />
-              </div>
-              <h3 className="font-bold text-xl mb-3">٢. شراء / بيع</h3>
-              <p className="text-muted-foreground">
-                اشتر برومبتات احترافية أو ابدأ ببيع إبداعاتك الخاصة بسهولة وأمان
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-8 text-center">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                <Zap className="h-8 w-8 text-green-600" />
-              </div>
-              <h3 className="font-bold text-xl mb-3">٣. استخدام</h3>
-              <p className="text-muted-foreground">
-                استخدم البرومبتات مع أدوات الذكاء الاصطناعي المفضلة لديك واحصل
-                على نتائج مذهلة
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
+      {/* How To Sell */}
+      <HowToSell />
 
       {/* Testimonials */}
       <section className="py-16 bg-muted/30">
