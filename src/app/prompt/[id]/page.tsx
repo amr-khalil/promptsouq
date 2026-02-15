@@ -2,7 +2,7 @@
 
 import { FavoriteButton } from "@/components/dashboard/FavoriteButton";
 import { PromptCard } from "@/components/PromptCard";
-import { ImageWithFallback } from "@/components/figma/ImageWithFallback";
+import { PromptGallery } from "@/components/PromptGallery";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -183,12 +183,17 @@ export default function PromptDetails() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Content */}
         <div className="lg:col-span-2">
-          {/* Image */}
-          <div className="aspect-video rounded-lg overflow-hidden mb-6 bg-muted">
-            <ImageWithFallback
-              src={prompt.thumbnail}
-              alt={prompt.title}
-              className="w-full h-full object-cover"
+          {/* Gallery */}
+          <div className="mb-6">
+            <PromptGallery
+              images={
+                prompt.gallery.length > 0
+                  ? prompt.gallery.map((url, i) => ({
+                      url,
+                      alt: `${prompt.title} - ${i + 1}`,
+                    }))
+                  : [{ url: prompt.thumbnail, alt: prompt.title }]
+              }
             />
           </div>
 

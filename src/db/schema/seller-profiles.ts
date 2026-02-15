@@ -2,6 +2,9 @@ import { boolean, integer, pgTable, text, timestamp } from "drizzle-orm/pg-core"
 
 export const sellerProfiles = pgTable("seller_profiles", {
   userId: text("user_id").primaryKey(),
+  displayName: text("display_name").notNull(),
+  avatar: text("avatar").notNull(),
+  bio: text("bio"),
   stripeAccountId: text("stripe_account_id").unique(),
   country: text("country"),
   chargesEnabled: boolean("charges_enabled").notNull().default(false),

@@ -18,6 +18,7 @@ export const prompts = pgTable(
     reviewsCount: integer("reviews_count").notNull().default(0),
     sales: integer("sales").notNull().default(0),
     thumbnail: text("thumbnail").notNull(),
+    gallery: text("gallery").array().notNull().default([]),
     sellerName: text("seller_name").notNull(),
     sellerAvatar: text("seller_avatar").notNull(),
     sellerRating: real("seller_rating").notNull().default(0),

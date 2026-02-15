@@ -26,6 +26,7 @@ export function mapPromptRow(row: PromptRow) {
     reviews: row.reviewsCount,
     sales: row.sales,
     thumbnail: row.thumbnail,
+    gallery: row.gallery,
     seller: {
       name: row.sellerName,
       avatar: row.sellerAvatar,
@@ -148,5 +149,62 @@ export function mapSellerProfileRow(row: SellerProfileRow) {
     payoutsEnabled: row.payoutsEnabled,
     detailsSubmitted: row.detailsSubmitted,
     isFullyOnboarded: row.chargesEnabled && row.payoutsEnabled,
+  };
+}
+
+// ─── Seller Leaderboard & Storefront Mappers ────────────────────
+
+export function computeSellerTier(totalSales: number): string {
+  if (totalSales >= 500) return "ذهبي";
+  if (totalSales >= 100) return "فضي";
+  return "برونزي";
+}
+
+interface TopPrompt {
+  title: string;
+  sales: number;
+}
+
+interface SellerLeaderboardRow {
+  userId: string;
+  displayName: string;
+  avatar: string;
+  bio: string | null;
+  country: string | null;
+  totalSales: number;
+  totalReviews: number;
+  avgRating: number;
+  promptCount: number;
+  topCategories: string[];
+  topPrompts?: TopPrompt[];
+}
+
+export function mapSellerLeaderboardRow(row: SellerLeaderboardRow) {
+  return {
+    userId: row.userId,
+    displayName: row.displayName,
+    avatar: row.avatar,
+    bio: row.bio,
+    country: row.country,
+    totalSales: row.totalSales,
+    totalReviews: row.totalReviews,
+    avgRating: Number(Number(row.avgRating).toFixed(1)),
+    promptCount: row.promptCount,
+    tier: computeSellerTier(row.totalSales),
+    topCategories: row.topCategories,
+    topPrompts: row.topPrompts ?? [],
+  };
+}
+
+interface SellerStorefrontRow extends SellerLeaderboardRow {
+  totalFavorites: number;
+  joinedAt: Date;
+}
+
+export function mapSellerStorefrontRow(row: SellerStorefrontRow) {
+  return {
+    ...mapSellerLeaderboardRow(row),
+    totalFavorites: row.totalFavorites,
+    joinedAt: row.joinedAt.toISOString(),
   };
 }

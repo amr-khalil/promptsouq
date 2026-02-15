@@ -21,6 +21,7 @@ export const promptSchema = z.object({
   reviews: z.number(),
   sales: z.number(),
   thumbnail: z.string(),
+  gallery: z.array(z.string()),
   seller: sellerSchema,
   tags: z.array(z.string()),
   difficulty: z.enum(["مبتدئ", "متقدم"]),
@@ -95,6 +96,7 @@ export const promptsQuerySchema = z.object({
     .optional(),
   limit: z.coerce.number().int().min(1).max(100).optional(),
   offset: z.coerce.number().int().min(0).optional(),
+  sellerId: z.string().optional(),
 });
 
 export const suggestionsQuerySchema = z.object({
@@ -234,6 +236,32 @@ export type AdminReview = z.infer<typeof adminReviewSchema>;
 
 export const connectAccountSchema = z.object({
   country: z.string().length(2, "رمز الدولة يجب أن يكون حرفين"),
+});
+
+// ─── Sellers Schemas ─────────────────────────────────────────────
+
+export const sellersQuerySchema = z.object({
+  sortBy: z.enum(["rating", "sales"]).optional().default("rating"),
+  limit: z.coerce.number().int().min(1).max(20).optional().default(8),
+});
+
+export const sellerProfileSchema = z.object({
+  userId: z.string(),
+  displayName: z.string(),
+  avatar: z.string(),
+  bio: z.string().nullable(),
+  country: z.string().nullable(),
+  totalSales: z.number(),
+  totalReviews: z.number(),
+  avgRating: z.number(),
+  promptCount: z.number(),
+  tier: z.string(),
+  topCategories: z.array(z.string()),
+});
+
+export const sellerStorefrontSchema = sellerProfileSchema.extend({
+  totalFavorites: z.number(),
+  joinedAt: z.string(),
 });
 
 // ─── Error Response Helper ────────────────────────────────────────
