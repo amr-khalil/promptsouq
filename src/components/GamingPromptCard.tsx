@@ -131,13 +131,18 @@ export function GamingPromptCard({ prompt }: GamingPromptCardProps) {
           {/* Seller Info Row */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              {/* Diamond Shaped Avatar Wrapper */}
-              <div className="relative flex items-center justify-center h-9 w-9">
-                <div className="absolute inset-0 bg-[#2a2a3d] rotate-45 rounded-[6px] border border-[#5F3DEF]"></div>
+              {/* Circle Avatar */}
+              <div className="relative h-9 w-9 rounded-full border-2 border-[#5F3DEF] overflow-hidden bg-[#2a2a3d]">
                 <img
-                  src={prompt.seller.avatar}
-                  className="absolute h-6 w-6 object-cover rounded-sm z-10"
+                  src={
+                    prompt.seller.avatar ||
+                    `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(prompt.seller.name)}&backgroundColor=ffdfbf`
+                  }
+                  className="h-full w-full object-cover"
                   alt="البائع"
+                  onError={(e) => {
+                    e.currentTarget.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(prompt.seller.name)}&backgroundColor=ffdfbf`;
+                  }}
                 />
               </div>
 
@@ -156,7 +161,7 @@ export function GamingPromptCard({ prompt }: GamingPromptCardProps) {
               </div>
             </div>
 
-            {/* Rating Stars - Purple Color */}
+            {/* Rating Stars - Yellow Accent */}
             <div className="flex flex-col items-end">
               <div className="flex gap-0.5">
                 {[...Array(5)].map((_, i) => (
@@ -164,14 +169,14 @@ export function GamingPromptCard({ prompt }: GamingPromptCardProps) {
                     key={i}
                     className={`h-2.5 w-2.5 ${
                       i < Math.floor(prompt.rating)
-                        ? "fill-[#5F3DEF] text-[#5F3DEF]"
+                        ? "fill-yellow-400 text-yellow-400"
                         : "text-slate-700"
                     }`}
                   />
                 ))}
               </div>
-              <span className="text-[10px] text-[#5F3DEF] font-bold mt-0.5 flex items-center gap-1">
-                {prompt.sales} <Heart className="h-2 w-2 fill-[#5F3DEF]" />
+              <span className="text-[10px] text-yellow-400 font-bold mt-0.5 flex items-center gap-1">
+                {prompt.sales} <Heart className="h-2 w-2 fill-yellow-400" />
               </span>
             </div>
           </div>

@@ -26,7 +26,7 @@ const sellers = [
 ];
 
 function sellerAvatar(name: string) {
-  return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=random&size=100`;
+  return `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(name)}&backgroundColor=ffdfbf`;
 }
 
 // ─── AI Models & Generation Types ─────────────────────────────────
@@ -294,21 +294,21 @@ async function seed() {
       name: "محمد السعيد",
       role: "مسوق رقمي",
       content: "وجدت البرومبتات التي أحتاجها لتطوير عملي. جودة عالية وأسعار معقولة!",
-      avatar: "https://ui-avatars.com/api/?name=%D9%85%D8%AD%D9%85%D8%AF&background=random&size=100",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=%D9%85%D8%AD%D9%85%D8%AF&backgroundColor=ffdfbf",
       rating: 5,
     },
     {
       name: "فاطمة الحربي",
       role: "مصممة جرافيك",
       content: "منصة رائعة للعثور على برومبتات Midjourney المميزة. وفرت علي الكثير من الوقت.",
-      avatar: "https://ui-avatars.com/api/?name=%D9%81%D8%A7%D8%B7%D9%85%D8%A9&background=random&size=100",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=%D9%81%D8%A7%D8%B7%D9%85%D8%A9&backgroundColor=ffdfbf",
       rating: 5,
     },
     {
       name: "أحمد الخطيب",
       role: "كاتب محتوى",
       content: "بفضل البرومبتات من هذا السوق، أصبحت كتابتي أكثر احترافية وإبداعاً.",
-      avatar: "https://ui-avatars.com/api/?name=%D8%A3%D8%AD%D9%85%D8%AF&background=random&size=100",
+      avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=%D8%A3%D8%AD%D9%85%D8%AF&backgroundColor=ffdfbf",
       rating: 5,
     },
   ]);

@@ -1,9 +1,8 @@
 "use client";
 
-import CategoryBrowser from "@/components/CategoryBrowser";
 import FeaturedSellers from "@/components/FeaturedSellers";
-import Hero from "@/components/Hero";
 import { GamingPromptCard } from "@/components/GamingPromptCard";
+import Hero from "@/components/Hero";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -159,22 +158,27 @@ export default function Home() {
 
             {/* Filter Pills */}
             <div className="flex flex-wrap gap-2">
-              {["الكل", "ChatGPT", "Midjourney", "DALL-E", "Claude", "Gemini"].map(
-                (filter) => (
-                  <Badge
-                    key={filter}
-                    onClick={() => setActiveFilter(filter)}
-                    className={`cursor-pointer px-5 py-2 text-sm font-medium rounded-full transition-all border-0
+              {[
+                "الكل",
+                "كتابة إبداعية",
+                "تصميم جرافيك",
+                "تطوير برمجيات",
+                "تسويق رقمي",
+                "إنتاجية",
+              ].map((filter) => (
+                <Badge
+                  key={filter}
+                  onClick={() => setActiveFilter(filter)}
+                  className={`cursor-pointer px-5 py-2 text-sm font-medium rounded-full transition-all border-0
                       ${
                         activeFilter === filter
                           ? "bg-yellow-500 text-black hover:bg-yellow-400 shadow-[0_0_15px_-3px_rgba(234,179,8,0.5)]"
                           : "bg-[#1f1f2e] text-slate-400 hover:bg-[#2a2a3d] hover:text-white"
                       }`}
-                  >
-                    {filter}
-                  </Badge>
-                )
-              )}
+                >
+                  {filter}
+                </Badge>
+              ))}
             </div>
           </div>
 
@@ -200,16 +204,26 @@ export default function Home() {
                   <GamingPromptCard key={prompt.id} prompt={prompt} />
                 ))}
           </div>
+
+          {/* Show More Button */}
+          <div className="mt-10 flex justify-center">
+            <Button
+              asChild
+              variant="outline"
+              size="lg"
+              className="border-yellow-500/30 bg-[#1f1f2e] text-yellow-400 hover:bg-yellow-500/10 hover:text-yellow-300 hover:border-yellow-400 px-8 py-3 text-base font-medium rounded-full transition-all shadow-[0_0_15px_-5px_rgba(234,179,8,0.3)] hover:shadow-[0_0_20px_-3px_rgba(234,179,8,0.5)]"
+            >
+              <Link href="/market">
+                عرض المزيد
+                <ChevronRight className="mr-2 h-5 w-5 rotate-180" />
+              </Link>
+            </Button>
+          </div>
         </div>
       </section>
 
       {/* Featured Sellers */}
       <FeaturedSellers />
-
-      {/* Category Browser */}
-      <section className="container mx-auto px-4">
-        <CategoryBrowser />
-      </section>
 
       {/* How It Works */}
       <section className="py-16 container mx-auto px-4">
