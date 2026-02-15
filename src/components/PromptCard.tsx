@@ -85,7 +85,11 @@ export function PromptCard({ prompt }: PromptCardProps) {
             <h3 className="truncate text-sm font-medium text-white">
               {prompt.title}
             </h3>
-            <p className="text-sm font-bold text-white">${prompt.price}</p>
+            {prompt.isFree ? (
+              <Badge className="bg-green-600 text-white hover:bg-green-700">مجاني</Badge>
+            ) : (
+              <p className="text-sm font-bold text-white">${prompt.price}</p>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -145,15 +149,19 @@ export function PromptCard({ prompt }: PromptCardProps) {
                 </h3>
                 <p className="text-sm text-slate-400">{prompt.titleEn}</p>
               </div>
-              <Button
-                className="shrink-0 bg-linear-to-r from-[#9333ea] to-[#6366f1] px-5 font-bold text-white hover:opacity-90"
-                size="sm"
-                onClick={handleAddToCart}
-                disabled={inCart}
-              >
-                <ShoppingCart className="h-4 w-4" />
-                {inCart ? "في السلة" : `$${prompt.price}`}
-              </Button>
+              {prompt.isFree ? (
+                <Badge className="bg-green-600 px-4 py-1.5 text-sm text-white hover:bg-green-700">مجاني</Badge>
+              ) : (
+                <Button
+                  className="shrink-0 bg-linear-to-r from-[#9333ea] to-[#6366f1] px-5 font-bold text-white hover:opacity-90"
+                  size="sm"
+                  onClick={handleAddToCart}
+                  disabled={inCart}
+                >
+                  <ShoppingCart className="h-4 w-4" />
+                  {inCart ? "في السلة" : `$${prompt.price}`}
+                </Button>
+              )}
             </div>
 
             <p className="line-clamp-3 text-sm leading-relaxed text-slate-400">

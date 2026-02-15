@@ -213,6 +213,768 @@ function generateExamplePrompts(genType: string): Record<string, string>[] {
   ];
 }
 
+// ─── Free Prompt Overrides (Rich Content) ─────────────────────────
+
+const FREE_PROMPT_OVERRIDES: Record<number, {
+  title: string;
+  titleEn: string;
+  description: string;
+  descriptionEn: string;
+  fullContent: string;
+  instructions: string;
+  exampleOutputs: string[];
+  examplePrompts: Record<string, string>[];
+  tags: string[];
+}> = {
+  // Index 0: Text/Marketing — كاتب محتوى تسويقي احترافي
+  0: {
+    title: "كاتب محتوى تسويقي احترافي",
+    titleEn: "Professional Marketing Content Writer",
+    description: "برومبت مجاني لكتابة محتوى تسويقي جذاب يزيد من التحويلات — مثالي للمبتدئين في التسويق الرقمي",
+    descriptionEn: "Free prompt for writing engaging marketing content that boosts conversions — perfect for digital marketing beginners",
+    fullContent: `أنت كاتب محتوى تسويقي محترف متخصص في السوق العربي. مهمتك كتابة محتوى تسويقي يحقق نتائج ملموسة.
+
+## المدخلات المطلوبة:
+- **المنتج/الخدمة**: [اسم المنتج أو الخدمة]
+- **الجمهور المستهدف**: [وصف الجمهور: العمر، الاهتمامات، المشاكل]
+- **المنصة**: [فيسبوك / إنستغرام / تويتر / موقع إلكتروني / بريد إلكتروني]
+- **الهدف**: [زيادة المبيعات / بناء الوعي / جمع بيانات / تفاعل]
+- **النبرة**: [رسمي / ودي / حماسي / تعليمي]
+
+## التعليمات:
+1. ابدأ بعنوان جذاب يثير الفضول (hook)
+2. حدد المشكلة التي يعاني منها الجمهور
+3. قدم الحل (المنتج/الخدمة) بطريقة طبيعية
+4. أضف دليل اجتماعي (شهادات، أرقام، نتائج)
+5. اختم بدعوة واضحة للإجراء (CTA)
+6. استخدم لغة عربية فصيحة مبسطة بدون تعقيد
+7. أضف 3-5 هاشتاغات ذات صلة
+
+## قواعد المحتوى:
+- الطول: 150-300 كلمة
+- تجنب المبالغة والوعود الكاذبة
+- ركّز على الفوائد لا المميزات
+- استخدم أرقام وإحصائيات عند الإمكان`,
+    instructions: `1. انسخ البرومبت كاملاً إلى ChatGPT أو Claude
+2. استبدل كل ما بين الأقواس المربعة بمعلوماتك
+3. راجع النتيجة وعدّل النبرة حسب جمهورك
+4. جرّب تغيير "المنصة" للحصول على محتوى مخصص لكل منصة
+5. يمكنك إضافة "اكتب 3 نسخ مختلفة" للمقارنة`,
+    exampleOutputs: [
+      `🔥 هل تعبت من قضاء ساعات في كتابة المحتوى؟
+
+أكثر من 10,000 صانع محتوى عربي يستخدمون أدوات الذكاء الاصطناعي لتوفير 80% من وقتهم.
+
+مع "برومبت سوق" — احصل على برومبتات جاهزة ومُجرّبة تكتب لك محتوى احترافي في دقائق.
+
+✅ محتوى تسويقي جذاب
+✅ نصوص إعلانية فعّالة
+✅ منشورات سوشال ميديا
+
+ابدأ مجاناً اليوم → رابط
+
+#تسويق_رقمي #محتوى #ذكاء_اصطناعي`,
+      `📈 حقيقة: 73% من العملاء يشترون بعد قراءة محتوى مقنع.
+
+لكن كتابة هذا المحتوى ليست سهلة...
+
+لهذا صممنا لك باقة "المسوّق الذكي":
+→ 50 قالب محتوى تسويقي جاهز
+→ 20 نموذج إعلان مُجرّب
+→ دليل كتابة المحتوى المقنع
+
+العرض ينتهي الخميس — احجز مقعدك الآن!
+
+#تسويق #كتابة_محتوى #أعمال`,
+      `لكل صاحب مشروع يبحث عن عملاء جدد... 🎯
+
+السر ليس في الإعلانات المدفوعة فقط.
+السر في المحتوى الذي يبني الثقة أولاً.
+
+في ورشتنا المجانية، ستتعلم:
+• كيف تكتب محتوى يجذب العميل المثالي
+• أسرار العناوين التي لا يمكن تجاهلها
+• خطة محتوى 30 يوم جاهزة للتطبيق
+
+سجّل الآن — الأماكن محدودة 👇`,
+    ],
+    examplePrompts: [
+      { "المنتج/الخدمة": "دورة تسويق رقمي", الجمهور: "رواد أعمال مبتدئين 25-40 سنة", المنصة: "إنستغرام", الهدف: "تسجيلات", النبرة: "حماسي" },
+      { "المنتج/الخدمة": "تطبيق توصيل طعام", الجمهور: "عائلات سعودية", المنصة: "تويتر", الهدف: "تحميل التطبيق", النبرة: "ودي" },
+      { "المنتج/الخدمة": "خدمة تصميم شعارات", الجمهور: "أصحاب مشاريع صغيرة", المنصة: "فيسبوك", الهدف: "طلبات", النبرة: "رسمي" },
+    ],
+    tags: ["تسويق", "محتوى", "مجاني", "إعلانات", "سوشال ميديا"],
+  },
+
+  // Index 5: Text/Business — مستشار خطة عمل شاملة
+  5: {
+    title: "مستشار خطة عمل شاملة",
+    titleEn: "Comprehensive Business Plan Advisor",
+    description: "برومبت مجاني لإنشاء خطة عمل احترافية شاملة — مثالي للمشاريع الناشئة ورواد الأعمال",
+    descriptionEn: "Free prompt for creating comprehensive business plans — ideal for startups and entrepreneurs",
+    fullContent: `أنت مستشار أعمال خبير متخصص في إعداد خطط عمل للمشاريع في المنطقة العربية. ساعدني في إنشاء خطة عمل شاملة.
+
+## المدخلات المطلوبة:
+- **اسم المشروع**: [اسم المشروع]
+- **نوع المشروع**: [تجارة إلكترونية / خدمات / SaaS / مطعم / تطبيق / أخرى]
+- **الميزانية المتاحة**: [المبلغ بالعملة]
+- **الموقع الجغرافي**: [المدينة/البلد]
+- **المرحلة**: [فكرة / تأسيس / نمو / توسع]
+
+## أقسام خطة العمل:
+
+### 1. الملخص التنفيذي
+- وصف المشروع في 3 جمل
+- القيمة المقترحة (Value Proposition)
+- الأهداف لأول 12 شهر
+
+### 2. تحليل السوق
+- حجم السوق المستهدف
+- تحليل SWOT
+- الشريحة المستهدفة (Demographics + Psychographics)
+
+### 3. نموذج الإيرادات
+- مصادر الدخل الرئيسية والثانوية
+- تسعير المنتج/الخدمة مع المبررات
+- توقعات الإيرادات (3 سنوات)
+
+### 4. الخطة التشغيلية
+- الموارد البشرية المطلوبة
+- التكنولوجيا والأدوات
+- الموردون والشراكات
+
+### 5. خطة التسويق
+- القنوات التسويقية الأنسب
+- ميزانية التسويق المقترحة
+- مؤشرات الأداء (KPIs)
+
+### 6. التحليل المالي
+- التكاليف الثابتة والمتغيرة
+- نقطة التعادل (Break-even)
+- العائد المتوقع على الاستثمار
+
+استخدم أرقام واقعية للسوق العربي. قدم جداول وقوائم منظمة.`,
+    instructions: `1. انسخ البرومبت إلى ChatGPT (GPT-4 مفضّل) أو Claude
+2. املأ المدخلات الخمسة بمعلومات مشروعك
+3. ستحصل على خطة عمل من 6 أقسام
+4. لتفصيل أكثر في قسم معين، اطلب "فصّل القسم 3 أكثر"
+5. لتعديل التوقعات المالية، حدد أرقامك الفعلية`,
+    exampleOutputs: [
+      `## الملخص التنفيذي — متجر "طيبات" للحلويات العربية أونلاين
+
+**المشروع**: متجر إلكتروني متخصص في الحلويات العربية الطازجة مع توصيل يومي في الرياض.
+
+**القيمة المقترحة**: حلويات عربية أصيلة بجودة المحلات التقليدية تصلك طازجة لبابك في نفس اليوم.
+
+**أهداف السنة الأولى**:
+- 500 طلب شهري بنهاية الشهر 6
+- إيرادات 180,000 ريال في السنة الأولى
+- معدل إعادة طلب 40%+
+
+## تحليل السوق
+- حجم سوق الحلويات في السعودية: 8.2 مليار ريال (2024)
+- نمو التجارة الإلكترونية للأغذية: 25% سنوياً
+- الشريحة: نساء 25-45، دخل متوسط-مرتفع، يبحثن عن الجودة والراحة`,
+      `## التحليل المالي — تطبيق "وصّلني" للتوصيل
+
+| البند | شهري | سنوي |
+|-------|-------|------|
+| تكاليف التطوير | 15,000 | 180,000 |
+| التسويق | 8,000 | 96,000 |
+| الرواتب (3 أشخاص) | 25,000 | 300,000 |
+| تكاليف تشغيلية | 5,000 | 60,000 |
+| **الإجمالي** | **53,000** | **636,000** |
+
+نقطة التعادل: الشهر 14 (عند 2,000 طلب/شهر بمتوسط 45 ريال)`,
+    ],
+    examplePrompts: [
+      { اسم_المشروع: "متجر طيبات", نوع_المشروع: "تجارة إلكترونية", الميزانية: "50,000 ريال", الموقع: "الرياض", المرحلة: "تأسيس" },
+      { اسم_المشروع: "أكاديمية نور", نوع_المشروع: "خدمات تعليمية", الميزانية: "30,000 درهم", الموقع: "دبي", المرحلة: "فكرة" },
+    ],
+    tags: ["أعمال", "خطة عمل", "مجاني", "ريادة", "مشاريع"],
+  },
+
+  // Index 8: Text/Marketing — كاتب منشورات وسائل التواصل
+  8: {
+    title: "كاتب منشورات وسائل التواصل",
+    titleEn: "Social Media Post Writer",
+    description: "برومبت مجاني لكتابة منشورات جذابة لجميع منصات وسائل التواصل — جاهز للاستخدام مباشرة",
+    descriptionEn: "Free prompt for writing engaging social media posts for all platforms — ready to use immediately",
+    fullContent: `أنت خبير سوشال ميديا محترف. اكتب لي منشورات جذابة حسب المعطيات التالية.
+
+## المدخلات:
+- **المنصة**: [إنستغرام / تويتر / لينكدإن / تيك توك / فيسبوك]
+- **الموضوع**: [موضوع المنشور]
+- **الهدف**: [تفاعل / مبيعات / توعية / ترفيه / تعليم]
+- **النبرة**: [مرح / جدي / ملهم / تعليمي / ساخر]
+
+## قواعد لكل منصة:
+
+### إنستغرام:
+- كابشن 150-250 كلمة
+- ابدأ بسطر أول قوي (يظهر قبل "المزيد")
+- أضف 20-25 هاشتاغ (مزيج عربي + إنجليزي)
+- اقترح فكرة تصميم الصورة/الريل
+
+### تويتر:
+- أقل من 280 حرف
+- ثريد من 5-7 تغريدات إذا طُلب
+- أضف استطلاع رأي إذا مناسب
+
+### لينكدإن:
+- 200-400 كلمة
+- نبرة مهنية مع لمسة شخصية
+- ابدأ بإحصائية أو سؤال مثير
+- اختم بسؤال يشجع التعليقات
+
+### تيك توك:
+- سكريبت فيديو 30-60 ثانية
+- خطاف أول 3 ثوان
+- CTA واضح
+
+اكتب 3 نسخ مختلفة لأختار الأفضل.`,
+    instructions: `1. اختر المنصة المناسبة من القائمة
+2. حدد الموضوع بدقة (كلما كنت أدق، كانت النتيجة أفضل)
+3. اختر الهدف المناسب لاستراتيجيتك
+4. البرومبت يعطيك 3 نسخ — اختر الأنسب أو ادمج بينها
+5. عدّل الهاشتاغات حسب مجالك ومنطقتك`,
+    exampleOutputs: [
+      `📸 منشور إنستغرام — موضوع: نصائح إنتاجية
+
+أكبر كذبة قلتها لنفسي: "بكرا أبدأ" 😅
+
+لأن "بكرا" ما جاء أبداً... حتى غيّرت شي واحد بسيط:
+
+بدل ما أخطط لكل شي مرة وحدة، بدأت بـ 3 مهام فقط كل يوم.
+
+والنتيجة؟ في شهر واحد:
+✅ أنجزت أكثر مما أنجزته في 3 شهور
+✅ التوتر نقص بشكل ملحوظ
+✅ صرت أنام مرتاح الضمير
+
+القاعدة الذهبية: لا تسأل "إيش أسوي؟"
+اسأل "إيش أهم 3 أشياء اليوم؟"
+
+جرّب أسبوع وقولي النتيجة 👇
+
+#إنتاجية #تطوير_ذات #نجاح #productivity #إنجاز`,
+      `🐦 ثريد تويتر — موضوع: التسويق بالمحتوى
+
+التسويق بالمحتوى مو "انشر وادعي" 🧵
+
+1/ 73% من الشركات الناجحة تستخدم التسويق بالمحتوى. لكن 90% يسوّونه غلط. خلني أقولك ليش 👇
+
+2/ الغلطة الأولى: تكتب عن نفسك بدل ما تكتب عن مشكلة العميل.
+القاعدة: 80% قيمة، 20% بيع.
+
+3/ الغلطة الثانية: تنشر بدون خطة.
+الحل: تقويم محتوى شهري بـ 4 أعمدة (تعليم، ترفيه، إلهام، بيع).`,
+    ],
+    examplePrompts: [
+      { المنصة: "إنستغرام", الموضوع: "إطلاق منتج جديد", الهدف: "مبيعات", النبرة: "حماسي" },
+      { المنصة: "لينكدإن", الموضوع: "دروس من فشل مشروعي الأول", الهدف: "تفاعل", النبرة: "ملهم" },
+      { المنصة: "تويتر", الموضوع: "5 أدوات AI لازم تعرفها", الهدف: "توعية", النبرة: "تعليمي" },
+    ],
+    tags: ["سوشال ميديا", "منشورات", "مجاني", "تواصل", "محتوى"],
+  },
+
+  // Index 12: Text/Education — مولد خطط دروس تعليمية
+  12: {
+    title: "مولد خطط دروس تعليمية",
+    titleEn: "Lesson Plan Generator",
+    description: "برومبت مجاني لإنشاء خطط دروس تفاعلية ومفصّلة — مصمم للمعلمين والمدربين العرب",
+    descriptionEn: "Free prompt for creating interactive detailed lesson plans — designed for Arabic teachers and trainers",
+    fullContent: `أنت معلم خبير في التصميم التعليمي. أنشئ خطة درس تفاعلية ومفصّلة.
+
+## المدخلات:
+- **المادة**: [الرياضيات / العلوم / اللغة العربية / اللغة الإنجليزية / أخرى]
+- **الموضوع**: [عنوان الدرس]
+- **الصف**: [المرحلة الدراسية]
+- **المدة**: [45 دقيقة / 90 دقيقة]
+- **عدد الطلاب**: [تقريباً]
+
+## هيكل خطة الدرس:
+
+### 1. معلومات أساسية (3 دقائق)
+- الأهداف التعليمية (3-5 أهداف قابلة للقياس بصيغة SMART)
+- المتطلبات السابقة
+- الوسائل والمواد المطلوبة
+
+### 2. التمهيد والتحفيز (7 دقائق)
+- نشاط افتتاحي يثير الفضول
+- ربط الموضوع بحياة الطالب اليومية
+- سؤال محفّز للتفكير
+
+### 3. العرض والشرح (15 دقيقة)
+- شرح المفهوم الرئيسي بطريقتين مختلفتين
+- أمثلة تفاعلية (3 أمثلة متدرجة الصعوبة)
+- فحص فهم سريع (أسئلة شفهية)
+
+### 4. النشاط التطبيقي (15 دقيقة)
+- نشاط فردي + نشاط جماعي
+- ورقة عمل أو نشاط رقمي
+- تمايز: مهام للمتفوقين + دعم للمحتاجين
+
+### 5. التقييم والختام (5 دقائق)
+- تقييم تكويني (exit ticket)
+- ملخص بصري للدرس
+- واجب منزلي مرتبط
+
+قدم الخطة في جدول منظم مع توقيتات دقيقة.`,
+    instructions: `1. حدد المادة والصف والموضوع بدقة
+2. اختر مدة الحصة (45 أو 90 دقيقة)
+3. البرومبت ينتج خطة كاملة مع أنشطة وتقييم
+4. لإنشاء ورقة عمل، اطلب "أنشئ ورقة عمل للنشاط 4"
+5. لتعديل المستوى، اطلب "اجعل الأنشطة أسهل/أصعب"`,
+    exampleOutputs: [
+      `## خطة درس: الكسور للصف الرابع (45 دقيقة)
+
+### الأهداف:
+1. يحدد الطالب الكسور البسيطة (½, ⅓, ¼) ✅
+2. يقارن بين كسرين باستخدام الرسم ✅
+3. يحل 3 مسائل تطبيقية على الكسور ✅
+
+### التمهيد (7 دقائق):
+🍕 "لو عندك بيتزا وتبي تقسمها بينك وبين 3 أصدقاء بالتساوي، كل واحد ياخذ كم؟"
+- وزّع أوراق دائرية واطلب من الطلاب طيّها
+
+### الشرح (15 دقيقة):
+1. عرض الكسور بالصور على السبورة
+2. لعبة "أكبر أو أصغر" بين كسرين
+3. فحص سريع: ارفع الإبهام لأعلى (فهمت) أو لأسفل
+
+### النشاط (15 دقيقة):
+- **فردي**: ورقة عمل "لوّن الكسر الصحيح" (10 أسئلة)
+- **جماعي**: لعبة دومينو الكسور (مجموعات من 4)
+- **للمتفوقين**: مسائل كلامية إضافية`,
+    ],
+    examplePrompts: [
+      { المادة: "الرياضيات", الموضوع: "الكسور", الصف: "الرابع ابتدائي", المدة: "45 دقيقة", عدد_الطلاب: "25" },
+      { المادة: "العلوم", الموضوع: "دورة المياه في الطبيعة", الصف: "الخامس ابتدائي", المدة: "90 دقيقة", عدد_الطلاب: "30" },
+    ],
+    tags: ["تعليم", "دروس", "مجاني", "خطط", "معلمين"],
+  },
+
+  // Index 21: Image/Design — مصمم شعارات احترافية
+  21: {
+    title: "مصمم شعارات احترافية",
+    titleEn: "Professional Logo Designer",
+    description: "برومبت مجاني لتوليد شعارات احترافية بالذكاء الاصطناعي — مثالي للمشاريع الناشئة",
+    descriptionEn: "Free prompt for generating professional logos with AI — ideal for startups",
+    fullContent: `Professional minimalist logo design for [BRAND_NAME], a [BUSINESS_TYPE] brand.
+
+## Core Parameters:
+- **Brand Name**: [BRAND_NAME]
+- **Industry**: [BUSINESS_TYPE]
+- **Style**: [minimal / geometric / wordmark / mascot / abstract / emblem]
+- **Color Scheme**: [COLOR_1] and [COLOR_2], with white background
+- **Mood**: [modern / luxury / playful / corporate / organic]
+
+## Prompt Template:
+A clean, professional [STYLE] logo for "[BRAND_NAME]", [BUSINESS_TYPE] company. [MOOD] aesthetic, using [COLOR_1] and [COLOR_2] as primary colors. The logo should be simple enough to work at small sizes, with clear negative space. White background, centered composition, vector-style rendering. No gradients, no shadows, flat design. --ar 1:1 --v 6 --style raw
+
+## Variations to Try:
+1. **Icon Only**: Simple geometric icon representing [BUSINESS_TYPE]
+2. **Wordmark**: Stylized typography of [BRAND_NAME] with a subtle icon element
+3. **Combination**: Icon + wordmark stacked or side by side
+4. **Arabic**: Incorporate Arabic calligraphy of the brand name with modern twist`,
+    instructions: `1. استبدل [BRAND_NAME] باسم علامتك التجارية
+2. حدد [BUSINESS_TYPE] (مطعم، تقنية، أزياء، الخ)
+3. اختر أسلوب الشعار من القائمة
+4. حدد لونين أساسيين
+5. استخدم في Midjourney أو DALL-E 3
+6. جرّب الـ 4 تنويعات للمقارنة
+7. طبّق الشعار الأفضل على موك أب (بطاقة، موقع، تغليف)`,
+    exampleOutputs: [
+      `Prompt: A clean, professional minimal logo for "نبع", a water delivery company. Modern aesthetic, using deep blue (#1E3A5F) and turquoise (#4ECDC4) as primary colors. Abstract water drop icon with geometric facets. White background, centered, vector-style. --ar 1:1 --v 6 --style raw
+
+Result: شعار أنيق بأيقونة قطرة ماء هندسية بتدرجات الأزرق، مع خط عربي عصري لكلمة "نبع"`,
+      `Prompt: A clean, professional wordmark logo for "Kalima", an Arabic publishing house. Luxury aesthetic, using gold (#C5A572) and dark charcoal (#2D2D2D). Elegant Arabic and English typography, the Arabic text كلمة should be the dominant element with a subtle book/page motif. --ar 1:1 --v 6
+
+Result: تصميم أنيق يدمج الخط العربي الكلاسيكي مع لمسة عصرية، حيث تتحول نقطة الكاف إلى شكل كتاب مفتوح`,
+      `Prompt: A geometric emblem logo for "صقر", a Saudi tech startup. Corporate modern style, using emerald green (#006B3F) and silver (#C0C0C0). Stylized falcon silhouette within a hexagonal frame, representing technology and Arabic heritage. Flat design, no gradients. --ar 1:1 --v 6 --style raw`,
+    ],
+    examplePrompts: [
+      { BRAND_NAME: "نبع", BUSINESS_TYPE: "توصيل مياه", STYLE: "minimal", COLOR_1: "أزرق غامق", COLOR_2: "فيروزي", MOOD: "modern" },
+      { BRAND_NAME: "كلمة", BUSINESS_TYPE: "دار نشر", STYLE: "wordmark", COLOR_1: "ذهبي", COLOR_2: "رمادي غامق", MOOD: "luxury" },
+      { BRAND_NAME: "صقر", BUSINESS_TYPE: "شركة تقنية", STYLE: "emblem", COLOR_1: "أخضر زمردي", COLOR_2: "فضي", MOOD: "corporate" },
+    ],
+    tags: ["شعارات", "تصميم", "مجاني", "لوجو", "هوية بصرية"],
+  },
+
+  // Index 23: Image/Design — مصمم أغلفة كتب رقمية
+  23: {
+    title: "مصمم أغلفة كتب رقمية",
+    titleEn: "Digital Book Cover Designer",
+    description: "برومبت مجاني لتصميم أغلفة كتب رقمية جذابة — مثالي للكتّاب المستقلين والناشرين",
+    descriptionEn: "Free prompt for designing attractive digital book covers — ideal for indie authors and publishers",
+    fullContent: `Professional book cover design for "[BOOK_TITLE]" by [AUTHOR].
+
+## Parameters:
+- **Title**: [BOOK_TITLE]
+- **Author**: [AUTHOR]
+- **Genre**: [self-help / novel / business / sci-fi / cooking / children / Islamic / technical]
+- **Mood**: [mysterious / inspiring / elegant / bold / warm / futuristic]
+- **Color Palette**: [dominant_color] with [accent_color]
+- **Language**: [Arabic / English / Bilingual]
+
+## Prompt Template:
+A professional book cover for "[BOOK_TITLE]". [GENRE] genre, [MOOD] atmosphere. Dominant [DOMINANT_COLOR] palette with [ACCENT_COLOR] accents. [VISUAL_ELEMENT] as the central visual element. Clean typography area at the top for the title and bottom for the author name. High-quality digital illustration, print-ready, 6x9 aspect ratio. --ar 2:3 --v 6
+
+## Genre-Specific Tips:
+- **أعمال/تطوير ذات**: خلفية نظيفة + أيقونة رمزية + خط عربي بولد
+- **رواية**: مشهد سينمائي + إضاءة درامية + عنوان بخط مميز
+- **أطفال**: ألوان زاهية + شخصية كرتونية + خط مرح
+- **إسلامي**: زخارف هندسية + ألوان هادئة + خط ثلث أو نسخ`,
+    instructions: `1. حدد عنوان الكتاب والنوع الأدبي
+2. اختر المزاج والألوان المناسبة
+3. صِف العنصر البصري الرئيسي
+4. استخدم في Midjourney (أفضل للأغلفة) أو DALL-E
+5. أضف النص بعد التوليد باستخدام Canva أو Photoshop
+6. الأبعاد المثالية: 2:3 للكتب الرقمية، 1:1.6 للمطبوعة`,
+    exampleOutputs: [
+      `Prompt: A professional book cover for "رحلة إلى القمة". Self-help genre, inspiring atmosphere. Dominant deep navy (#1B2838) with gold (#D4AF37) accents. A silhouette of a person standing on a mountain peak at sunrise as the central element. Dramatic lighting, motivational mood. --ar 2:3 --v 6
+
+Result: غلاف ملهم بصورة ظلية لشخص على قمة جبل مع شروق ذهبي، عنوان بخط عربي بولد`,
+      `Prompt: A professional book cover for "حكايات من الأندلس". Historical novel, mysterious atmosphere. Rich burgundy (#722F37) with aged gold accents. Moorish architectural arches with intricate Islamic geometric patterns, a glimpse of a sunset garden through the archway. Cinematic lighting. --ar 2:3 --v 6
+
+Result: غلاف روائي بأجواء أندلسية ساحرة، أقواس عربية مع حديقة خلفية وإضاءة غروب`,
+    ],
+    examplePrompts: [
+      { BOOK_TITLE: "رحلة إلى القمة", GENRE: "تطوير ذات", MOOD: "inspiring", DOMINANT_COLOR: "كحلي", ACCENT_COLOR: "ذهبي" },
+      { BOOK_TITLE: "حكايات من الأندلس", GENRE: "رواية تاريخية", MOOD: "mysterious", DOMINANT_COLOR: "عنابي", ACCENT_COLOR: "ذهبي عتيق" },
+    ],
+    tags: ["أغلفة كتب", "تصميم", "مجاني", "نشر", "رقمي"],
+  },
+
+  // Index 34: Image/Design — مولد صور بورتريه فني
+  34: {
+    title: "مولد صور بورتريه فني",
+    titleEn: "Artistic Portrait Generator",
+    description: "برومبت مجاني لتوليد صور بورتريه فنية بأساليب متعددة — زيتي، مائي، رقمي",
+    descriptionEn: "Free prompt for generating artistic portraits in multiple styles — oil, watercolor, digital",
+    fullContent: `Generate an artistic portrait in [STYLE] style.
+
+## Parameters:
+- **Subject**: [DESCRIPTION — gender, age range, expression, clothing]
+- **Style**: [oil painting / watercolor / digital art / pencil sketch / pop art / anime / renaissance]
+- **Background**: [BACKGROUND — solid color, gradient, scene, abstract]
+- **Lighting**: [dramatic / soft / golden hour / studio / neon / natural]
+- **Color Mood**: [warm / cool / monochrome / vibrant / muted / pastel]
+- **Composition**: [close-up / bust / half-body / full-body]
+
+## Prompt Template:
+A stunning [STYLE] portrait of [SUBJECT]. [LIGHTING] lighting, [COLOR_MOOD] color palette. [BACKGROUND] background. [COMPOSITION] composition. Highly detailed, professional quality, artistic masterpiece. --ar [ASPECT] --v 6
+
+## Style-Specific Additions:
+- **Oil Painting**: visible brushstrokes, rich textures, classical composition, museum quality
+- **Watercolor**: soft bleeding edges, white paper showing through, delicate color washes, ethereal mood
+- **Digital Art**: clean lines, vibrant colors, modern aesthetic, trending on ArtStation
+- **Pencil Sketch**: detailed crosshatching, graphite texture, dramatic shadows, fine detail
+- **Pop Art**: bold outlines, halftone dots, bright primary colors, Warhol-inspired
+- **Arabic Calligraphy Fusion**: portrait integrated with Arabic calligraphic elements`,
+    instructions: `1. صِف الشخصية بدقة (العمر، التعبير، الملابس)
+2. اختر الأسلوب الفني المناسب
+3. حدد الإضاءة والألوان
+4. استخدم في Midjourney للأفضل (أو Stable Diffusion / DALL-E)
+5. لنتائج أفضل: أضف "masterpiece, best quality" للأنماط الرقمية
+6. جرّب نفس الوصف بأساليب مختلفة للمقارنة`,
+    exampleOutputs: [
+      `Prompt: A stunning oil painting portrait of an elderly Arab man with a white keffiyeh, deep wrinkles telling stories of wisdom, warm brown eyes, gentle smile. Golden hour lighting, warm earthy palette. Desert landscape fading into the background. Bust composition. Visible brushstrokes, museum quality. --ar 3:4 --v 6
+
+Result: بورتريه زيتي مذهل لرجل عربي مسن بالكوفية البيضاء، تفاصيل دقيقة في التجاعيد والعينين`,
+      `Prompt: A stunning watercolor portrait of a young Arab woman reading a book in a garden, wearing a flowing hijab in teal. Soft natural lighting, cool pastel palette. Blooming garden with jasmine flowers in background. Half-body composition. Soft bleeding edges, ethereal mood. --ar 3:4 --v 6
+
+Result: بورتريه مائي رقيق لشابة تقرأ في حديقة، ألوان هادئة مع تفاصيل الياسمين`,
+    ],
+    examplePrompts: [
+      { SUBJECT: "رجل عربي مسن بالكوفية", STYLE: "oil painting", LIGHTING: "golden hour", COLOR_MOOD: "warm", BACKGROUND: "صحراء", COMPOSITION: "bust" },
+      { SUBJECT: "شابة بحجاب فيروزي تقرأ كتاب", STYLE: "watercolor", LIGHTING: "soft", COLOR_MOOD: "pastel", BACKGROUND: "حديقة ياسمين", COMPOSITION: "half-body" },
+    ],
+    tags: ["بورتريه", "فن", "مجاني", "رسم", "صور فنية"],
+  },
+
+  // Index 42: Code/GPT — مصحح أخطاء البرمجة الذكي
+  42: {
+    title: "مصحح أخطاء البرمجة الذكي",
+    titleEn: "Smart Code Debugger",
+    description: "برومبت مجاني لتشخيص وإصلاح أخطاء البرمجة — يدعم جميع اللغات الشائعة",
+    descriptionEn: "Free prompt for diagnosing and fixing programming bugs — supports all popular languages",
+    fullContent: `أنت مصحح أخطاء برمجية خبير. حلل الكود التالي وأصلح جميع المشاكل.
+
+## المدخلات:
+- **اللغة**: [JavaScript / Python / TypeScript / Java / C++ / PHP / أخرى]
+- **الكود**: [الصق الكود هنا]
+- **الخطأ**: [رسالة الخطأ أو وصف المشكلة]
+- **السلوك المتوقع**: [ماذا يفترض أن يفعل الكود؟]
+
+## خطوات التحليل:
+1. **التشخيص**: حدد نوع الخطأ (syntax / runtime / logic / performance)
+2. **السبب الجذري**: اشرح لماذا يحدث الخطأ بالتفصيل
+3. **الإصلاح**: قدم الكود المُصحّح كاملاً مع تعليقات
+4. **الشرح**: اشرح كل تعديل قمت به ولماذا
+5. **الوقاية**: اقترح أفضل الممارسات لتجنب هذا الخطأ مستقبلاً
+6. **اختبار**: اكتب 2-3 حالات اختبار للتحقق من الإصلاح
+
+## قواعد الإصلاح:
+- لا تغير بنية الكود الأصلية إلا إذا كانت سبب المشكلة
+- حافظ على أسماء المتغيرات الأصلية
+- أضف تعليقات بالعربية للتوضيح
+- إذا وجدت مشاكل إضافية (غير المطلوب إصلاحها)، أشر إليها بدون تعديلها
+- استخدم أحدث الممارسات للغة المحددة`,
+    instructions: `1. الصق الكود الذي يحتوي على المشكلة
+2. انسخ رسالة الخطأ كاملة (أو صِف المشكلة)
+3. اشرح ما يفترض أن يفعله الكود
+4. البرومبت يعطيك تحليل كامل + كود مُصحّح + اختبارات
+5. لمشاكل الأداء: أضف "حلل الأداء أيضاً"`,
+    exampleOutputs: [
+      `## التشخيص — خطأ في React useEffect
+
+**الكود الأصلي:**
+\`\`\`jsx
+useEffect(() => {
+  const data = await fetch('/api/data');
+  setData(data.json());
+}, []);
+\`\`\`
+
+**نوع الخطأ**: Syntax + Runtime Error
+**السبب**: useEffect callback لا يمكن أن يكون async مباشرة، و \`data.json()\` يرجع Promise.
+
+**الإصلاح:**
+\`\`\`jsx
+useEffect(() => {
+  // نستخدم دالة async داخلية بدل جعل callback نفسه async
+  async function fetchData() {
+    try {
+      const response = await fetch('/api/data');
+      const json = await response.json(); // await مطلوب هنا
+      setData(json);
+    } catch (error) {
+      console.error('فشل تحميل البيانات:', error);
+    }
+  }
+  fetchData();
+}, []);
+\`\`\`
+
+**التعديلات:**
+1. ✅ إنشاء دالة async داخلية (useEffect لا يقبل async مباشرة)
+2. ✅ إضافة await قبل response.json()
+3. ✅ إضافة try-catch للتعامل مع أخطاء الشبكة`,
+      `## التشخيص — خطأ في Python
+
+**الكود الأصلي:**
+\`\`\`python
+def get_average(numbers):
+    total = sum(numbers)
+    return total / len(numbers)
+
+result = get_average([])
+\`\`\`
+
+**نوع الخطأ**: Runtime Error (ZeroDivisionError)
+**السبب**: عند تمرير قائمة فارغة، \`len(numbers)\` يساوي 0
+
+**الإصلاح:**
+\`\`\`python
+def get_average(numbers):
+    if not numbers:  # التحقق من القائمة الفارغة
+        return 0
+    total = sum(numbers)
+    return total / len(numbers)
+\`\`\``,
+    ],
+    examplePrompts: [
+      { اللغة: "JavaScript/React", الخطأ: "useEffect async error", السلوك_المتوقع: "تحميل بيانات من API" },
+      { اللغة: "Python", الخطأ: "ZeroDivisionError", السلوك_المتوقع: "حساب المتوسط" },
+    ],
+    tags: ["برمجة", "تصحيح", "مجاني", "أخطاء", "تطوير"],
+  },
+
+  // Index 46: Code/GPT — مولد اختبارات وحدة تلقائية
+  46: {
+    title: "مولد اختبارات وحدة تلقائية",
+    titleEn: "Unit Test Generator",
+    description: "برومبت مجاني لكتابة اختبارات وحدة شاملة — يدعم Jest و Pytest و أكثر",
+    descriptionEn: "Free prompt for writing comprehensive unit tests — supports Jest, Pytest, and more",
+    fullContent: `أنت مهندس ضمان جودة محترف. اكتب اختبارات وحدة شاملة للكود التالي.
+
+## المدخلات:
+- **اللغة + Framework**: [Jest + TypeScript / Pytest + Python / JUnit + Java / أخرى]
+- **الكود المراد اختباره**: [الصق الكود]
+- **نوع الوحدة**: [دالة / كلاس / API endpoint / React component]
+- **مستوى التغطية**: [أساسي (happy path) / شامل / متقدم (edge cases + mocks)]
+
+## بنية الاختبارات:
+
+### 1. Happy Path Tests (المسار الأساسي)
+- اختبار السلوك الطبيعي مع مدخلات صحيحة
+- التحقق من القيم المُرجعة المتوقعة
+
+### 2. Edge Cases (الحالات الحدية)
+- مدخلات فارغة / null / undefined
+- قيم حدية (0, -1, MAX_INT, أول/آخر عنصر)
+- مدخلات بأطوال كبيرة جداً
+
+### 3. Error Cases (حالات الخطأ)
+- مدخلات غير صالحة
+- حالات الاستثناء المتوقعة
+- التعامل مع الأخطاء غير المتوقعة
+
+### 4. Integration Points (نقاط التكامل)
+- Mock للتبعيات الخارجية (API, DB, filesystem)
+- التحقق من الآثار الجانبية (side effects)
+- اختبار الحالات المتزامنة (async)
+
+## قواعد:
+- كل اختبار يختبر شيء واحد فقط
+- أسماء اختبارات واضحة: "should [expected] when [condition]"
+- استخدم AAA pattern: Arrange, Act, Assert
+- لا تكرر الـ setup — استخدم beforeEach/fixtures`,
+    instructions: `1. الصق الكود المراد اختباره
+2. حدد اللغة وإطار الاختبار
+3. اختر مستوى التغطية
+4. ستحصل على ملف اختبارات جاهز للتشغيل
+5. لتغطية أعلى: اطلب "أضف اختبارات performance و stress"
+6. لمكونات React: سيستخدم Testing Library تلقائياً`,
+    exampleOutputs: [
+      `\`\`\`typescript
+// calculateDiscount.test.ts
+import { calculateDiscount } from './calculateDiscount';
+
+describe('calculateDiscount', () => {
+  // Happy Path
+  describe('حالات النجاح', () => {
+    it('should apply 10% discount for orders over 100', () => {
+      expect(calculateDiscount(150)).toBe(135);
+    });
+
+    it('should apply 20% discount for orders over 500', () => {
+      expect(calculateDiscount(600)).toBe(480);
+    });
+
+    it('should not apply discount for orders under 100', () => {
+      expect(calculateDiscount(50)).toBe(50);
+    });
+  });
+
+  // Edge Cases
+  describe('حالات حدية', () => {
+    it('should handle exact threshold of 100', () => {
+      expect(calculateDiscount(100)).toBe(90);
+    });
+
+    it('should handle zero amount', () => {
+      expect(calculateDiscount(0)).toBe(0);
+    });
+
+    it('should handle decimal amounts', () => {
+      expect(calculateDiscount(150.50)).toBeCloseTo(135.45);
+    });
+  });
+
+  // Error Cases
+  describe('حالات الخطأ', () => {
+    it('should throw for negative amounts', () => {
+      expect(() => calculateDiscount(-10)).toThrow('المبلغ لا يمكن أن يكون سالباً');
+    });
+  });
+});
+\`\`\``,
+    ],
+    examplePrompts: [
+      { اللغة: "Jest + TypeScript", نوع_الوحدة: "دالة calculateDiscount", مستوى_التغطية: "شامل" },
+      { اللغة: "Pytest + Python", نوع_الوحدة: "كلاس UserService", مستوى_التغطية: "متقدم" },
+    ],
+    tags: ["اختبارات", "برمجة", "مجاني", "Jest", "TDD"],
+  },
+
+  // Index 60: Marketing — مخطط حملات إعلانية متكاملة
+  60: {
+    title: "مخطط حملات إعلانية متكاملة",
+    titleEn: "Integrated Ad Campaign Planner",
+    description: "برومبت مجاني لتخطيط حملات إعلانية متكاملة عبر جميع المنصات — مع ميزانية وجدول نشر",
+    descriptionEn: "Free prompt for planning integrated ad campaigns across all platforms — with budget and schedule",
+    fullContent: `أنت مدير حملات إعلانية خبير. خطط حملة إعلانية متكاملة.
+
+## المدخلات:
+- **المنتج/الخدمة**: [ما الذي تروّج له؟]
+- **الميزانية الإجمالية**: [المبلغ بالعملة]
+- **المدة**: [أسبوع / شهر / 3 أشهر]
+- **الهدف الرئيسي**: [مبيعات / تسجيلات / تحميلات / زيارات / وعي]
+- **الجمهور**: [وصف مختصر للجمهور المستهدف]
+- **المنطقة**: [السعودية / الخليج / العالم العربي]
+
+## هيكل الخطة:
+
+### 1. تحليل الجمهور المستهدف
+- الشريحة الأساسية + الثانوية
+- الاهتمامات والسلوكيات
+- نقاط الألم (Pain Points)
+- الأوقات الأنشط على كل منصة
+
+### 2. توزيع الميزانية
+| المنصة | النسبة | المبلغ | الهدف |
+|--------|--------|--------|-------|
+| فيسبوك/إنستغرام | X% | | |
+| جوجل | X% | | |
+| تيك توك | X% | | |
+| سناب شات | X% | | |
+| تويتر | X% | | |
+
+### 3. الرسائل الإعلانية
+- 3 عناوين رئيسية (headlines)
+- 2 نصوص إعلانية لكل منصة
+- 3 دعوات للإجراء (CTAs)
+
+### 4. تقويم النشر
+- جدول يومي/أسبوعي للمحتوى
+- مواعيد النشر المثلى لكل منصة
+- خطة A/B Testing
+
+### 5. مؤشرات الأداء (KPIs)
+- CPM / CPC / CPA المتوقع
+- معدل التحويل المستهدف
+- ROAS المتوقع (العائد على الإنفاق الإعلاني)
+
+قدم الخطة بجداول منظمة وأرقام واقعية للسوق العربي.`,
+    instructions: `1. حدد المنتج والميزانية بدقة
+2. اختر الهدف الرئيسي (لا تختر أكثر من هدف)
+3. صِف جمهورك بأكبر قدر من التفصيل
+4. البرومبت ينتج خطة كاملة مع توزيع ميزانية وتقويم
+5. لتعديل منصة معينة: "فصّل خطة إنستغرام أكثر"
+6. لإضافة محتوى: "اكتب 5 نسخ إعلانية لفيسبوك"`,
+    exampleOutputs: [
+      `## خطة حملة — تطبيق توصيل طعام "وجبتي"
+**الميزانية**: 15,000 ريال / شهر | **المنطقة**: الرياض وجدة
+
+### توزيع الميزانية:
+| المنصة | النسبة | المبلغ | الهدف |
+|--------|--------|--------|-------|
+| إنستغرام | 35% | 5,250 | تحميل التطبيق |
+| سناب شات | 25% | 3,750 | وعي (Story Ads) |
+| جوجل (بحث) | 20% | 3,000 | تحويل مباشر |
+| تيك توك | 15% | 2,250 | انتشار فيروسي |
+| تويتر | 5% | 750 | خدمة عملاء |
+
+### الرسائل الإعلانية:
+1. "جوعان؟ طلبك يوصلك في 30 دقيقة أو مجاناً 🚀"
+2. "أكثر من 500 مطعم في تطبيق واحد — حمّل وجبتي الآن"
+3. "أول طلب عليك 50% خصم — كود: FIRST50"
+
+### KPIs المتوقعة:
+- CPC: 1.5-2.5 ريال | CPI: 8-12 ريال
+- معدل التحويل: 3-5% | ROAS: 2.5x`,
+    ],
+    examplePrompts: [
+      { "المنتج/الخدمة": "تطبيق توصيل طعام", الميزانية: "15,000 ريال/شهر", الهدف: "تحميلات", الجمهور: "شباب 18-35 في المدن الكبرى", المنطقة: "السعودية" },
+      { "المنتج/الخدمة": "دورة تصميم UX", الميزانية: "5,000 درهم/شهر", الهدف: "تسجيلات", الجمهور: "مصممون ومطورون 22-40", المنطقة: "الخليج" },
+    ],
+    tags: ["حملات", "إعلانات", "مجاني", "تخطيط", "تسويق رقمي"],
+  },
+};
+
 // ─── Seed Function ────────────────────────────────────────────────
 
 async function seed() {
@@ -339,6 +1101,23 @@ async function seed() {
     };
   });
 
+  // Apply free prompt overrides (10 free prompts with rich content)
+  for (const [indexStr, override] of Object.entries(FREE_PROMPT_OVERRIDES)) {
+    const idx = Number(indexStr);
+    if (idx < promptValues.length) {
+      promptValues[idx].price = 0;
+      promptValues[idx].title = override.title;
+      promptValues[idx].titleEn = override.titleEn;
+      promptValues[idx].description = override.description;
+      promptValues[idx].descriptionEn = override.descriptionEn;
+      promptValues[idx].fullContent = override.fullContent;
+      promptValues[idx].instructions = override.instructions;
+      promptValues[idx].exampleOutputs = override.exampleOutputs;
+      promptValues[idx].examplePrompts = override.examplePrompts;
+      promptValues[idx].tags = override.tags;
+    }
+  }
+
   // Insert in batches of 25 to avoid query size limits
   for (let i = 0; i < promptValues.length; i += 25) {
     await db.insert(prompts).values(promptValues.slice(i, i + 25));
@@ -374,7 +1153,7 @@ async function seed() {
   console.log("✅ Seeding complete!");
   console.log("  - 8 categories");
   console.log("  - 10 seller profiles (2 Gold, 4 Silver, 4 Bronze)");
-  console.log("  - 100 prompts (across 10 sellers, 7 AI models, 5 types)");
+  console.log("  - 100 prompts (across 10 sellers, 7 AI models, 5 types, 10 free with rich content)");
   console.log("  - 3 testimonials");
 
   await client.end();

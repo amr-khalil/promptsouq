@@ -3,18 +3,26 @@
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
 
-const steps = [
+const paidSteps = [
   { number: "١", label: "تفاصيل البرومبت" },
   { number: "٢", label: "ملف البرومبت" },
   { number: "٣", label: "تفعيل المدفوعات" },
   { number: "٤", label: "تأكيد" },
 ];
 
+const freeSteps = [
+  { number: "١", label: "تفاصيل البرومبت" },
+  { number: "٢", label: "ملف البرومبت" },
+  { number: "٣", label: "تأكيد" },
+];
+
 interface StepIndicatorProps {
   currentStep: number;
+  isFree?: boolean;
 }
 
-export function StepIndicator({ currentStep }: StepIndicatorProps) {
+export function StepIndicator({ currentStep, isFree = false }: StepIndicatorProps) {
+  const steps = isFree ? freeSteps : paidSteps;
   return (
     <div className="flex items-center justify-center gap-2 sm:gap-4">
       {steps.map((step, index) => {

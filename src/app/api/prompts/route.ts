@@ -8,7 +8,7 @@ import {
   promptSubmissionSchema,
 } from "@/lib/schemas/api";
 import { currentUser } from "@clerk/nextjs/server";
-import { and, asc, count, desc, eq, gte, inArray, lte, sql, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, gt, gte, inArray, lte, sql, type SQL } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -44,6 +44,7 @@ export async function GET(request: NextRequest) {
       limit: rawLimit,
       offset: rawOffset,
       sellerId,
+      priceType,
     } = parsed.data;
 
     const effectiveLimit = rawLimit ?? 20;
@@ -95,6 +96,13 @@ export async function GET(request: NextRequest) {
     }
     if (priceMax !== undefined) {
       conditions.push(lte(prompts.price, priceMax));
+    }
+
+    // Filter by price type (free/paid/all)
+    if (priceType === "free") {
+      conditions.push(eq(prompts.price, 0));
+    } else if (priceType === "paid") {
+      conditions.push(gt(prompts.price, 0));
     }
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
@@ -178,7 +186,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const parsed = promptSubmissionSchema.safeParse(body);
+    const parsed = promptSubmissionSchema.safeParse({ isFree: false, ...body });
 
     if (!parsed.success) {
       return NextResponse.json(
@@ -199,6 +207,7 @@ export async function POST(request: NextRequest) {
     const sellerAvatar = user?.imageUrl ?? "";
 
     const data = parsed.data;
+    const effectivePrice = data.isFree ? 0 : data.price;
 
     const [inserted] = await db
       .insert(prompts)
@@ -207,7 +216,7 @@ export async function POST(request: NextRequest) {
         titleEn: data.titleEn || data.title,
         description: data.description,
         descriptionEn: data.descriptionEn || data.description,
-        price: data.price,
+        price: effectivePrice,
         category: data.category,
         aiModel: data.aiModel,
         generationType: data.generationType,

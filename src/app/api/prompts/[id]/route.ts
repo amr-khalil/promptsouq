@@ -1,5 +1,6 @@
 import { db } from "@/db";
 import { prompts } from "@/db/schema";
+import { checkAuth } from "@/lib/auth";
 import { mapPromptRow } from "@/lib/mappers";
 import { apiErrorResponse, uuidParamSchema } from "@/lib/schemas/api";
 import { eq } from "drizzle-orm";
@@ -33,7 +34,26 @@ export async function GET(
       );
     }
 
-    return NextResponse.json({ data: mapPromptRow(rows[0]) });
+    const mapped = mapPromptRow(rows[0]);
+    const userId = await checkAuth();
+    const isFree = mapped.isFree;
+
+    // Content gating: strip sensitive fields for unauthenticated users on free prompts
+    if (isFree && !userId) {
+      return NextResponse.json({
+        data: {
+          ...mapped,
+          fullContent: null,
+          samples: [],
+          instructions: null,
+          contentLocked: true,
+        },
+      });
+    }
+
+    return NextResponse.json({
+      data: { ...mapped, contentLocked: false },
+    });
   } catch {
     return NextResponse.json(
       apiErrorResponse("INTERNAL_ERROR", "حدث خطأ داخلي في الخادم"),

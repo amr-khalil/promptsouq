@@ -26,8 +26,10 @@ export const promptSchema = z.object({
   tags: z.array(z.string()),
   difficulty: z.enum(["مبتدئ", "متقدم"]),
   samples: z.array(z.string()),
-  fullContent: z.string().optional(),
-  instructions: z.string().optional(),
+  fullContent: z.string().optional().nullable(),
+  instructions: z.string().optional().nullable(),
+  isFree: z.boolean(),
+  contentLocked: z.boolean().optional(),
 });
 
 export const categorySchema = z.object({
@@ -97,6 +99,7 @@ export const promptsQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).optional(),
   offset: z.coerce.number().int().min(0).optional(),
   sellerId: z.string().optional(),
+  priceType: z.enum(["all", "free", "paid"]).optional().default("all"),
 });
 
 export const suggestionsQuerySchema = z.object({
@@ -170,38 +173,49 @@ export const purchaseListItemSchema = z.object({
 
 // ─── Prompt Submission Schema (Sell Flow) ─────────────────────────
 
-export const promptSubmissionSchema = z.object({
-  title: z.string().min(1, "عنوان البرومبت مطلوب").max(60, "العنوان يجب ألا يتجاوز 60 حرفاً"),
-  titleEn: z.string().max(60),
-  description: z.string().min(1, "الوصف مطلوب").max(500, "الوصف يجب ألا يتجاوز 500 حرف"),
-  descriptionEn: z.string().max(500),
-  price: z.number().min(1.99, "الحد الأدنى للسعر 1.99$").max(99.99, "الحد الأقصى للسعر 99.99$"),
-  category: z.string().min(1, "التصنيف مطلوب"),
-  aiModel: z.string().min(1, "نموذج الذكاء الاصطناعي مطلوب"),
-  generationType: z.enum(["text", "image", "code", "marketing", "design"], {
-    message: "نوع المحتوى غير صالح",
-  }),
-  modelVersion: z.string().optional(),
-  maxTokens: z.number().int().min(1).max(128000).optional().nullable(),
-  temperature: z.number().min(0).max(2).optional().nullable(),
-  difficulty: z.enum(["مبتدئ", "متقدم"], { message: "مستوى الصعوبة غير صالح" }),
-  tags: z.array(z.string()).min(1, "يجب إضافة وسم واحد على الأقل").max(10, "الحد الأقصى 10 وسوم"),
-  thumbnail: z.string().min(1, "الصورة المصغرة مطلوبة"),
-  fullContent: z
-    .string()
-    .min(1, "محتوى البرومبت مطلوب")
-    .max(32768, "محتوى البرومبت طويل جداً")
-    .refine((val) => /\[.+?\]/.test(val), {
-      message: "يجب أن يحتوي البرومبت على متغير واحد على الأقل بين [أقواس مربعة]",
+export const promptSubmissionSchema = z
+  .object({
+    title: z.string().min(1, "عنوان البرومبت مطلوب").max(60, "العنوان يجب ألا يتجاوز 60 حرفاً"),
+    titleEn: z.string().max(60),
+    description: z.string().min(1, "الوصف مطلوب").max(500, "الوصف يجب ألا يتجاوز 500 حرف"),
+    descriptionEn: z.string().max(500),
+    isFree: z.boolean(),
+    price: z.number().max(99.99, "الحد الأقصى للسعر 99.99$"),
+    category: z.string().min(1, "التصنيف مطلوب"),
+    aiModel: z.string().min(1, "نموذج الذكاء الاصطناعي مطلوب"),
+    generationType: z.enum(["text", "image", "code", "marketing", "design"], {
+      message: "نوع المحتوى غير صالح",
     }),
-  instructions: z.string().max(2000, "التعليمات طويلة جداً").optional(),
-  exampleOutputs: z
-    .array(z.string().min(1, "مثال المخرجات لا يمكن أن يكون فارغاً"))
-    .length(4, "يجب تقديم 4 أمثلة بالضبط"),
-  examplePrompts: z
-    .array(z.record(z.string(), z.string()))
-    .length(4, "يجب تقديم 4 أمثلة للمتغيرات بالضبط"),
-});
+    modelVersion: z.string().optional(),
+    maxTokens: z.number().int().min(1).max(128000).optional().nullable(),
+    temperature: z.number().min(0).max(2).optional().nullable(),
+    difficulty: z.enum(["مبتدئ", "متقدم"], { message: "مستوى الصعوبة غير صالح" }),
+    tags: z.array(z.string()).min(1, "يجب إضافة وسم واحد على الأقل").max(10, "الحد الأقصى 10 وسوم"),
+    thumbnail: z.string().min(1, "الصورة المصغرة مطلوبة"),
+    fullContent: z
+      .string()
+      .min(1, "محتوى البرومبت مطلوب")
+      .max(32768, "محتوى البرومبت طويل جداً")
+      .refine((val) => /\[.+?\]/.test(val), {
+        message: "يجب أن يحتوي البرومبت على متغير واحد على الأقل بين [أقواس مربعة]",
+      }),
+    instructions: z.string().max(2000, "التعليمات طويلة جداً").optional(),
+    exampleOutputs: z
+      .array(z.string().min(1, "مثال المخرجات لا يمكن أن يكون فارغاً"))
+      .length(4, "يجب تقديم 4 أمثلة بالضبط"),
+    examplePrompts: z
+      .array(z.record(z.string(), z.string()))
+      .length(4, "يجب تقديم 4 أمثلة للمتغيرات بالضبط"),
+  })
+  .superRefine((data, ctx) => {
+    if (!data.isFree && data.price < 1.99) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "الحد الأدنى للسعر 1.99$",
+        path: ["price"],
+      });
+    }
+  });
 
 export type PromptSubmission = z.infer<typeof promptSubmissionSchema>;
 
