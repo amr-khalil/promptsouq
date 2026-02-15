@@ -1,100 +1,70 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Check, ChevronRight, Shield, Star } from "lucide-react";
+import { Check, ChevronRight, Loader2, RefreshCw, Shield, ShoppingCart, Star } from "lucide-react";
 import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
 
-// --- Mock Data for Featured Sellers ---
-const FEATURED_SELLERS = [
-  {
-    id: "1",
-    name: "أحمد محمد",
-    tier: "ذهبي",
-    rating: 4.9,
-    reviews: 387,
-    verified: true,
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Ahmed&backgroundColor=b6e3f4",
-    categories: ["ChatGPT", "Midjourney"],
-    gradient: "from-purple-500/20 to-blue-500/5",
-  },
-  {
-    id: "2",
-    name: "فاطمة علي",
-    tier: "ذهبي",
-    rating: 4.9,
-    reviews: 524,
-    verified: true,
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Fatima&backgroundColor=c0aede",
-    categories: ["DALL-E", "Claude"],
-    gradient: "from-blue-500/20 to-cyan-500/5",
-  },
-  {
-    id: "3",
-    name: "محمد صالح",
-    tier: "ذهبي",
-    rating: 4.8,
-    reviews: 892,
-    verified: true,
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Mohamed&backgroundColor=ffdfbf",
-    categories: ["Gemini", "ChatGPT"],
-    gradient: "from-pink-500/20 to-rose-500/5",
-  },
-  {
-    id: "4",
-    name: "سارة خالد",
-    tier: "ذهبي",
-    rating: 5.0,
-    reviews: 456,
-    verified: true,
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sara&backgroundColor=d4f1f4",
-    categories: ["Midjourney", "DALL-E"],
-    gradient: "from-amber-500/20 to-orange-500/5",
-  },
-  {
-    id: "5",
-    name: "عمر حسن",
-    tier: "ذهبي",
-    rating: 4.7,
-    reviews: 312,
-    verified: true,
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Omar&backgroundColor=ffd5dc",
-    categories: ["Claude", "Gemini"],
-    gradient: "from-green-500/20 to-emerald-500/5",
-  },
-  {
-    id: "6",
-    name: "نور الدين",
-    tier: "ذهبي",
-    rating: 4.9,
-    reviews: 678,
-    verified: true,
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Nour&backgroundColor=c7ceea",
-    categories: ["ChatGPT", "DALL-E"],
-    gradient: "from-indigo-500/20 to-violet-500/5",
-  },
-  {
-    id: "7",
-    name: "ليلى أحمد",
-    tier: "ذهبي",
-    rating: 4.8,
-    reviews: 543,
-    verified: true,
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Layla&backgroundColor=ffeaa7",
-    categories: ["Midjourney", "Claude"],
-    gradient: "from-teal-500/20 to-cyan-500/5",
-  },
-  {
-    id: "8",
-    name: "يوسف كريم",
-    tier: "ذهبي",
-    rating: 5.0,
-    reviews: 234,
-    verified: true,
-    avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Youssef&backgroundColor=dfe6e9",
-    categories: ["Gemini", "Midjourney"],
-    gradient: "from-rose-500/20 to-pink-500/5",
-  },
-];
+// --- Types ---
+
+interface TopPrompt {
+  title: string;
+  sales: number;
+}
+
+interface Seller {
+  userId: string;
+  displayName: string;
+  avatar: string;
+  bio: string | null;
+  country: string | null;
+  totalSales: number;
+  totalReviews: number;
+  avgRating: number;
+  promptCount: number;
+  tier: string;
+  topCategories: string[];
+  topPrompts: TopPrompt[];
+}
+
+// --- Gaming Card Shell (Yellow) ---
+
+const clipPathStyle = {
+  clipPath: `polygon(
+    0% 20px,
+    4px 12px,
+    12px 4px,
+    20px 0%,
+    calc(100% - 20px) 0%,
+    calc(100% - 12px) 4px,
+    calc(100% - 4px) 12px,
+    100% 20px,
+    100% calc(100% - 18px),
+    calc(100% - 18px) 100%,
+    18px 100%,
+    0% calc(100% - 18px)
+  )`,
+};
+
+const GamingSellerCard = ({ children }: { children: React.ReactNode }) => (
+  <div className="relative group drop-shadow-[0_0_0_1px_rgba(251,191,36,0.5)] transition-transform hover:-translate-y-1 h-full">
+    {/* Outer Border Layer (Yellow #fbbf24) */}
+    <div className="absolute inset-0 bg-[#fbbf24]" style={clipPathStyle} />
+
+    {/* Inner Content Layer */}
+    <div
+      className="relative h-full bg-[#161b26] text-card-foreground"
+      style={{
+        ...clipPathStyle,
+        margin: "2px",
+        height: "calc(100% - 4px)",
+        width: "calc(100% - 4px)",
+      }}
+    >
+      {children}
+    </div>
+  </div>
+);
 
 // --- Sub-Components ---
 
@@ -112,111 +82,179 @@ const Badge = ({
   </span>
 );
 
-const CategoryItem = ({ name }: { name: string }) => (
-  <div className="flex items-center gap-2 group cursor-pointer justify-end">
-    <span className="text-xs text-slate-400 font-medium group-hover:text-slate-200 transition-colors">
-      {name}
-    </span>
-    <div className="w-2 h-2 rounded-full bg-[#fbbf24] group-hover:scale-110 transition-transform" />
-  </div>
-);
-
-interface Seller {
-  id: string;
-  name: string;
-  tier: string;
-  rating: number;
-  reviews: number;
-  verified: boolean;
-  avatar: string;
-  categories: string[];
-  gradient: string;
+function tierBadgeClass(tier: string): string {
+  switch (tier) {
+    case "ذهبي":
+      return "bg-[#fbbf24] text-black shadow-[0_0_10px_rgba(251,191,36,0.3)]";
+    case "فضي":
+      return "bg-slate-300 text-slate-900 shadow-[0_0_10px_rgba(148,163,184,0.3)]";
+    default:
+      return "bg-amber-700 text-amber-100 shadow-[0_0_10px_rgba(180,83,9,0.2)]";
+  }
 }
 
-const SellerCard = ({ seller }: { seller: Seller }) => {
+function rankBadgeClass(rank: number): string {
+  if (rank === 1) return "bg-[#fbbf24] text-black";
+  if (rank === 2) return "bg-slate-300 text-slate-900";
+  if (rank === 3) return "bg-amber-700 text-amber-100";
+  return "bg-slate-700 text-slate-300";
+}
+
+function countryToFlag(code: string): string {
+  return code
+    .toUpperCase()
+    .split("")
+    .map((c) => String.fromCodePoint(0x1f1e6 + c.charCodeAt(0) - 65))
+    .join("");
+}
+
+const SellerCard = ({ seller, rank }: { seller: Seller; rank: number }) => {
   return (
-    <div className="group relative w-full rounded-2xl border border-slate-800 bg-[#161b26] p-4 transition-all duration-300 hover:border-slate-600 hover:shadow-2xl hover:shadow-indigo-500/10 hover:-translate-y-1 overflow-hidden">
-      {/* Dynamic Hover Gradient Background */}
-      <div
-        className={`absolute inset-0 bg-gradient-to-br ${seller.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`}
-      />
-
-      {/* Header: Tier & Rating */}
-      <div className="relative z-10 flex justify-between items-start mb-6">
-        <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-300 bg-slate-900/50 px-2 py-1 rounded-full border border-slate-800/50">
-          <span className="text-white">{seller.rating}</span>
-          <span className="text-slate-500">({seller.reviews})</span>
-          <Star className="w-3 h-3 fill-[#fbbf24] text-[#fbbf24]" />
-        </div>
-
-        <Badge className="bg-[#fbbf24] text-black shadow-[0_0_10px_rgba(251,191,36,0.3)]">
-          {seller.tier}
-        </Badge>
-      </div>
-
-      {/* Identity: Avatar & Name */}
-      <div className="relative z-10 flex flex-col items-center mb-6">
-        <div className="relative mb-3 group-hover:scale-105 transition-transform duration-300">
-          {/* Avatar Ring */}
-          <div className="absolute -inset-1 rounded-full bg-gradient-to-b from-slate-700 to-slate-900" />
-          <img
-            src={seller.avatar}
-            alt={seller.name}
-            className="relative w-[72px] h-[72px] rounded-full border-[3px] border-[#161b26] bg-slate-800 object-cover"
-          />
-          {/* Verified Checkmark Badge */}
-          {seller.verified && (
-            <div className="absolute bottom-0 left-0 -translate-x-1 translate-y-1 bg-[#161b26] p-[2px] rounded-full">
-              <div className="bg-green-500 rounded-full p-[2px]">
-                <Check className="w-2.5 h-2.5 text-black stroke-[4]" />
+    <Link href={`/seller/${seller.userId}`} className="block h-full">
+      <GamingSellerCard>
+        <div className="p-4 flex flex-col h-full">
+          {/* Header: Rank + Rating | Tier */}
+          <div className="flex justify-between items-start mb-5">
+            <div className="flex items-center gap-2">
+              {/* Rank Badge */}
+              <span className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-black ${rankBadgeClass(rank)}`}>
+                #{rank}
+              </span>
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-300 bg-slate-900/50 px-2 py-1 rounded-full border border-slate-800/50">
+                <span className="text-white">{seller.avgRating}</span>
+                <span className="text-slate-500">({seller.totalReviews})</span>
+                <Star className="w-3 h-3 fill-[#fbbf24] text-[#fbbf24]" />
               </div>
             </div>
-          )}
-        </div>
 
-        <div className="flex items-center gap-1.5">
-          <h3 className="text-white font-bold text-lg tracking-tight group-hover:text-[#fbbf24] transition-colors">
-            {seller.name}
-          </h3>
-          {seller.verified && (
-            <Shield className="w-3.5 h-3.5 text-green-500 fill-green-500/10" />
-          )}
-        </div>
-      </div>
+            <Badge className={tierBadgeClass(seller.tier)}>
+              {seller.tier}
+            </Badge>
+          </div>
 
-      {/* Content: Top Categories */}
-      <div className="relative z-10">
-        <div className="flex items-center gap-2 mb-3">
-          <div className="h-px bg-gradient-to-l from-transparent via-slate-700 to-transparent flex-1" />
-          <span className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold">
-            التصنيفات الأكثر مبيعاً
-          </span>
-          <div className="h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent flex-1" />
-        </div>
+          {/* Identity: Avatar & Name */}
+          <div className="flex flex-col items-center mb-5">
+            <div className="relative mb-3 group-hover:scale-105 transition-transform duration-300">
+              <div className="absolute -inset-1 rounded-full bg-gradient-to-b from-[#fbbf24]/40 to-slate-900" />
+              <img
+                src={seller.avatar}
+                alt={seller.displayName}
+                className="relative w-[72px] h-[72px] rounded-full border-[3px] border-[#161b26] bg-slate-800 object-cover"
+              />
+              <div className="absolute bottom-0 left-0 -translate-x-1 translate-y-1 bg-[#161b26] p-[2px] rounded-full">
+                <div className="bg-green-500 rounded-full p-[2px]">
+                  <Check className="w-2.5 h-2.5 text-black stroke-[4]" />
+                </div>
+              </div>
+            </div>
 
-        <div className="space-y-2.5 pr-2">
-          {seller.categories.map((category, idx) => (
-            <CategoryItem key={`${seller.id}-${category}-${idx}`} name={category} />
-          ))}
-          {/* Add one more for visual balance */}
-          {seller.categories[0] && (
-            <CategoryItem name={seller.categories[0]} />
-          )}
+            <div className="flex items-center gap-1.5">
+              <h3 className="text-white font-bold text-lg tracking-tight group-hover:text-[#fbbf24] transition-colors">
+                {seller.displayName}
+              </h3>
+              {seller.country && (
+                <span className="text-base leading-none" title={seller.country}>
+                  {countryToFlag(seller.country)}
+                </span>
+              )}
+              <Shield className="w-3.5 h-3.5 text-green-500 fill-green-500/10" />
+            </div>
+          </div>
+
+          {/* Top Prompts by Sales */}
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="h-px bg-gradient-to-l from-transparent via-[#fbbf24]/30 to-transparent flex-1" />
+              <span className="text-[10px] uppercase tracking-wider text-[#fbbf24]/70 font-semibold">
+                الأكثر مبيعاً
+              </span>
+              <div className="h-px bg-gradient-to-r from-transparent via-[#fbbf24]/30 to-transparent flex-1" />
+            </div>
+
+            <div className="space-y-2 pr-1">
+              {seller.topPrompts.map((prompt, idx) => (
+                <div key={idx} className="flex items-center gap-2 justify-end">
+                  <span className="text-[11px] text-slate-400 font-medium truncate flex-1 text-right">
+                    {prompt.title}
+                  </span>
+                  <div className="flex items-center gap-1 shrink-0 text-[10px] text-[#fbbf24]/80 font-bold">
+                    <span>{prompt.sales}</span>
+                    <ShoppingCart className="w-2.5 h-2.5" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </GamingSellerCard>
+    </Link>
+  );
+};
+
+const SkeletonCard = () => (
+  <div className="relative h-full">
+    <div className="absolute inset-0 bg-[#fbbf24]/30 animate-pulse" style={clipPathStyle} />
+    <div
+      className="relative h-full bg-[#161b26]"
+      style={{
+        ...clipPathStyle,
+        margin: "2px",
+        height: "calc(100% - 4px)",
+        width: "calc(100% - 4px)",
+      }}
+    >
+      <div className="p-4 animate-pulse">
+        <div className="flex justify-between items-start mb-5">
+          <div className="h-6 w-20 bg-slate-800 rounded-full" />
+          <div className="h-5 w-12 bg-slate-800 rounded" />
+        </div>
+        <div className="flex flex-col items-center mb-5">
+          <div className="w-[72px] h-[72px] rounded-full bg-slate-800 mb-3" />
+          <div className="h-5 w-24 bg-slate-800 rounded" />
+        </div>
+        <div className="space-y-2">
+          <div className="h-3 w-full bg-slate-800 rounded" />
+          <div className="h-3 w-3/4 bg-slate-800 rounded ms-auto" />
+          <div className="h-3 w-2/3 bg-slate-800 rounded ms-auto" />
         </div>
       </div>
     </div>
-  );
-};
+  </div>
+);
 
 // --- Main Component ---
 
 export default function FeaturedSellers() {
+  const [sellers, setSellers] = useState<Seller[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<"rating" | "sales">("rating");
+
+  const fetchSellers = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/sellers?sortBy=${activeTab}&limit=8`);
+      if (!res.ok) throw new Error("فشل في تحميل البيانات");
+      const json = await res.json();
+      setSellers(json.data);
+    } catch {
+      setError("حدث خطأ في تحميل البائعين");
+    } finally {
+      setLoading(false);
+    }
+  }, [activeTab]);
+
+  useEffect(() => {
+    fetchSellers();
+  }, [fetchSellers]);
+
   return (
     <section className="py-16 bg-[#0B0E14] relative overflow-hidden">
       {/* Decorative Background Elements */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-indigo-600/10 rounded-full blur-[100px]" />
-        <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-purple-600/5 rounded-full blur-[100px]" />
+        <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-[#fbbf24]/5 rounded-full blur-[100px]" />
+        <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-[#fbbf24]/3 rounded-full blur-[100px]" />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
@@ -227,21 +265,66 @@ export default function FeaturedSellers() {
             <span className="text-yellow-400">بائعين</span> مميزين
           </h2>
           <div className="mt-3 flex gap-6 text-sm font-medium text-slate-400">
-            <button className="text-yellow-400 border-b-2 border-yellow-400 pb-1 hover:text-yellow-300 transition-colors">
+            <button
+              onClick={() => setActiveTab("rating")}
+              className={`pb-1 border-b-2 transition-colors ${
+                activeTab === "rating"
+                  ? "text-yellow-400 border-yellow-400 hover:text-yellow-300"
+                  : "border-transparent hover:text-white hover:border-slate-700"
+              }`}
+            >
               الأعلى تقييماً.
             </button>
-            <button className="hover:text-white transition-colors pb-1 border-b-2 border-transparent hover:border-slate-700">
+            <button
+              onClick={() => setActiveTab("sales")}
+              className={`pb-1 border-b-2 transition-colors ${
+                activeTab === "sales"
+                  ? "text-yellow-400 border-yellow-400 hover:text-yellow-300"
+                  : "border-transparent hover:text-white hover:border-slate-700"
+              }`}
+            >
               الأكثر مبيعاً.
             </button>
           </div>
         </div>
 
+        {/* Error State */}
+        {error && (
+          <div className="text-center py-12">
+            <p className="text-slate-400 mb-4">{error}</p>
+            <Button variant="outline" onClick={fetchSellers}>
+              <RefreshCw className="w-4 h-4 ml-2" />
+              إعادة المحاولة
+            </Button>
+          </div>
+        )}
+
+        {/* Loading State */}
+        {loading && !error && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <SkeletonCard key={i} />
+            ))}
+          </div>
+        )}
+
         {/* Card Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {FEATURED_SELLERS.map((seller) => (
-            <SellerCard key={seller.id} seller={seller} />
-          ))}
-        </div>
+        {!loading && !error && (
+          <>
+            {sellers.length === 0 ? (
+              <div className="text-center py-12">
+                <Loader2 className="w-8 h-8 text-slate-500 mx-auto mb-4" />
+                <p className="text-slate-400">لا يوجد بائعين حالياً</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {sellers.map((seller, index) => (
+                  <SellerCard key={seller.userId} seller={seller} rank={index + 1} />
+                ))}
+              </div>
+            )}
+          </>
+        )}
 
         {/* Show More Button */}
         <div className="text-center mt-8">

@@ -43,6 +43,7 @@ export async function GET(request: NextRequest) {
       sortBy: rawSortBy,
       limit: rawLimit,
       offset: rawOffset,
+      sellerId,
     } = parsed.data;
 
     const effectiveLimit = rawLimit ?? 20;
@@ -51,6 +52,11 @@ export async function GET(request: NextRequest) {
     const effectiveSortBy = rawSortBy ?? (search ? "relevant" : "trending");
 
     const conditions: SQL[] = [eq(prompts.status, "approved")];
+
+    // Seller filter
+    if (sellerId) {
+      conditions.push(eq(prompts.sellerId, sellerId));
+    }
 
     // Search filter
     if (search) {

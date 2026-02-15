@@ -3,6 +3,7 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { categories } from "./schema/categories";
 import { prompts } from "./schema/prompts";
+import { sellerProfiles } from "./schema/seller-profiles";
 import { testimonials } from "./schema/testimonials";
 import { sql } from "drizzle-orm";
 
@@ -13,16 +14,16 @@ const db = drizzle(client);
 // ─── Seller Personas ──────────────────────────────────────────────
 
 const sellers = [
-  { name: "أحمد الخالدي", rating: 4.9 },
-  { name: "فاطمة الزهراء", rating: 5.0 },
-  { name: "محمد العتيبي", rating: 4.7 },
-  { name: "نورة الشمري", rating: 4.8 },
-  { name: "خالد البدر", rating: 4.6 },
-  { name: "سارة المالكي", rating: 4.9 },
-  { name: "عبدالله الحربي", rating: 4.5 },
-  { name: "ريم القحطاني", rating: 4.8 },
-  { name: "يوسف الدوسري", rating: 3.9 },
-  { name: "هند العنزي", rating: 4.7 },
+  { id: "seed-seller-1", name: "أحمد الخالدي", rating: 4.9, country: "SA", bio: "مطور برومبتات محترف متخصص في التسويق والأعمال" },
+  { id: "seed-seller-2", name: "فاطمة الزهراء", rating: 5.0, country: "EG", bio: "خبيرة في تصميم الصور بالذكاء الاصطناعي والفنون الرقمية" },
+  { id: "seed-seller-3", name: "محمد العتيبي", rating: 4.7, country: "AE", bio: "مبرمج ومطور برومبتات للأكواد والتطبيقات" },
+  { id: "seed-seller-4", name: "نورة الشمري", rating: 4.8, country: "JO", bio: "متخصصة في برومبتات التعليم والمحتوى الأكاديمي" },
+  { id: "seed-seller-5", name: "خالد البدر", rating: 4.6, country: "MA", bio: "كاتب محتوى محترف يصنع برومبتات إبداعية متميزة" },
+  { id: "seed-seller-6", name: "سارة المالكي", rating: 4.9, country: "KW", bio: "خبيرة تسويق رقمي تقدم أفضل برومبتات الحملات الإعلانية" },
+  { id: "seed-seller-7", name: "عبدالله الحربي", rating: 4.5, country: "QA", bio: "مصمم جرافيك يبدع في برومبتات التصميم والهوية البصرية" },
+  { id: "seed-seller-8", name: "ريم القحطاني", rating: 4.8, country: "BH", bio: "متخصصة في كتابة برومبتات الأعمال والاستراتيجيات" },
+  { id: "seed-seller-9", name: "يوسف الدوسري", rating: 3.9, country: "OM", bio: "مطور تطبيقات يقدم برومبتات برمجية متقدمة" },
+  { id: "seed-seller-10", name: "هند العنزي", rating: 4.7, country: "TN", bio: "صانعة محتوى رقمي متخصصة في وسائل التواصل الاجتماعي" },
 ];
 
 function sellerAvatar(name: string) {
@@ -217,12 +218,18 @@ function generateExamplePrompts(genType: string): Record<string, string>[] {
 async function seed() {
   console.log("🌱 Seeding database with 100 marketplace prompts...");
 
-  // Clear existing seed data (prompts without a sellerId are seed data)
-  console.log("Clearing previous seed prompts...");
+  // Clear existing seed data
+  console.log("Clearing previous seed data...");
+  await db.execute(sql`DELETE FROM reviews WHERE prompt_id IN (SELECT id FROM prompts WHERE seller_id LIKE 'seed-seller-%')`);
+  await db.execute(sql`DELETE FROM favorites WHERE prompt_id IN (SELECT id FROM prompts WHERE seller_id LIKE 'seed-seller-%')`);
+  await db.execute(sql`DELETE FROM order_items WHERE prompt_id IN (SELECT id FROM prompts WHERE seller_id LIKE 'seed-seller-%')`);
+  await db.execute(sql`DELETE FROM prompts WHERE seller_id LIKE 'seed-seller-%'`);
+  // Also clean up legacy seed prompts without sellerId
   await db.execute(sql`DELETE FROM reviews WHERE prompt_id IN (SELECT id FROM prompts WHERE seller_id IS NULL)`);
   await db.execute(sql`DELETE FROM favorites WHERE prompt_id IN (SELECT id FROM prompts WHERE seller_id IS NULL)`);
   await db.execute(sql`DELETE FROM order_items WHERE prompt_id IN (SELECT id FROM prompts WHERE seller_id IS NULL)`);
   await db.execute(sql`DELETE FROM prompts WHERE seller_id IS NULL`);
+  await db.execute(sql`DELETE FROM seller_profiles WHERE user_id LIKE 'seed-seller-%'`);
 
   // Ensure categories exist
   console.log("Upserting categories...");
@@ -243,10 +250,54 @@ async function seed() {
       .onConflictDoUpdate({ target: categories.slug, set: { name: cat.name, nameEn: cat.nameEn, icon: cat.icon, count: cat.count } });
   }
 
+  // Seed seller profiles
+  console.log("Upserting 10 seller profiles...");
+  for (const seller of sellers) {
+    await db
+      .insert(sellerProfiles)
+      .values({
+        userId: seller.id,
+        displayName: seller.name,
+        avatar: sellerAvatar(seller.name),
+        bio: seller.bio,
+        country: seller.country,
+      })
+      .onConflictDoUpdate({
+        target: sellerProfiles.userId,
+        set: {
+          displayName: seller.name,
+          avatar: sellerAvatar(seller.name),
+          bio: seller.bio,
+          country: seller.country,
+        },
+      });
+  }
+
   // Build 100 prompts
   console.log("Inserting 100 prompts...");
+  // Sales ranges per seller to create non-trivial tier distribution:
+  // Sellers 0,1 = Gold (high sales), 2,3,4,5 = Silver (mid sales), 6,7,8,9 = Bronze (low sales)
+  const salesRanges: [number, number][] = [
+    [40, 60],   // seller 0: Gold (high per-prompt sales × 10 prompts = 400-600)
+    [35, 55],   // seller 1: Gold
+    [12, 18],   // seller 2: Silver (120-180 total)
+    [15, 22],   // seller 3: Silver
+    [10, 16],   // seller 4: Silver
+    [13, 20],   // seller 5: Silver
+    [3, 8],     // seller 6: Bronze (<100 total)
+    [4, 9],     // seller 7: Bronze
+    [2, 6],     // seller 8: Bronze
+    [5, 10],    // seller 9: Bronze
+  ];
+
+  const reviewRanges: [number, number][] = [
+    [15, 30], [20, 35], [8, 15], [10, 18],
+    [5, 12], [12, 20], [2, 6], [3, 8], [1, 5], [4, 10],
+  ];
+
   const promptValues = promptData.map((p, i) => {
-    const seller = sellers[i % sellers.length];
+    const sellerIdx = i % sellers.length;
+    const seller = sellers[sellerIdx];
     const createdAt = daysAgo(randomInt(1, 30));
 
     return {
@@ -259,9 +310,10 @@ async function seed() {
       aiModel: p.aiModel,
       generationType: p.generationType,
       rating: randomFloat(3.0, 5.0, 1),
-      reviewsCount: randomInt(5, 200),
-      sales: randomInt(10, 500),
+      reviewsCount: randomInt(reviewRanges[sellerIdx][0], reviewRanges[sellerIdx][1]),
+      sales: randomInt(salesRanges[sellerIdx][0], salesRanges[sellerIdx][1]),
       thumbnail: `https://picsum.photos/seed/${i + 1}/400/300`,
+      sellerId: seller.id,
       sellerName: seller.name,
       sellerAvatar: sellerAvatar(seller.name),
       sellerRating: seller.rating,
@@ -315,6 +367,7 @@ async function seed() {
 
   console.log("✅ Seeding complete!");
   console.log("  - 8 categories");
+  console.log("  - 10 seller profiles (2 Gold, 4 Silver, 4 Bronze)");
   console.log("  - 100 prompts (across 10 sellers, 7 AI models, 5 types)");
   console.log("  - 3 testimonials");
 
