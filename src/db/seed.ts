@@ -313,6 +313,12 @@ async function seed() {
       reviewsCount: randomInt(reviewRanges[sellerIdx][0], reviewRanges[sellerIdx][1]),
       sales: randomInt(salesRanges[sellerIdx][0], salesRanges[sellerIdx][1]),
       thumbnail: `https://picsum.photos/seed/${i + 1}/400/300`,
+      gallery: [
+        `https://picsum.photos/seed/${i + 1}a/800/600`,
+        `https://picsum.photos/seed/${i + 1}b/800/600`,
+        `https://picsum.photos/seed/${i + 1}c/800/600`,
+        `https://picsum.photos/seed/${i + 1}d/800/600`,
+      ],
       sellerId: seller.id,
       sellerName: seller.name,
       sellerAvatar: sellerAvatar(seller.name),

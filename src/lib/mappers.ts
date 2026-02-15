@@ -26,6 +26,7 @@ export function mapPromptRow(row: PromptRow) {
     reviews: row.reviewsCount,
     sales: row.sales,
     thumbnail: row.thumbnail,
+    gallery: row.gallery,
     seller: {
       name: row.sellerName,
       avatar: row.sellerAvatar,

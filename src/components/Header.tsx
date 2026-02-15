@@ -62,11 +62,15 @@ export function Header() {
           {/* Logo - Left */}
           <div className="flex-1 flex items-center">
             <Link href="/" className="flex items-center gap-2 shrink-0">
-              <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-blue-500 rounded-lg flex items-center justify-center">
-                <img src="/logo.png" alt="Logo" className="w-8 h-8" />
-              </div>
+              <img
+                src="/logo.png"
+                alt="Logo"
+                className="w-24 h-24x object-contain shrink-0"
+              />
               <div className="hidden sm:block">
-                <div className="font-bold text-lg">سوق البرومبتات</div>
+                <div className="font-bold text-lg whitespace-nowrap">
+                  سوق البرومبتات
+                </div>
               </div>
             </Link>
           </div>

@@ -21,6 +21,7 @@ export const promptSchema = z.object({
   reviews: z.number(),
   sales: z.number(),
   thumbnail: z.string(),
+  gallery: z.array(z.string()),
   seller: sellerSchema,
   tags: z.array(z.string()),
   difficulty: z.enum(["مبتدئ", "متقدم"]),
