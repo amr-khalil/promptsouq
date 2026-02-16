@@ -1,23 +1,21 @@
 "use client";
 
-import { CreditBadge } from "@/components/credits/CreditBadge";
 import { useCartItemCount } from "@/hooks/use-cart";
-import {
-  SignInButton,
-  SignUpButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-  useUser,
-} from "@clerk/nextjs";
-import { Menu, Shield, ShoppingCart, User } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
+import { Menu, Plus, Search, Zap } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Button } from "./ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 
 function useAdminPendingCount(isAdmin: boolean) {
   const [count, setCount] = useState(0);
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   useEffect(() => {
     if (!isAdmin) return;
@@ -56,169 +54,80 @@ export function Header() {
     (user?.publicMetadata as { role?: string } | undefined)?.role === "admin";
   const pendingCount = useAdminPendingCount(isAdmin);
 
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center gap-4">
-          {/* Logo - Left */}
-          <div className="flex-1 flex items-center">
-            <Link href="/" className="flex items-center gap-2 shrink-0">
-              <img
-                src="/logo.png"
-                alt="Logo"
-                className="w-24 h-24x object-contain shrink-0"
+    <nav
+      className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? "bg-[#0f0f0f]/90 backdrop-blur-md border-b border-[#7f0df2]/20" : "bg-transparent"}`}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+        {/* Logo & Links */}
+        <div className="flex items-center gap-8">
+          <a href="#" className="flex items-center gap-2 group">
+            <div className="relative">
+              <div className="absolute inset-0 bg-[#7f0df2] blur-lg opacity-50 group-hover:opacity-100 transition-opacity"></div>
+              <Zap
+                className="relative z-10 w-8 h-8 text-[#7f0df2]"
+                fill="currentColor"
               />
-              <div className="hidden sm:block">
-                <div className="font-bold text-lg whitespace-nowrap">
-                  سوق البرومبتات
-                </div>
-              </div>
-            </Link>
-          </div>
+            </div>
+            <span className="text-2xl font-bold font-display tracking-tight text-white z-10">
+              سوق<span className="text-[#7f0df2]">برومبت</span>
+            </span>
+          </a>
 
-          {/* Center Navigation */}
-          <nav className="hidden md:flex items-center gap-2">
-            <Button variant="ghost" asChild>
-              <Link href="/"> الرئيسية</Link>
-            </Button>
-            <Button variant="ghost" asChild>
-              <Link href="/market">تصفح الأوامر</Link>
-            </Button>
-            <Button variant="ghost" asChild>
-              <Link href="/sell">بيع الأوامر</Link>
-            </Button>
-            <Button variant="ghost" asChild>
-              <Link href="/subscription">الأسعار</Link>
-            </Button>
-          </nav>
-
-          {/* Right Actions */}
-          <div className="flex-1 hidden md:flex items-center justify-end gap-2">
-            <Button variant="ghost" size="icon" asChild className="relative">
-              <Link href="/cart">
-                <ShoppingCart className="h-5 w-5" />
-                {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                    {cartCount}
-                  </span>
-                )}
-              </Link>
-            </Button>
-            <SignedIn>
-              <CreditBadge />
-              {isAdmin && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  asChild
-                  className="relative"
-                >
-                  <Link href="/admin/review">
-                    <Shield className="h-5 w-5" />
-                    {pendingCount > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                        {pendingCount}
-                      </span>
-                    )}
-                  </Link>
-                </Button>
-              )}
-              <Button variant="ghost" size="icon" asChild>
-                <Link href="/dashboard">
-                  <User className="h-5 w-5" />
-                </Link>
-              </Button>
-              <UserButton />
-            </SignedIn>
-            <SignedOut>
-              <SignInButton>
-                <Button variant="ghost">تسجيل الدخول</Button>
-              </SignInButton>
-              <SignUpButton>
-                <Button variant={"neonGradient"}>إنشاء حساب</Button>
-              </SignUpButton>
-            </SignedOut>
-          </div>
-
-          {/* Mobile Menu */}
-          <div className="flex md:hidden items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              asChild
-              className="shrink-0 relative"
-            >
-              <Link href="/cart">
-                <ShoppingCart className="h-5 w-5" />
-                {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
-                    {cartCount}
-                  </span>
-                )}
-              </Link>
-            </Button>
-
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="shrink-0">
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-[300px]">
-                <div className="flex flex-col gap-4 mt-8">
-                  <div className="flex flex-col gap-2">
-                    <Button variant="ghost" asChild>
-                      <Link href="/market">تصفح الأوامر</Link>
-                    </Button>
-                    <Button variant="ghost" asChild>
-                      <Link href="/sell">بيع الأوامر</Link>
-                    </Button>
-                    <Button variant="ghost" asChild>
-                      <Link href="/subscription">الأسعار</Link>
-                    </Button>
-                    <SignedIn>
-                      <CreditBadge />
-                      {isAdmin && (
-                        <Button
-                          variant="ghost"
-                          asChild
-                          className="justify-start"
-                        >
-                          <Link href="/admin/review">
-                            <Shield className="h-4 w-4 me-2" />
-                            مراجعة البرومبتات
-                            {pendingCount > 0 && (
-                              <span className="ms-auto bg-destructive text-destructive-foreground text-xs font-bold rounded-full h-5 min-w-5 px-1.5 flex items-center justify-center">
-                                {pendingCount}
-                              </span>
-                            )}
-                          </Link>
-                        </Button>
-                      )}
-                      <Button variant="ghost" asChild>
-                        <Link href="/dashboard">لوحة التحكم</Link>
-                      </Button>
-                      <div className="flex justify-center py-2">
-                        <UserButton />
-                      </div>
-                    </SignedIn>
-                    <SignedOut>
-                      <SignInButton>
-                        <Button variant="ghost" className="w-full">
-                          تسجيل الدخول
-                        </Button>
-                      </SignInButton>
-                      <SignUpButton>
-                        <Button className="w-full">إنشاء حساب</Button>
-                      </SignUpButton>
-                    </SignedOut>
-                  </div>
-                </div>
-              </SheetContent>
-            </Sheet>
+          <div className="hidden md:flex items-center gap-8 mr-4">
+            <Link href="#">تصفح</Link>
+            <Link href="#">المجتمع</Link>
+            <Link href="#">المدونة</Link>
           </div>
         </div>
+
+        {/* Right Actions */}
+        <div className="flex items-center gap-4">
+          <button className="hidden lg:flex items-center justify-center w-10 h-10 rounded-full border border-zinc-700 text-zinc-400 hover:text-white hover:border-[#7f0df2] hover:shadow-[0_0_15px_#7f0df2] transition-all">
+            <Search className="w-5 h-5" />
+          </button>
+
+          <div className="h-6 w-px bg-zinc-800 mx-2 hidden sm:block"></div>
+
+          <a
+            href="#"
+            className="text-sm font-bold text-gray-300 hover:text-white hidden sm:block"
+          >
+            تسجيل دخول
+          </a>
+
+          <a
+            href="#"
+            className="bg-[#7f0df2]/10 border border-[#7f0df2] text-[#7f0df2] px-5 py-2 rounded-full text-sm font-bold hover:bg-[#7f0df2] hover:text-white hover:shadow-[0_0_20px_#7f0df2] transition-all duration-300 flex items-center gap-2 group"
+          >
+            <Plus className="w-4 h-4" />
+            <span>بيع برومبت</span>
+          </a>
+
+          <button className="hidden sm:flex items-center gap-1 text-[10px] font-bold bg-zinc-900 px-3 py-1.5 rounded-lg border border-zinc-800 text-zinc-400 hover:border-zinc-600 transition-colors">
+            <span className="text-white">AR</span>
+            <span className="text-zinc-700">|</span>
+            <span>EN</span>
+          </button>
+
+          {/* Mobile Menu Toggle */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden text-white"
+          >
+            {mobileMenuOpen ? <X /> : <Menu />}
+          </button>
+        </div>
       </div>
-    </header>
+    </nav>
   );
 }

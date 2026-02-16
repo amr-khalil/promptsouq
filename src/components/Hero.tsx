@@ -1,62 +1,161 @@
 "use client";
 
-import SearchInput from "@/components/SearchInput";
-import { Button } from "@/components/ui/button";
-import { ShoppingBag, Zap } from "lucide-react";
-import Link from "next/link";
+import { Coins, Cpu, Globe, Image as ImageIcon, Sparkles } from "lucide-react";
+import BrandItem, { type BrandItemProps } from "./BrandItem";
+import TechCard from "./TechCard";
+
+const brands: BrandItemProps[] = [
+  {
+    name: "ChatGPT",
+    color: "#10a37f",
+    logo: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="w-full h-full">
+        <path d="M22.282 9.821a5.985 5.985 0 0 0-.516-4.91 6.046 6.046 0 0 0-6.51-2.9A6.065 6.065 0 0 0 4.981 4.18a5.985 5.985 0 0 0-3.998 2.9 6.046 6.046 0 0 0 .743 7.097 5.98 5.98 0 0 0 .51 4.911 6.051 6.051 0 0 0 6.515 2.9A5.985 5.985 0 0 0 13.26 24a6.056 6.056 0 0 0 5.772-4.206 5.99 5.99 0 0 0 3.997-2.9 6.056 6.056 0 0 0-.747-7.073zM13.26 22.43a4.476 4.476 0 0 1-2.876-1.04l.141-.081 4.779-2.758a.795.795 0 0 0 .392-.681v-6.737l2.02 1.168a.071.071 0 0 1 .038.052v5.583a4.504 4.504 0 0 1-4.494 4.494zM3.6 18.304a4.47 4.47 0 0 1-.535-3.014l.142.085 4.783 2.759a.771.771 0 0 0 .78 0l5.843-3.369v2.332a.08.08 0 0 1-.033.062L9.74 19.95a4.5 4.5 0 0 1-6.14-1.646zM2.34 7.896a4.485 4.485 0 0 1 2.366-1.973V11.6a.766.766 0 0 0 .388.676l5.815 3.355-2.02 1.168a.076.076 0 0 1-.071 0l-4.83-2.786A4.504 4.504 0 0 1 2.34 7.872zm16.597 3.855l-5.833-3.387L15.119 7.2a.076.076 0 0 1 .071 0l4.83 2.791a4.494 4.494 0 0 1-.676 8.105v-5.678a.79.79 0 0 0-.407-.667zm2.01-3.023l-.141-.085-4.774-2.782a.776.776 0 0 0-.785 0L9.409 9.23V6.897a.066.066 0 0 1 .028-.061l4.83-2.787a4.5 4.5 0 0 1 6.68 4.66zm-12.64 4.135l-2.02-1.164a.08.08 0 0 1-.038-.057V6.075a4.5 4.5 0 0 1 7.375-3.453l-.142.08L8.704 5.46a.795.795 0 0 0-.393.681zm1.097-2.365l2.602-1.5 2.607 1.5v2.999l-2.597 1.5-2.607-1.5z" />
+      </svg>
+    ),
+  },
+  {
+    name: "Midjourney",
+    color: "#fff",
+    logo: (
+      <svg viewBox="0 0 256 256" fill="currentColor" className="w-full h-full">
+        <path d="M240.86 162.892c.662 1.719.119 3.158-1.35 4.34c-13.753 11.071-28.19 21.114-43.904 29.24l-13.12 6.776c2.706 2.161 5.76 2.769 9.003 2.648c3.55-.133 6.524-1.763 9.27-3.858c3.283-2.504 6.387-5.274 9.836-7.519c8.35-5.435 17.35-4.944 25.248 1.185c3.355 2.604 6.439 5.578 9.92 7.988c1.683 1.165 3.838 1.8 5.904 2.257l.457.099c2.507.528 4.03 1.79 3.863 3.955c-.165 2.148-1.867 3.403-4.437 3.237c-5.445-.352-9.713-3.16-13.713-6.556c-2.498-2.12-4.91-4.38-7.606-6.219c-4.999-3.409-10.303-3.508-15.396-.235c-3.001 1.929-5.73 4.289-8.539 6.508c-4.527 3.578-9.413 6.212-15.374 6.302c-6.538.099-11.8-2.835-16.62-6.866c-1.724-1.442-3.431-2.905-5.188-4.306c-6.586-5.254-13.334-5.251-19.943.004a177 177 0 0 0-2.292 1.86l-1.52 1.25a122 122 0 0 1-3.849 3.062c-8.09 6.115-17.355 6.407-25.738.681c-3.05-2.083-5.831-4.561-8.74-6.853c-6.61-5.205-12.096-5.19-18.824-.022l-.55.424l-1.65 1.275c-2.2 1.7-4.415 3.385-6.74 4.896c-8.76 5.696-17.677 5.458-26.384-.047c-3.603-2.278-6.892-5.052-10.305-7.631l-.513-.386c-1.362-1.017-2.708-2.059-4.106-3.024c-1.95-1.346-4.05-1.722-6.162-.44c-3.732 2.266-7.42 4.604-11.116 6.928c-3.493 2.196-6.868 4.61-10.5 6.542c-1.968 1.046-4.332 1.533-6.575 1.82c-2.088.266-3.524-1.284-3.604-3.24c-.078-1.926 1.18-3.136 3.135-3.692l.114-.031c2.078-.556 4.219-1.262 6.022-2.395c5.087-3.199 10.017-6.649 15.003-10.008c.142-.095.224-.276.393-.493l-3.095-5.854q-1.552-2.93-3.093-5.87c-1.8-3.438-.629-5.744 3.237-6.02c10.423-.745 20.853-1.384 31.28-2.055l60.021-3.852c14.187-.913 28.373-1.835 42.56-2.75q30.008-1.936 60.018-3.87c5.32-.342 10.64-.676 15.96-1.024l5.32-.353c1.832-.123 3.302.43 3.982 2.192m-15.22 6.079l-.179-.437l-198.607 12.787l.49.916c1.288 2.412 2.428 4.59 3.673 6.706c.115.195.517.235.938.25l.43.01l.129.005l.122.007c1.726.127 3.612-.177 5.145.428c2.446.966 4.784 2.35 6.94 3.876c3.86 2.733 7.432 5.881 11.34 8.536c6.946 4.716 13.487 4.576 20.32-.206c2.883-2.018 5.618-4.248 8.475-6.306c8.932-6.435 17.394-6.302 26.113.417c2.548 1.964 4.977 4.082 7.52 6.051c6.378 4.938 12.849 4.956 19.194.051c2.113-1.633 4.125-3.397 6.199-5.082c9.406-7.641 18.94-8.378 28.19-1.563l.28.208c2.96 2.232 5.163 2.12 8.113.649l1.436-.718c13.157-6.597 26.065-13.607 37.982-22.318c1.928-1.41 3.838-2.844 5.756-4.267M41.217.675c21.496 9.698 40.8 22.744 58.345 38.424c21.83 19.512 39.036 42.552 51.744 68.903c6.688 13.87 11.89 28.276 14.28 43.572l.114.75l.174 1.198c.003 2.96-2.368 4.699-4.84 3.7c-12.272-4.959-24.944-8.398-38.039-10.362c-17.305-2.596-34.393-1.95-51.217 3.115c-11.157 3.36-21.77 7.942-31.632 14.195c-1.821 1.155-3.752.953-4.94-.46c-1.236-1.467-1.234-3.238.193-4.787c10.303-11.187 16.298-24.622 20.273-39.068c3.883-14.115 5.301-28.538 4.431-43.13c-.653-10.967-3.283-21.579-6.725-31.996c-4.453-13.477-10.231-26.36-17.198-38.717c-1.138-2.02-1.117-3.593.034-4.885c1.191-1.338 2.725-1.48 5.003-.452m66.27 25.192c1.993.581 4.678 1.155 7.204 2.137c10.083 3.925 18.77 10.152 27.046 16.955c13.45 11.056 25.765 23.285 36.779 36.772c7.665 9.387 13.953 19.713 19.686 30.371c6.5 12.087 12.099 24.582 16.85 37.454l.33.899c.126.342.255.683.37 1.028c.501 1.488.439 2.928-.727 4.065c-1.19 1.161-2.618 1.238-4.125.648l-.105-.042c-2.16-.888-4.35-1.707-6.505-2.604l-.922-.389c-6.066-2.604-12.3-3.124-18.72-1.666c-.592.135-1.192.237-1.792.329c-2.382.367-3.87-.564-4.52-2.87c-6.253-22.186-15.069-43.311-26.23-63.467l-.558-1.004c-7.196-12.857-15.434-24.948-26.14-35.22c-6.321-6.067-12.973-11.722-20.32-16.525c-1.702-1.113-2.34-2.658-1.78-4.344c.552-1.658 1.84-2.31 4.18-2.527M47.645 11.789c.02.561.171 1 .375 1.41c4.672 9.423 8.735 19.102 12.034 29.089c3.13 9.474 5.53 19.13 6.68 29.06c1.287 11.114.758 22.2-.767 33.254c-2.007 14.558-6.045 28.482-13.009 41.487l-.81 1.515l-1.228 2.303c.257.07.388.153.472.12a64 64 0 0 0 2.185-.907c14.78-6.488 30.181-10.406 46.357-10.809c18.47-.46 36.36 2.87 53.83 8.67l1.193.396c.864.284 1.786.576 2.98.963c-7.077-30.978-21.748-57.605-41.522-81.557c-19.063-23.09-42.249-41.132-68.77-54.994m87.764 37.559l.234.265l.465.518c.18.202.343.392.496.59a274 274 0 0 0 3.305 4.18l1.819 2.262c2.732 3.404 5.43 6.832 7.802 10.47c15.005 23.014 26.039 47.899 34.082 74.124l.243.795c.418 1.373.992 1.759 2.33 1.557l.093-.015c6.017-1.002 11.898-.481 17.6 1.715l.295.115c.545.216 1.127.336 2.183.645c-7.725-19.275-16.855-37.217-28.408-53.942c-9.99-14.462-36.741-40.14-42.54-43.28" />
+      </svg>
+    ),
+  },
+  {
+    name: "Claude",
+    color: "#D97757",
+    logo: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="w-full h-full">
+        <title>Claude</title>
+        <path d="M4.709 15.955l4.72-2.647.08-.23-.08-.128H9.2l-.79-.048-2.698-.073-2.339-.097-2.266-.122-.571-.121L0 11.784l.055-.352.48-.321.686.06 1.52.103 2.278.158 1.652.097 2.449.255h.389l.055-.157-.134-.098-.103-.097-2.358-1.596-2.552-1.688-1.336-.972-.724-.491-.364-.462-.158-1.008.656-.722.881.06.225.061.893.686 1.908 1.476 2.491 1.833.365.304.145-.103.019-.073-.164-.274-1.355-2.446-1.446-2.49-.644-1.032-.17-.619a2.97 2.97 0 01-.104-.729L6.283.134 6.696 0l.996.134.42.364.62 1.414 1.002 2.229 1.555 3.03.456.898.243.832.091.255h.158V9.01l.128-1.706.237-2.095.23-2.695.08-.76.376-.91.747-.492.584.28.48.685-.067.444-.286 1.851-.559 2.903-.364 1.942h.212l.243-.242.985-1.306 1.652-2.064.73-.82.85-.904.547-.431h1.033l.76 1.129-.34 1.166-1.064 1.347-.881 1.142-1.264 1.7-.79 1.36.073.11.188-.02 2.856-.606 1.543-.28 1.841-.315.833.388.091.395-.328.807-1.969.486-2.309.462-3.439.813-.042.03.049.061 1.549.146.662.036h1.622l3.02.225.79.522.474.638-.079.485-1.215.62-1.64-.389-3.829-.91-1.312-.329h-.182v.11l1.093 1.068 2.006 1.81 2.509 2.33.127.578-.322.455-.34-.049-2.205-1.657-.851-.747-1.926-1.62h-.128v.17l.444.649 2.345 3.521.122 1.08-.17.353-.608.213-.668-.122-1.374-1.925-1.415-2.167-1.143-1.943-.14.08-.674 7.254-.316.37-.729.28-.607-.461-.322-.747.322-1.476.389-1.924.315-1.53.286-1.9.17-.632-.012-.042-.14.018-1.434 1.967-2.18 2.945-1.726 1.845-.414.164-.717-.37.067-.662.401-.589 2.388-3.036 1.44-1.882.93-1.086-.006-.158h-.055L4.132 18.56l-1.13.146-.487-.456.061-.746.231-.243 1.908-1.312-.006.006z" />
+      </svg>
+    ),
+  },
+  {
+    name: "Gemini",
+    color: "#4285f4",
+    logo: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="w-full h-full">
+        <path d="M12 0C12 6.627 6.627 12 0 12c6.627 0 12 5.373 12 12 0-6.627 5.373-12 12-12-6.627 0-12-5.373-12-12z" />
+      </svg>
+    ),
+  },
+
+  {
+    name: "Copilot",
+    color: "#fff",
+    logo: (
+      <svg viewBox="0 0 256 256" fill="currentColor" className="w-full h-full">
+        <path d="M205.28 31.36c14.096 14.88 20.016 35.2 22.512 63.68c6.626 0 12.805 1.47 16.976 7.152l7.792 10.56A17.55 17.55 0 0 1 256 123.2v28.688c-.008 3.704-1.843 7.315-4.832 9.504C215.885 187.222 172.35 208 128 208c-49.066 0-98.19-28.273-123.168-46.608c-2.989-2.189-4.825-5.8-4.832-9.504V123.2c0-3.776 1.2-7.424 3.424-10.464l7.792-10.544c4.173-5.657 10.38-7.152 16.992-7.152c2.496-28.48 8.4-48.8 22.512-63.68C77.331 3.165 112.567.06 127.552 0H128c14.72 0 50.4 2.88 77.28 31.36m-77.264 47.376c-3.04 0-6.544.176-10.272.544c-1.312 4.896-3.248 9.312-6.08 12.128c-11.2 11.2-24.704 12.928-31.936 12.928c-6.802 0-13.927-1.42-19.744-5.088c-5.502 1.808-10.786 4.415-11.136 10.912c-.586 12.28-.637 24.55-.688 36.824c-.026 6.16-.05 12.322-.144 18.488c.024 3.579 2.182 6.903 5.44 8.384C79.936 185.92 104.976 192 128.016 192c23.008 0 48.048-6.08 74.512-18.144c3.258-1.48 5.415-4.805 5.44-8.384c.317-18.418.062-36.912-.816-55.312h.016c-.342-6.534-5.648-9.098-11.168-10.912c-5.82 3.652-12.927 5.088-19.728 5.088c-7.232 0-20.72-1.728-31.936-12.928c-2.832-2.816-4.768-7.232-6.08-12.128a106 106 0 0 0-10.24-.544m-26.941 43.93c5.748 0 10.408 4.66 10.408 10.409v19.183c0 5.749-4.66 10.409-10.408 10.409s-10.408-4.66-10.408-10.409v-19.183c0-5.748 4.66-10.408 10.408-10.408m53.333 0c5.749 0 10.409 4.66 10.409 10.409v19.183c0 5.749-4.66 10.409-10.409 10.409c-5.748 0-10.408-4.66-10.408-10.409v-19.183c0-5.748 4.66-10.408 10.408-10.408M81.44 28.32c-11.2 1.12-20.64 4.8-25.44 9.92c-10.4 11.36-8.16 40.16-2.24 46.24c4.32 4.32 12.48 7.2 21.28 7.2c6.72 0 19.52-1.44 30.08-12.16c4.64-4.48 7.52-15.68 7.2-27.04c-.32-9.12-2.88-16.64-6.72-19.84c-4.16-3.68-13.6-5.28-24.16-4.32m68.96 4.32c-3.84 3.2-6.4 10.72-6.72 19.84c-.32 11.36 2.56 22.56 7.2 27.04c10.56 10.72 23.36 12.16 30.08 12.16c8.8 0 16.96-2.88 21.28-7.2c5.92-6.08 8.16-34.88-2.24-46.24c-4.8-5.12-14.24-8.8-25.44-9.92c-10.56-.96-20 .64-24.16 4.32M128 56c-2.56 0-5.6.16-8.96.48c.32 1.76.48 3.68.64 5.76c0 1.44 0 2.88-.16 4.48c3.2-.32 5.92-.32 8.48-.32s5.28 0 8.48.32c-.16-1.6-.16-3.04-.16-4.48c.16-2.08.32-4 .64-5.76c-3.36-.32-6.4-.48-8.96-.48" />
+      </svg>
+    ),
+  },
+];
 
 function Hero() {
   return (
-    <section className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-950/20 dark:to-blue-950/20 py-20">
-      {/* CTA */}
-      <div className="container mx-auto px-4">
-        <div className="flex flex-row items-center text-center gap-8 mx-auto">
-          <div className="mx-auto text-right">
-            <h1 className="text-3xl md:text-3xl font-extrabold leading-tight tracking-tight">
-              أطلق العنان لقوة <br />
-              <span className="bg-gradient-to-l from-purple-400 to-indigo-500 bg-clip-text text-transparent drop-shadow-sm">
-                الذكاء الاصطناعي
-              </span>{" "}
-              <span>مع</span>{" "}
-              <span className="bg-gradient-to-l from-purple-400 to-indigo-500 bg-clip-text text-transparent drop-shadow-sm">
-                أوامر احترافية
-              </span>{" "}
-            </h1>
-            <p className="text-xl md:text-xl text-muted-foreground my-8">
-              اشترِ وبيع برومبتات قوية للذكاء الاصطناعي بسهولة
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-start">
-              <Button
-                variant={"neonGradient"}
-                size="lg"
-                asChild
-                className="text-lg"
-              >
-                <Link href="/market">
-                  <ShoppingBag className="ml-2 h-5 w-5" />
-                  تسوق الآن
-                </Link>
-              </Button>
-              <Button size="lg" variant="outline" asChild className="text-lg">
-                <Link href="/seller">
-                  <Zap className="ml-2 h-5 w-5" />
-                  ابدأ البيع
-                </Link>
-              </Button>
+    <section>
+      {/* Hero Section */}
+      <header className="relative pt-16 pb-12 lg:pt-20 lg:pb-24 overflow-hidden min-h-[90vh] flex flex-col justify-center">
+        {/* Background Effects */}
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          {/* Top Glow */}
+          <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-200 h-125 bg-[#7f0df2]/10 rounded-full blur-[120px] mix-blend-screen" />
+          <div className="absolute inset-0 bg-noise opacity-20" />
+          <div className="absolute inset-0 bg-circuit opacity-30" />
+          {/* Fade to bottom */}
+          <div className="absolute inset-0 bg-linear-to-b from-transparent via-[#0f0f0f]/80 to-[#0f0f0f]" />
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          {/* Search Bar Area */}
+          <div className="relative max-w-2xl mx-auto mb-20 z-20">
+            <div className="flex items-center gap-4 relative">
+              {/* Left Decorative Element */}
+              <div className="absolute -right-6 top-1/2 -translate-y-1/2 hidden md:block">
+                <div className="w-2 h-8 bg-[#faff00]/80" />
+              </div>
+
+              {/* Main Input Container */}
+              <div className="flex-1 bg-[#1a1a20]/90 backdrop-blur-xl border border-[#7f0df2]/30 clip-search-container flex items-center p-1.5 focus-within:border-[#faff00] focus-within:shadow-[0_0_15px_rgba(250,255,0,0.3)] transition-all duration-300 shadow-xl">
+                <div className="pl-4 pr-6 text-[#7f0df2]">
+                  <Sparkles className="w-6 h-6" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search prompts... ابحث عن أوامر..."
+                  className="w-full bg-transparent border-none text-white text-base placeholder-zinc-500 focus:ring-0 focus:outline-none px-2 font-display tracking-wide h-12"
+                />
+                <button className="bg-[#7f0df2] hover:bg-[#9d4dff] text-white px-8 py-3 font-bold text-sm tracking-wider uppercase transition-colors shadow-[0_0_15px_rgba(127,13,242,0.4)] clip-button-start">
+                  START
+                </button>
+              </div>
+
+              {/* Right Decorative Element */}
+              <div className="absolute -left-6 top-1/2 -translate-y-1/2 hidden md:block">
+                <div className="w-2 h-8 bg-[#faff00]/80" />
+              </div>
             </div>
           </div>
-          <div>
-            <img
-              src="/hero.png"
-              alt="Hero Image"
-              className="w-full max-w-md mx-auto rounded-lg shadow-lg"
+
+          {/* Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+            <TechCard
+              title="استكشف"
+              subTitle="Explore"
+              desc="اكتشف أحدث الأعمال الفنية والأوامر المميزة."
+              sysId="SYS.ID_01"
+              colorClass="secondary"
+              glowColor="rgba(127,13,242,0.5)"
+              imageSrc="https://lh3.googleusercontent.com/aida-public/AB6AXuCy17PrQe4vyCG7lHq60OaemI8yRZi1lOecYZ84l46PxkExfsA-wZnnDxPzjebem1djf09-QoZYCZ7JIZTUT4uLMcx_uzuDGuSgL2QfK8UoTcfP2vF0oGqIFGRlZQpjbwXKsr-CF1K0sxb8q1uHD2HBzD_hwcGNh8BPih908U6VV-KwezY51zJeVKTzdSLG35eXvqMiIRFmbqc40pBlJa2u63P_Y6iK2PX9QL1xy8pzqJmlPxwx6Nmj4X0MIJbs_1Exx6pD-qWqT-QW"
+              icon={Globe}
+            />
+
+            <TechCard
+              title="بع الآن"
+              subTitle="Sell Prompts"
+              desc="حول إبداعك إلى دخل مادي حقيقي."
+              sysId="SYS.ID_02"
+              colorClass="[#faff00]"
+              glowColor="rgba(250,255,0,0.4)"
+              imageSrc="https://lh3.googleusercontent.com/aida-public/AB6AXuAMxq8iOPcqjH_pqTboYQ6bFOI-aGnsrLfa8_cTD-ua-f0jrWVw_lzv--dS-921gJI5pwU8RcmeNc9a4r19KACU2Ixe-RN24tIsGPO3NWGJnxKzrQN7Dglx-ATlHPDNjRVIEsja5hv7CyMxTs0gJ4fLs27PBOPy6pEDadVZlPJbljFGjX_Wtsj7HLCKitQZ-dDY8blrRc7Bd8hYxP4q1LEzizB_mjVsXDeipOOh2zKB8Cew4SLVhr7p9C-tFiWKhWe94sMypJ6fpRl4"
+              icon={Coins}
+            />
+
+            <TechCard
+              title="توليد"
+              subTitle="Generate"
+              desc="أنشئ صوراً مذهلة باستخدام أدواتنا المدمجة."
+              sysId="SYS.ID_03"
+              colorClass="[#7f0df2]"
+              glowColor="rgba(168,85,247,0.5)"
+              imageSrc="https://lh3.googleusercontent.com/aida-public/AB6AXuB8Blopr5HwsBM5k0LoPaLn0azDRw6nnwyMkfhtg7MoU5VUv89WLirWjkY8AxooFk46kIilnXhCxqW3IiOxrza7ElZ16BR8iHpZZCMKI5-Vo6lfLX0WTyzlCXR81BxCwSbMaECa10a-bJlXNI7WWrBotUv-uBtO3GNCFnKMUXXX4RCqWB-8ggv7VH6C37EiKZS6Ah9sdE8axs0T9QAPVhzb3U8xa5k-XvkeZiPG3g1UuqEQ6d0aClepvkVQ6kKVdZdqOhPaPsKjy3Pp"
+              icon={Cpu}
+            />
+
+            <TechCard
+              title="المجتمع"
+              subTitle="Community"
+              desc="تواصل مع آلاف المصممين والمطورين."
+              sysId="SYS.ID_04"
+              colorClass="blue-500"
+              glowColor="rgba(59,130,246,0.5)"
+              imageSrc="https://lh3.googleusercontent.com/aida-public/AB6AXuCMIynAy0wLsmQA3RDTk1HdGPTwsNAeJ_aJnElzkV397kZqsZTs4Udxp9vHLsk4QmtQlTQc5UPKBcWBhEF4zWgu0UGaVs9lEBD2v8vr1oI1PJp13Fc92JkHwcOq7AGdWlKSSxIY4bWiTCg-vzNQhUWTTzdGXnan_VGSLxXg5zAmRMP1XX4p8UafqJAhx_ns-pC8wYKbmfIk2ekJxWjDaaaZaL5BjLrZHAF3H2KkJs4hJgaNdmdnX4lZTVRXWJJPcgJ9dOv47ur_qiOG"
+              icon={ImageIcon}
             />
           </div>
         </div>
-      </div>
-      {/* Search Bar */}
-      <div className="w-full mt-10 mx-auto max-w-2xl px-4">
-        <SearchInput navigateOnSearch="/market" />
+      </header>
+
+      {/* Brand Strip */}
+      <div className="w-full border-y border-white/5 bg-white/2 backdrop-blur-sm">
+        <div className="flex justify-center gap-10 md:gap-16 items-center py-8 px-6">
+          {brands.map((b) => (
+            <BrandItem key={b.name} {...b} />
+          ))}
+        </div>
       </div>
     </section>
   );
