@@ -43,6 +43,13 @@
       "when": 1771173191667,
       "tag": "0005_misty_zodiak",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1771203115809,
+      "tag": "0006_equal_vermin",
+      "breakpoints": true
     }
   ]
 }

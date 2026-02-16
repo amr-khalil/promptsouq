@@ -8,6 +8,7 @@ const isPublicRoute = createRouteMatcher([
   "/market(.*)",
   "/search(.*)",
   "/prompt(.*)",
+  "/subscription(.*)",
   "/api(.*)",
 ]);
 
