@@ -6,13 +6,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { useUser } from "@clerk/nextjs";
-import { Heart, Settings, ShoppingBag, User } from "lucide-react";
+import { Coins, Heart, Settings, ShoppingBag, Sparkles, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navItems = [
   { href: "/dashboard", label: "الملف الشخصي", icon: User },
   { href: "/dashboard/purchases", label: "المشتريات", icon: ShoppingBag },
+  { href: "/dashboard/credits", label: "الرصيد", icon: Coins },
+  { href: "/dashboard/generations", label: "التوليدات", icon: Sparkles },
   { href: "/dashboard/favorites", label: "المفضلة", icon: Heart },
   { href: "/dashboard/settings", label: "الإعدادات", icon: Settings },
 ] as const;

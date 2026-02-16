@@ -1,6 +1,7 @@
 "use client";
 
 import { FavoriteButton } from "@/components/dashboard/FavoriteButton";
+import { GenerateButton } from "@/components/generation/GenerateButton";
 import { PromptCard } from "@/components/PromptCard";
 import { ContentLockOverlay } from "@/components/prompt/ContentLockOverlay";
 import { PromptGallery } from "@/components/PromptGallery";
@@ -35,6 +36,7 @@ export default function PromptDetails() {
   const [error, setError] = useState("");
   const [purchased, setPurchased] = useState(false);
   const [isFavorited, setIsFavorited] = useState(false);
+  const [creditBalance, setCreditBalance] = useState(0);
   const { addItem, isInCart } = useCartStore();
   const { isSignedIn } = useAuth();
   const searchParams = useSearchParams();
@@ -125,6 +127,12 @@ export default function PromptDetails() {
       .then((res) => res.json())
       .then((json) => {
         if (json.data?.[id as string]) setIsFavorited(true);
+      })
+      .catch(() => {});
+    fetch("/api/credits/balance")
+      .then((res) => res.json())
+      .then((data) => {
+        if (typeof data.total === "number") setCreditBalance(data.total);
       })
       .catch(() => {});
   }, [isSignedIn, id]);
@@ -443,6 +451,17 @@ export default function PromptDetails() {
                     >
                       إضافة للسلة
                     </Button>
+                  </div>
+                )}
+
+                {isSignedIn && (purchased || prompt.isFree) && !prompt.contentLocked && (
+                  <div className="mt-3">
+                    <GenerateButton
+                      promptId={prompt.id}
+                      promptContent={prompt.fullContent || prompt.description}
+                      userOwnsPrompt={true}
+                      creditBalance={creditBalance}
+                    />
                   </div>
                 )}
 

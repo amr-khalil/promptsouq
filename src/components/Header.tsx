@@ -1,5 +1,6 @@
 "use client";
 
+import { CreditBadge } from "@/components/credits/CreditBadge";
 import { useCartItemCount } from "@/hooks/use-cart";
 import {
   SignInButton,
@@ -86,6 +87,9 @@ export function Header() {
             <Button variant="ghost" asChild>
               <Link href="/sell">بيع الأوامر</Link>
             </Button>
+            <Button variant="ghost" asChild>
+              <Link href="/subscription">الأسعار</Link>
+            </Button>
           </nav>
 
           {/* Right Actions */}
@@ -101,6 +105,7 @@ export function Header() {
               </Link>
             </Button>
             <SignedIn>
+              <CreditBadge />
               {isAdmin && (
                 <Button
                   variant="ghost"
@@ -168,7 +173,11 @@ export function Header() {
                     <Button variant="ghost" asChild>
                       <Link href="/sell">بيع الأوامر</Link>
                     </Button>
+                    <Button variant="ghost" asChild>
+                      <Link href="/subscription">الأسعار</Link>
+                    </Button>
                     <SignedIn>
+                      <CreditBadge />
                       {isAdmin && (
                         <Button
                           variant="ghost"

@@ -6,12 +6,14 @@ import Hero from "@/components/Hero";
 import HowToSell from "@/components/HowToSell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Category, Prompt, Testimonial } from "@/lib/schemas/api";
 import {
   Briefcase,
+  Check,
   ChevronRight,
+  Crown,
   GraduationCap,
   Image,
   MessageSquare,
@@ -19,10 +21,43 @@ import {
   PenTool,
   Sparkles,
   Star,
+  Sword,
   TrendingUp,
+  Zap,
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+
+interface PlanData {
+  id: string;
+  nameAr: string;
+  monthlyCredits: number;
+  monthlyPrice: number;
+  features: string[];
+  theme: string;
+  icon: string;
+}
+
+const planIconMap: Record<string, React.ElementType> = {
+  Sword,
+  Zap,
+  Crown,
+};
+
+const planThemes: Record<string, { gradient: string; button: string }> = {
+  blue: {
+    gradient: "from-blue-500 to-blue-600",
+    button: "bg-blue-600 text-white hover:bg-blue-700",
+  },
+  green: {
+    gradient: "from-emerald-500 to-emerald-600",
+    button: "bg-emerald-600 text-white hover:bg-emerald-700",
+  },
+  purple: {
+    gradient: "from-purple-500 to-purple-600",
+    button: "bg-purple-600 text-white hover:bg-purple-700",
+  },
+};
 
 const iconMap: Record<string, React.ElementType> = {
   MessageSquare,
@@ -40,6 +75,7 @@ export default function Home() {
   const [trendingPrompts, setTrendingPrompts] = useState<Prompt[]>([]);
   const [freePrompts, setFreePrompts] = useState<Prompt[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [plans, setPlans] = useState<PlanData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activeFilter, setActiveFilter] = useState("الكل");
@@ -47,11 +83,12 @@ export default function Home() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [categoriesRes, promptsRes, freeRes, testimonialsRes] = await Promise.all([
+        const [categoriesRes, promptsRes, freeRes, testimonialsRes, plansRes] = await Promise.all([
           fetch("/api/categories"),
           fetch("/api/prompts?sortBy=bestselling&limit=8"),
           fetch("/api/prompts?priceType=free&limit=10"),
           fetch("/api/testimonials"),
+          fetch("/api/subscription/plans"),
         ]);
 
         if (!categoriesRes.ok || !promptsRes.ok || !freeRes.ok || !testimonialsRes.ok) {
@@ -70,6 +107,11 @@ export default function Home() {
         setTrendingPrompts([...promptsData.data]);
         setFreePrompts(freeData.data ?? []);
         setTestimonials(testimonialsData.data);
+
+        if (plansRes.ok) {
+          const plansData = await plansRes.json();
+          setPlans(plansData.data ?? []);
+        }
       } catch {
         setError("حدث خطأ أثناء تحميل البيانات. يرجى المحاولة مرة أخرى.");
       } finally {
@@ -267,6 +309,95 @@ export default function Home() {
               >
                 <Link href="/market?priceType=free">
                   عرض الكل
+                  <ChevronRight className="mr-2 h-5 w-5 rotate-180" />
+                </Link>
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Pricing Section */}
+      {plans.length > 0 && (
+        <section className="py-16 bg-[#0f0f16] border-t border-purple-900/30">
+          <div className="container mx-auto px-4">
+            <div className="mb-10 text-center">
+              <h2 className="flex items-center justify-center gap-2 text-3xl font-bold text-white tracking-tight">
+                <ChevronRight className="h-6 w-6 text-purple-500 stroke-3" />
+                <span className="text-purple-400">خطط</span> الاشتراك
+              </h2>
+              <p className="mt-3 text-sm text-slate-400">
+                اختر الخطة المناسبة واحصل على رصيد شهري لتوليد المحتوى بالذكاء الاصطناعي
+              </p>
+            </div>
+
+            <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 md:grid-cols-3">
+              {plans.map((plan) => {
+                const Icon = planIconMap[plan.icon] ?? Sword;
+                const theme = planThemes[plan.theme] ?? planThemes.blue;
+                const displayPrice = (plan.monthlyPrice / 100).toFixed(2).replace(/\.00$/, "");
+
+                return (
+                  <Card
+                    key={plan.id}
+                    className="relative flex flex-col overflow-hidden border-[#2a2a3d] bg-[#161621] transition-all hover:scale-[1.02] hover:shadow-[0_0_30px_-5px_rgba(168,85,247,0.3)]"
+                  >
+                    {/* Gradient header */}
+                    <div className={`bg-gradient-to-l p-5 text-white ${theme.gradient}`}>
+                      <div className="flex items-center gap-3">
+                        <div className="rounded-xl bg-white/20 p-2">
+                          <Icon className="h-5 w-5" />
+                        </div>
+                        <h3 className="text-lg font-bold">{plan.nameAr}</h3>
+                      </div>
+                    </div>
+
+                    <CardContent className="flex flex-1 flex-col gap-4 pt-5">
+                      {/* Credits */}
+                      <div className="text-center">
+                        <span className="text-3xl font-bold text-white">{plan.monthlyCredits}</span>
+                        <span className="text-slate-400 text-sm me-1"> رصيد / شهر</span>
+                      </div>
+
+                      {/* Price */}
+                      <div className="text-center">
+                        <span className="text-3xl font-extrabold text-white">${displayPrice}</span>
+                        <span className="text-slate-400 text-sm">/شهرياً</span>
+                      </div>
+
+                      {/* Features */}
+                      <ul className="flex flex-col gap-2">
+                        {(plan.features as string[]).slice(0, 3).map((feature) => (
+                          <li key={feature} className="flex items-start gap-2 text-sm text-slate-300">
+                            <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </CardContent>
+
+                    <CardFooter className="mt-auto pt-0">
+                      <Button
+                        asChild
+                        className={`w-full ${theme.button}`}
+                      >
+                        <Link href="/subscription">اشترك الآن</Link>
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                );
+              })}
+            </div>
+
+            <div className="mt-8 flex justify-center">
+              <Button
+                asChild
+                variant="outline"
+                size="lg"
+                className="border-purple-500/30 bg-[#1f1f2e] text-purple-400 hover:bg-purple-500/10 hover:text-purple-300 hover:border-purple-400 px-8 py-3 text-base font-medium rounded-full transition-all"
+              >
+                <Link href="/subscription">
+                  عرض جميع الخطط
                   <ChevronRight className="mr-2 h-5 w-5 rotate-180" />
                 </Link>
               </Button>
