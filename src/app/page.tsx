@@ -134,52 +134,6 @@ export default function Home() {
   return (
     <div>
       <Hero />
-      {/* Categories Section */}
-      {/* <section className="py-16 container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            الفئات الشائعة
-          </h2>
-          <p className="text-muted-foreground text-lg">
-            استكشف برومبتات متنوعة لجميع احتياجاتك
-          </p>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {loading
-            ? Array.from({ length: 8 }).map((_, i) => (
-                <Card key={i}>
-                  <CardContent className="p-6 text-center">
-                    <Skeleton className="w-12 h-12 mx-auto mb-3 rounded-full" />
-                    <Skeleton className="h-4 w-20 mx-auto mb-1" />
-                    <Skeleton className="h-3 w-16 mx-auto" />
-                  </CardContent>
-                </Card>
-              ))
-            : categories.map((category) => {
-                const Icon = iconMap[category.icon] || Sparkles;
-                return (
-                  <Link
-                    key={category.id}
-                    href={`/market?category=${category.id}`}
-                  >
-                    <Card className="hover:shadow-lg transition-all hover:scale-105 cursor-pointer">
-                      <CardContent className="p-6 text-center">
-                        <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-primary/10 flex items-center justify-center">
-                          <Icon className="h-6 w-6 text-primary" />
-                        </div>
-                        <h3 className="font-bold mb-1">{category.name}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          {category.count} برومبت
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                );
-              })}
-        </div>
-      </section> */}
-
       {/* Featured Prompts - Gaming Style */}
       <section className="py-16 bg-[#0f0f16]">
         <div className="container mx-auto px-4">

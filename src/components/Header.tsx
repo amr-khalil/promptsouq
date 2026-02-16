@@ -2,7 +2,7 @@
 
 import { useCartItemCount } from "@/hooks/use-cart";
 import { useUser } from "@clerk/nextjs";
-import { Menu, Plus, Search, Zap } from "lucide-react";
+import { Menu, Plus, Search, X, Zap } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
