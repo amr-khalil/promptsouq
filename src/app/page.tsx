@@ -8,9 +8,8 @@ import Hero from "@/components/Hero";
 import HowToSell from "@/components/HowToSell";
 import { NewArrivalsGrid } from "@/components/NewArrivalsGrid";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import type { Category, Prompt, Testimonial } from "@/lib/schemas/api";
+import { TESTIMONIALS } from "@/lib/constants";
+import type { Category, Prompt } from "@/lib/schemas/api";
 import {
   Briefcase,
   Check,
@@ -23,6 +22,7 @@ import {
   PenTool,
   Sparkles,
   Star,
+  StarHalf,
   Sword,
   TrendingUp,
   Zap,
@@ -111,12 +111,26 @@ const iconMap: Record<string, React.ElementType> = {
   Sparkles,
 };
 
+function RatingStars({ rating }: { rating: number }) {
+  const fullStars = Math.floor(rating);
+  const hasHalf = rating % 1 !== 0;
+  return (
+    <div className="flex items-center gap-1">
+      {Array.from({ length: fullStars }).map((_, i) => (
+        <Star key={i} className="h-4 w-4 fill-[#faff00] text-[#faff00]" />
+      ))}
+      {hasHalf && (
+        <StarHalf className="h-4 w-4 fill-[#faff00] text-[#faff00]" />
+      )}
+    </div>
+  );
+}
+
 export default function Home() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [trendingPrompts, setTrendingPrompts] = useState<Prompt[]>([]);
   const [freePrompts, setFreePrompts] = useState<Prompt[]>([]);
   const [newPrompts, setNewPrompts] = useState<Prompt[]>([]);
-  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [plans, setPlans] = useState<PlanData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -125,51 +139,31 @@ export default function Home() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [
-          categoriesRes,
-          promptsRes,
-          freeRes,
-          newRes,
-          testimonialsRes,
-          plansRes,
-        ] = await Promise.all([
-          fetch("/api/categories"),
-          fetch("/api/prompts?sortBy=bestselling&limit=8"),
-          fetch("/api/prompts?priceType=free&limit=10"),
-          fetch("/api/prompts?sortBy=newest&limit=8"),
-          fetch("/api/testimonials"),
-          fetch("/api/subscription/plans"),
-        ]);
+        const [categoriesRes, promptsRes, freeRes, newRes, plansRes] =
+          await Promise.all([
+            fetch("/api/categories"),
+            fetch("/api/prompts?sortBy=bestselling&limit=8"),
+            fetch("/api/prompts?priceType=free&limit=10"),
+            fetch("/api/prompts?sortBy=newest&limit=8"),
+            fetch("/api/subscription/plans"),
+          ]);
 
-        if (
-          !categoriesRes.ok ||
-          !promptsRes.ok ||
-          !freeRes.ok ||
-          !newRes.ok ||
-          !testimonialsRes.ok
-        ) {
+        if (!categoriesRes.ok || !promptsRes.ok || !freeRes.ok || !newRes.ok) {
           throw new Error("فشل في تحميل البيانات");
         }
 
-        const [
-          categoriesData,
-          promptsData,
-          freeData,
-          newData,
-          testimonialsData,
-        ] = await Promise.all([
-          categoriesRes.json(),
-          promptsRes.json(),
-          freeRes.json(),
-          newRes.json(),
-          testimonialsRes.json(),
-        ]);
+        const [categoriesData, promptsData, freeData, newData] =
+          await Promise.all([
+            categoriesRes.json(),
+            promptsRes.json(),
+            freeRes.json(),
+            newRes.json(),
+          ]);
 
         setCategories(categoriesData.data);
         setTrendingPrompts([...promptsData.data]);
         setFreePrompts(freeData.data ?? []);
         setNewPrompts(newData.data ?? []);
-        setTestimonials(testimonialsData.data);
 
         if (plansRes.ok) {
           const plansData = await plansRes.json();
@@ -248,7 +242,9 @@ export default function Home() {
                       {/* Popular badge */}
                       {isPopular && (
                         <div className="absolute top-0 left-1/2 -translate-x-1/2 z-20">
-                          <div className={`px-4 py-1 text-xs font-bold ${theme.accentText} bg-black/60 backdrop-blur-sm border-b ${theme.cornerBorder}`}>
+                          <div
+                            className={`px-4 py-1 text-xs font-bold ${theme.accentText} bg-black/60 backdrop-blur-sm border-b ${theme.cornerBorder}`}
+                          >
                             الأكثر شيوعاً
                           </div>
                         </div>
@@ -269,7 +265,9 @@ export default function Home() {
                       <div className="relative z-10 flex-1 flex flex-col p-6 pt-8">
                         {/* Icon + Plan Name */}
                         <div className="flex items-center gap-3 mb-6">
-                          <div className={`rounded-lg bg-white/5 p-2.5 border ${theme.cornerBorder}`}>
+                          <div
+                            className={`rounded-lg bg-white/5 p-2.5 border ${theme.cornerBorder}`}
+                          >
                             <Icon className={`h-5 w-5 ${theme.accentText}`} />
                           </div>
                           <h3 className="text-lg font-bold text-white">
@@ -279,7 +277,9 @@ export default function Home() {
 
                         {/* Credits */}
                         <div className="text-center mb-2">
-                          <span className={`text-4xl font-bold ${theme.accentText}`}>
+                          <span
+                            className={`text-4xl font-bold ${theme.accentText}`}
+                          >
                             {plan.monthlyCredits}
                           </span>
                           <span className="text-gray-400 text-sm me-1">
@@ -366,66 +366,69 @@ export default function Home() {
       {/* How To Sell */}
       <HowToSell />
 
-      {/* Testimonials */}
-      <section className="py-16 bg-muted/30">
+      {/* Testimonials Carousel */}
+      <section className="py-16 bg-[#0f0f0f] overflow-hidden">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            <h2 className="text-3xl font-bold text-white mb-2 flex items-center justify-center gap-2">
+              <span className="w-2 h-8 bg-[#faff00] rounded-full block" />
               ماذا يقول عملاؤنا
             </h2>
-            <p className="text-muted-foreground text-lg">
+            <p className="text-gray-400 text-sm">
               آراء المستخدمين الذين جربوا منصتنا
             </p>
           </div>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            {loading
-              ? Array.from({ length: 3 }).map((_, i) => (
-                  <Card key={i}>
-                    <CardContent className="p-6">
-                      <Skeleton className="h-4 w-24 mb-4" />
-                      <Skeleton className="h-3 w-full mb-2" />
-                      <Skeleton className="h-3 w-3/4 mb-4" />
-                      <div className="flex items-center gap-3">
-                        <Skeleton className="w-10 h-10 rounded-full" />
-                        <div>
-                          <Skeleton className="h-4 w-20 mb-1" />
-                          <Skeleton className="h-3 w-16" />
-                        </div>
+        <div className="group/marquee relative" dir="ltr">
+          {/* Fade edges */}
+          <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-[#0f0f0f] to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-[#0f0f0f] to-transparent z-10 pointer-events-none" />
+
+          <div className="flex w-max animate-marquee group-hover/marquee:paused">
+            {Array.from({ length: 2 }).map((_, setIndex) =>
+              TESTIMONIALS.map((testimonial) => (
+                <div
+                  key={`${setIndex}-${testimonial.id}`}
+                  className="w-[320px] mx-3 shrink-0"
+                  dir="rtl"
+                >
+                  <div className="group relative bg-[#1a1a20] tech-clip-both border border-white/5 hover:border-[#7f0df2]/50 p-6 h-full transition-all duration-300 hover:shadow-[0_0_20px_rgba(127,13,242,0.2)]">
+                    {/* Circuit overlay */}
+                    <div className="absolute inset-0 bg-circuit opacity-5 group-hover:opacity-15 transition-opacity pointer-events-none" />
+
+                    <div className="relative z-10">
+                      {/* Stars */}
+                      <div className="mb-4">
+                        <RatingStars rating={testimonial.rating} />
                       </div>
-                    </CardContent>
-                  </Card>
-                ))
-              : testimonials.map((testimonial) => (
-                  <Card key={testimonial.id}>
-                    <CardContent className="p-6">
-                      <div className="flex items-center gap-1 mb-4">
-                        {[...Array(testimonial.rating)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className="h-4 w-4 fill-yellow-400 text-yellow-400"
-                          />
-                        ))}
-                      </div>
-                      <p className="text-muted-foreground mb-4">
+
+                      {/* Quote */}
+                      <p className="text-gray-300 text-sm mb-5 leading-relaxed line-clamp-4">
                         &ldquo;{testimonial.content}&rdquo;
                       </p>
-                      <div className="flex items-center gap-3">
+
+                      {/* Author */}
+                      <div className="flex items-center gap-3 border-t border-white/5 pt-4">
                         <img
                           src={testimonial.avatar}
                           alt={testimonial.name}
-                          className="w-10 h-10 rounded-full object-cover"
+                          className="w-10 h-10 rounded-full object-cover ring-2 ring-[#7f0df2]/30"
                         />
                         <div>
-                          <div className="font-bold">{testimonial.name}</div>
-                          <div className="text-sm text-muted-foreground">
+                          <div className="font-bold text-white text-sm">
+                            {testimonial.name}
+                          </div>
+                          <div className="text-xs text-gray-500">
                             {testimonial.role}
                           </div>
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                    </div>
+                  </div>
+                </div>
+              )),
+            )}
           </div>
         </div>
       </section>
