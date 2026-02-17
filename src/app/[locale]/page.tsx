@@ -6,6 +6,7 @@ import FeaturedSellers from "@/components/FeaturedSellers";
 import { FreePromptsCarousel } from "@/components/FreePromptsCarousel";
 import Hero from "@/components/Hero";
 import HowToSell from "@/components/HowToSell";
+import { LocaleLink } from "@/components/LocaleLink";
 import { NewArrivalsGrid } from "@/components/NewArrivalsGrid";
 import { Button } from "@/components/ui/button";
 import type { Category, Prompt } from "@/lib/schemas/api";
@@ -13,6 +14,7 @@ import {
   Briefcase,
   Check,
   ChevronRight,
+  Compass,
   Crown,
   GraduationCap,
   Image,
@@ -24,9 +26,9 @@ import {
   StarHalf,
   Sword,
   TrendingUp,
+  UserPlus,
   Zap,
 } from "lucide-react";
-import { LocaleLink } from "@/components/LocaleLink";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -184,7 +186,9 @@ export default function Home() {
     return (
       <div className="container mx-auto px-4 py-20 text-center">
         <p className="text-destructive text-lg mb-4">{error}</p>
-        <Button onClick={() => window.location.reload()}>{t("buttons.retry", { ns: "common" })}</Button>
+        <Button onClick={() => window.location.reload()}>
+          {t("buttons.retry", { ns: "common" })}
+        </Button>
       </div>
     );
   }
@@ -271,7 +275,9 @@ export default function Home() {
                             <Icon className={`h-5 w-5 ${theme.accentText}`} />
                           </div>
                           <h3 className="text-lg font-bold text-white">
-                            {t(`pricing.plans.${plan.id}.name` as never, { ns: "home" })}
+                            {t(`pricing.plans.${plan.id}.name` as never, {
+                              ns: "home",
+                            })}
                           </h3>
                         </div>
 
@@ -291,9 +297,14 @@ export default function Home() {
                         {/* Price */}
                         <div className="text-center mb-6">
                           <span className="text-3xl font-extrabold text-white">
-                            {t("price.currency", { ns: "common", amount: displayPrice })}
+                            {t("price.currency", {
+                              ns: "common",
+                              amount: displayPrice,
+                            })}
                           </span>
-                          <span className="text-gray-400 text-sm">{t("price.perMonth", { ns: "common" })}</span>
+                          <span className="text-gray-400 text-sm">
+                            {t("price.perMonth", { ns: "common" })}
+                          </span>
                         </div>
 
                         {/* Divider */}
@@ -301,7 +312,12 @@ export default function Home() {
 
                         {/* Features */}
                         <ul className="flex flex-col gap-3 mb-6">
-                          {(t(`pricing.plans.${plan.id}.features` as never, { ns: "home", returnObjects: true }) as string[])
+                          {(
+                            t(`pricing.plans.${plan.id}.features` as never, {
+                              ns: "home",
+                              returnObjects: true,
+                            }) as string[]
+                          )
                             .slice(0, 3)
                             .map((feature) => (
                               <li
@@ -322,7 +338,9 @@ export default function Home() {
                             asChild
                             className={`w-full font-bold ${theme.buttonBg} ${theme.buttonText} ${theme.buttonHover}`}
                           >
-                            <LocaleLink href="/subscription">{t("buttons.subscribe", { ns: "common" })}</LocaleLink>
+                            <LocaleLink href="/subscription">
+                              {t("buttons.subscribe", { ns: "common" })}
+                            </LocaleLink>
                           </Button>
                         </div>
                       </div>
@@ -387,7 +405,18 @@ export default function Home() {
 
           <div className="flex w-max animate-marquee group-hover/marquee:paused">
             {Array.from({ length: 2 }).map((_, setIndex) =>
-              (t("testimonials.items", { ns: "home", returnObjects: true }) as Array<{ name: string; role: string; content: string; avatarSeed: string; rating: number }>).map((testimonial, idx) => (
+              (
+                t("testimonials.items", {
+                  ns: "home",
+                  returnObjects: true,
+                }) as Array<{
+                  name: string;
+                  role: string;
+                  content: string;
+                  avatarSeed: string;
+                  rating: number;
+                }>
+              ).map((testimonial, idx) => (
                 <div
                   key={`${setIndex}-${idx}`}
                   className="w-[320px] mx-3 shrink-0"
@@ -433,17 +462,43 @@ export default function Home() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-purple-600 to-blue-600 text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-5xl font-bold mb-6">
-            {t("cta.title", { ns: "home" })}
-          </h2>
-          <p className="text-xl mb-8 opacity-90">
-            {t("cta.description", { ns: "home" })}
-          </p>
-          <Button size="lg" variant="secondary" className="text-lg" asChild>
-            <LocaleLink href="/signup">{t("buttons.signupFree", { ns: "common" })}</LocaleLink>
-          </Button>
+      <section className="relative py-24 px-4 overflow-hidden">
+        {/* Ambient CTA Background */}
+        <div className="absolute inset-0 bg-[#7f0df2]/5 pointer-events-none"></div>
+        <div className="absolute inset-0 bg-circuit opacity-20 pointer-events-none"></div>
+
+        <div className="max-w-5xl mx-auto relative z-10">
+          <div className="bg-[#1a1a20] border border-[#7f0df2]/30 p-8 md:p-12 rounded-2xl relative overflow-hidden group hover:border-[#7f0df2]/50 transition-colors duration-500">
+            {/* Inner Glows */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[#7f0df2]/20 blur-[100px] rounded-full pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#faff00]/10 blur-[100px] rounded-full pointer-events-none"></div>
+
+            <div className="flex flex-col md:flex-row items-center justify-between gap-8 text-center md:text-right relative z-10">
+              <div className="flex-1">
+                <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-4 leading-tight">
+                  {t("cta.titleLine1", { ns: "home" })}
+                  <br />
+                  <span className="text-[#7f0df2]">
+                    {t("cta.titleLine2", { ns: "home" })}
+                  </span>
+                </h2>
+                <p className="text-gray-400 text-lg max-w-xl font-arabic leading-relaxed">
+                  {t("cta.description", { ns: "home" })}
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4 shrink-0 w-full md:w-auto">
+                <button className="bg-[#7f0df2] hover:bg-[#9d4dff] text-white px-8 py-4 font-bold rounded-lg transition-all shadow-[0_0_20px_rgba(127,13,242,0.3)] hover:shadow-[0_0_30px_rgba(127,13,242,0.5)] flex items-center justify-center gap-2 group/btn clip-button-start">
+                  <UserPlus className="w-5 h-5" />
+                  <span>{t("buttons.createAccount", { ns: "common" })}</span>
+                </button>
+                <button className="bg-[#faff00] hover:bg-[#e0e500] text-black px-8 py-4 font-bold rounded-lg transition-all shadow-[0_0_20px_rgba(250,255,0,0.2)] hover:shadow-[0_0_30px_rgba(250,255,0,0.4)] flex items-center justify-center gap-2">
+                  <Compass className="w-5 h-5" />
+                  <span>{t("buttons.exploreMarket", { ns: "common" })}</span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </div>
