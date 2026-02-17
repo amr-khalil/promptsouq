@@ -1,6 +1,9 @@
 "use client";
 
-import { PromptCard } from "@/components/PromptCard";
+import {
+  PromptGridCard,
+  PromptGridCardSkeleton,
+} from "@/components/PromptGridCard";
 import SearchInput from "@/components/SearchInput";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,7 +23,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Skeleton } from "@/components/ui/skeleton";
 import type { Prompt } from "@/lib/schemas/api";
 import { Filter, Gift, Loader2, RotateCcw, Search, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -80,7 +82,8 @@ export default function Market() {
   const generationType = searchParams.get("generationType") ?? "all";
   const aiModel = searchParams.get("aiModel") ?? "all";
   const priceType = searchParams.get("priceType") ?? "all";
-  const sortBy = searchParams.get("sortBy") ?? (searchQuery ? "relevant" : "trending");
+  const sortBy =
+    searchParams.get("sortBy") ?? (searchQuery ? "relevant" : "trending");
 
   // Local state for data
   const [allPrompts, setAllPrompts] = useState<Prompt[]>([]);
@@ -96,7 +99,8 @@ export default function Market() {
     (currentOffset: number) => {
       const params = new URLSearchParams();
       if (searchQuery) params.set("search", searchQuery);
-      if (generationType !== "all") params.set("generationType", generationType);
+      if (generationType !== "all")
+        params.set("generationType", generationType);
       if (aiModel !== "all") params.set("aiModel", aiModel);
       if (priceType !== "all") params.set("priceType", priceType);
       params.set("sortBy", sortBy);
@@ -205,7 +209,10 @@ export default function Market() {
   const activeFilters: { key: string; label: string }[] = [];
   if (generationType !== "all") {
     const found = GENERATION_TYPES.find((gt) => gt.value === generationType);
-    activeFilters.push({ key: "generationType", label: found?.label ?? generationType });
+    activeFilters.push({
+      key: "generationType",
+      label: found?.label ?? generationType,
+    });
   }
   if (aiModel !== "all") {
     const found = AI_MODELS.find((m) => m.value === aiModel);
@@ -214,7 +221,10 @@ export default function Market() {
   if (priceType !== "all") {
     activeFilters.push({
       key: "priceType",
-      label: priceType === "free" ? t("filters.priceOptions.free") : t("filters.priceOptions.paid"),
+      label:
+        priceType === "free"
+          ? t("filters.priceOptions.free")
+          : t("filters.priceOptions.paid"),
     });
   }
   if (searchQuery) {
@@ -316,16 +326,15 @@ export default function Market() {
   // ─── Render ─────────────────────────────────────────────────────
 
   return (
-    <div className="dark bg-gray-950 min-h-screen">
+    <div className="dark bg-[#0f0f0f] min-h-screen">
       {/* Hero */}
-      <section className="bg-gray-950 border-b border-gray-800">
+      <section className="bg-[#0f0f0f] border-b border-white/5">
         <div className="container mx-auto px-4 py-12 text-center">
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-3 flex items-center justify-center gap-2">
+            <span className="w-2 h-8 bg-[#faff00] rounded-full block" />
             {t("title")}
           </h1>
-          <p className="text-gray-400 mb-8 text-lg">
-            {t("subtitle")}
-          </p>
+          <p className="text-gray-400 mb-8 text-lg">{t("subtitle")}</p>
           <div className="max-w-2xl mx-auto">
             <SearchInput
               key={searchQuery}
@@ -370,9 +379,11 @@ export default function Market() {
         <div className="flex flex-col md:flex-row gap-6">
           {/* Filters Sidebar - Desktop */}
           <aside className="hidden md:block w-56 shrink-0">
-            <div className="sticky top-20 rounded-lg border border-gray-800 bg-gray-900 p-4">
+            <div className="sticky top-20 rounded-2xl border border-white/10 bg-[#18181b] p-4">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="font-bold text-white">{t("labels.filters", { ns: "common" })}</h2>
+                <h2 className="font-bold text-white">
+                  {t("labels.filters", { ns: "common" })}
+                </h2>
                 <Filter className="h-4 w-4 text-gray-400" />
               </div>
               {filtersContent}
@@ -396,9 +407,14 @@ export default function Market() {
                   )}
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-[300px] bg-gray-900 border-gray-800">
+              <SheetContent
+                side="right"
+                className="w-[300px] bg-gray-900 border-gray-800"
+              >
                 <SheetHeader>
-                  <SheetTitle className="text-white">{t("labels.filters", { ns: "common" })}</SheetTitle>
+                  <SheetTitle className="text-white">
+                    {t("labels.filters", { ns: "common" })}
+                  </SheetTitle>
                 </SheetHeader>
                 <div className="mt-6">{filtersContent}</div>
               </SheetContent>
@@ -480,18 +496,9 @@ export default function Market() {
 
             {/* Loading State */}
             {loading && !error && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {Array.from({ length: 8 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="rounded-lg overflow-hidden bg-gray-900 border border-gray-800"
-                  >
-                    <Skeleton className="aspect-square bg-gray-800" />
-                    <div className="p-3">
-                      <Skeleton className="h-4 w-full mb-2 bg-gray-800" />
-                      <Skeleton className="h-4 w-16 bg-gray-800" />
-                    </div>
-                  </div>
+                  <PromptGridCardSkeleton key={i} />
                 ))}
               </div>
             )}
@@ -499,9 +506,9 @@ export default function Market() {
             {/* Prompts Grid */}
             {!loading && !error && allPrompts.length > 0 && (
               <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {allPrompts.map((prompt) => (
-                    <PromptCard key={prompt.id} prompt={prompt} />
+                    <PromptGridCard key={prompt.id} prompt={prompt} />
                   ))}
                 </div>
 
@@ -533,7 +540,9 @@ export default function Market() {
             {!loading && !error && allPrompts.length === 0 && (
               <div className="text-center py-16">
                 <Search className="h-12 w-12 text-gray-600 mx-auto mb-4" />
-                <p className="text-gray-400 text-lg mb-2">{t("messages.noResults", { ns: "common" })}</p>
+                <p className="text-gray-400 text-lg mb-2">
+                  {t("messages.noResults", { ns: "common" })}
+                </p>
                 <p className="text-gray-500 text-sm mb-6">
                   {t("messages.tryDifferentFilters", { ns: "common" })}
                 </p>

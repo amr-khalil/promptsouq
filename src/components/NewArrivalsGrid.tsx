@@ -1,11 +1,10 @@
 "use client";
 
 import type { Prompt } from "@/lib/schemas/api";
-import { Bot, ImageIcon, Sparkles, Star } from "lucide-react";
-import { LocaleLink } from "@/components/LocaleLink";
-import { useTranslation } from "react-i18next";
+import { Sparkles } from "lucide-react";
 import { useState } from "react";
-import { Skeleton } from "./ui/skeleton";
+import { useTranslation } from "react-i18next";
+import { PromptGridCard, PromptGridCardSkeleton } from "./PromptGridCard";
 
 interface NewArrivalsGridProps {
   prompts: Prompt[];
@@ -22,90 +21,7 @@ function matchesFilter(prompt: Prompt, filter: FilterTab): boolean {
   const model = prompt.aiModel.toLowerCase();
   if (filter === "images") return IMAGE_MODELS.some((m) => model.includes(m));
   if (filter === "text") return TEXT_MODELS.some((m) => model.includes(m));
-  // "audio" — audio models (none currently, show none)
   return false;
-}
-
-function NewArrivalCard({ prompt }: { prompt: Prompt }) {
-  const { t } = useTranslation(["home", "common"]);
-  const isTextPrompt = TEXT_MODELS.some((m) =>
-    prompt.aiModel.toLowerCase().includes(m),
-  );
-
-  return (
-    <LocaleLink
-      href={`/prompt/${prompt.id}`}
-      className="group bg-[#18181b] rounded-xl overflow-hidden border border-white/5 hover:border-[#7f0df2]/50 transition-all hover:-translate-y-1 cursor-pointer"
-    >
-      {/* Image */}
-      <div className="h-48 overflow-hidden relative">
-        {prompt.thumbnail ? (
-          <img
-            src={prompt.thumbnail}
-            alt={prompt.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-        ) : (
-          <div className="h-full w-full bg-gradient-to-bl from-purple-900 to-indigo-900 flex items-center justify-center">
-            <Bot className="w-12 h-12 text-white/30 group-hover:text-white/60 transition-colors" />
-          </div>
-        )}
-      </div>
-
-      {/* Content */}
-      <div className="p-4">
-        <div className="flex justify-between items-start mb-2">
-          <h3 className="text-white font-bold line-clamp-1">{prompt.title}</h3>
-          <span className="text-[#faff00] font-bold text-sm shrink-0 ms-2">
-            {prompt.isFree || prompt.price === 0 ? t("price.free", { ns: "common" }) : t("price.currency", { ns: "common", amount: prompt.price })}
-          </span>
-        </div>
-        <div className="flex items-center gap-2 text-xs text-gray-400 mb-3">
-          <span className="bg-zinc-800 px-1.5 py-0.5 rounded flex items-center gap-1">
-            {isTextPrompt ? (
-              <Bot className="w-3 h-3" />
-            ) : (
-              <ImageIcon className="w-3 h-3" />
-            )}
-            {prompt.aiModel}
-          </span>
-          <span>{prompt.category}</span>
-        </div>
-        {/* Rating */}
-        <div className="flex items-center gap-1">
-          {[...Array(5)].map((_, i) => (
-            <Star
-              key={i}
-              className={`w-3 h-3 ${
-                i < Math.floor(prompt.rating)
-                  ? "fill-yellow-400 text-yellow-400"
-                  : "text-zinc-700"
-              }`}
-            />
-          ))}
-          <span className="text-[10px] text-gray-500 ms-1">
-            ({prompt.reviews})
-          </span>
-        </div>
-      </div>
-    </LocaleLink>
-  );
-}
-
-function CardSkeleton() {
-  return (
-    <div className="bg-[#18181b] rounded-xl overflow-hidden border border-white/5">
-      <Skeleton className="h-48 w-full" />
-      <div className="p-4 space-y-3">
-        <div className="flex justify-between">
-          <Skeleton className="h-5 w-3/4" />
-          <Skeleton className="h-5 w-12" />
-        </div>
-        <Skeleton className="h-3 w-1/2" />
-        <Skeleton className="h-3 w-20" />
-      </div>
-    </div>
-  );
 }
 
 const FILTER_TABS: FilterTab[] = ["all", "images", "text", "audio"];
@@ -152,12 +68,14 @@ export function NewArrivalsGrid({ prompts, loading }: NewArrivalsGridProps) {
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {loading ? (
-            Array.from({ length: 4 }).map((_, i) => <CardSkeleton key={i} />)
+            Array.from({ length: 4 }).map((_, i) => (
+              <PromptGridCardSkeleton key={i} />
+            ))
           ) : filtered.length > 0 ? (
             filtered
               .slice(0, 8)
               .map((prompt) => (
-                <NewArrivalCard key={prompt.id} prompt={prompt} />
+                <PromptGridCard key={prompt.id} prompt={prompt} />
               ))
           ) : (
             <div className="col-span-full text-center py-12 text-gray-500">
