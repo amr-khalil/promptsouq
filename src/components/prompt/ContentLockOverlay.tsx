@@ -1,11 +1,13 @@
 "use client";
 
+import { LocaleLink } from "@/components/LocaleLink";
 import { Button } from "@/components/ui/button";
 import { Lock } from "lucide-react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 export function ContentLockOverlay() {
+  const { t } = useTranslation(["prompt", "common"]);
   const pathname = usePathname();
   const redirectParam = encodeURIComponent(pathname);
 
@@ -19,17 +21,17 @@ export function ContentLockOverlay() {
         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-muted">
           <Lock className="h-7 w-7 text-muted-foreground" />
         </div>
-        <p className="text-lg font-semibold">سجل دخولك لرؤية المحتوى</p>
+        <p className="text-lg font-semibold">{t("prompt:contentLock.signInToView")}</p>
         <div className="flex gap-3">
           <Button asChild>
-            <Link href={`/sign-in?redirect_url=${redirectParam}`}>
-              تسجيل الدخول
-            </Link>
+            <LocaleLink href={`/sign-in?redirect_url=${redirectParam}`}>
+              {t("common:buttons.signIn")}
+            </LocaleLink>
           </Button>
           <Button variant="outline" asChild>
-            <Link href={`/sign-up?redirect_url=${redirectParam}`}>
-              إنشاء حساب
-            </Link>
+            <LocaleLink href={`/sign-up?redirect_url=${redirectParam}`}>
+              {t("common:buttons.createAccount")}
+            </LocaleLink>
           </Button>
         </div>
       </div>

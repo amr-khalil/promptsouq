@@ -1,0 +1,204 @@
+{
+  "hero": {
+    "searchPlaceholder": "Search prompts...",
+    "cards": {
+      "explore": {
+        "title": "Explore",
+        "subtitle": "Explore",
+        "description": "Discover the latest artworks and featured prompts."
+      },
+      "sell": {
+        "title": "Sell Now",
+        "subtitle": "Sell Prompts",
+        "description": "Turn your creativity into real income."
+      },
+      "generate": {
+        "title": "Generate",
+        "subtitle": "Generate",
+        "description": "Create stunning images using our built-in tools."
+      },
+      "community": {
+        "title": "Community",
+        "subtitle": "Community",
+        "description": "Connect with thousands of designers and developers."
+      }
+    }
+  },
+  "bestsellers": {
+    "title": "Best Sellers This Week",
+    "subtitle": "Carefully selected prompts that deliver the best results"
+  },
+  "freePrompts": {
+    "title": "Free Prompts",
+    "subtitle": "Try professional prompts for free — sign in and benefit"
+  },
+  "newArrivals": {
+    "title": "New Arrivals",
+    "filterTabs": {
+      "all": "All",
+      "images": "Images",
+      "text": "Text",
+      "audio": "Audio"
+    }
+  },
+  "featured": {
+    "banner": {
+      "alt": "Digital Oil Art Collection",
+      "badge": "Exclusive Collection",
+      "title": "Digital Oil Art Bundle",
+      "description": "A complete collection of 50 text prompts for generating digital oil paintings in classic and modern styles."
+    },
+    "categories": {
+      "architecture": {
+        "title": "Architecture",
+        "subtitle": "Interior and exterior designs"
+      },
+      "coding": {
+        "title": "Coding Assistants",
+        "subtitle": "Debug, write, and improve code"
+      }
+    }
+  },
+  "sellers": {
+    "title": "Top Sellers",
+    "titleHighlight": "Top",
+    "titleRest": "Sellers",
+    "subtitle": "The best-selling sellers on the platform"
+  },
+  "howToSell": {
+    "title": "How to Sell?",
+    "videoTitle": "How to sell on PromptSouq",
+    "step1": {
+      "title": "Write the Prompt",
+      "subtitle": "The first step in your journey.",
+      "badge": "Step 1",
+      "heading": "Design a Professional Prompt",
+      "description": "Write smart prompts that achieve amazing results with AI tools."
+    },
+    "step2": {
+      "title": "Price & Publish",
+      "subtitle": "Set your price and start selling.",
+      "badge": "Step 2",
+      "heading": {
+        "part1": "Set",
+        "middle": "your price",
+        "part2": "and start earning!!"
+      },
+      "avatarNames": ["Sarah", "James", "David"]
+    },
+    "step3": {
+      "badge": "Step 3",
+      "heading": "Publish and attract buyers"
+    },
+    "whyUs": {
+      "title": "Why PromptSouq?",
+      "subtitle": "Features that help you sell more."
+    },
+    "features": {
+      "buyers": "Thousands of Buyers",
+      "earnings": "Instant Earnings",
+      "ai": "Artificial Intelligence",
+      "launch": "Launch Now"
+    },
+    "footer": {
+      "steps": "3 Steps",
+      "startSelling": "to start selling"
+    },
+    "stats": {
+      "sellers": "+1000 sellers",
+      "revenue": "+50K SAR"
+    },
+    "tagline": "More than 1000 sellers trust our platform"
+  },
+  "pricing": {
+    "title": "Subscription Plans",
+    "subtitle": "Choose the right plan and get monthly credits for AI content generation",
+    "plans": {
+      "standard": {
+        "name": "Standard",
+        "features": ["50 credits monthly", "Text generation", "Image generation", "3 AI models"]
+      },
+      "pro": {
+        "name": "Pro",
+        "features": ["150 credits monthly", "Text generation", "Image generation", "3 AI models", "Priority support"]
+      },
+      "legendary": {
+        "name": "Legendary",
+        "features": ["500 credits monthly", "Text generation", "Image generation", "3 AI models", "Priority support", "Early access to features"]
+      }
+    }
+  },
+  "testimonials": {
+    "title": "What Our Customers Say",
+    "subtitle": "Reviews from users who tried our platform",
+    "items": [
+      {
+        "name": "James Mitchell",
+        "role": "Digital Marketer",
+        "content": "I found exactly the prompts I needed to grow my business. High quality and great prices!",
+        "avatarSeed": "James",
+        "rating": 5
+      },
+      {
+        "name": "Sarah Chen",
+        "role": "Graphic Designer",
+        "content": "An amazing platform for finding top-tier Midjourney prompts. Saved me so much time.",
+        "avatarSeed": "Sarah",
+        "rating": 5
+      },
+      {
+        "name": "Alex Rivera",
+        "role": "Content Writer",
+        "content": "Thanks to the prompts from this marketplace, my writing has become more professional and creative.",
+        "avatarSeed": "Alex",
+        "rating": 5
+      },
+      {
+        "name": "Emily Watson",
+        "role": "Entrepreneur",
+        "content": "The platform helped me build professional marketing content for my startup at minimal cost.",
+        "avatarSeed": "Emily",
+        "rating": 4
+      },
+      {
+        "name": "David Park",
+        "role": "App Developer",
+        "content": "I use coding prompts daily. They've saved me hours of writing repetitive code.",
+        "avatarSeed": "David",
+        "rating": 5
+      },
+      {
+        "name": "Lisa Thompson",
+        "role": "Social Media Manager",
+        "content": "Social media content has become so much easier. Ready-made prompts with amazing results from the first try.",
+        "avatarSeed": "Lisa",
+        "rating": 5
+      },
+      {
+        "name": "Ryan Foster",
+        "role": "Photographer",
+        "content": "Image generation prompts completely changed my workflow. Unlimited creativity!",
+        "avatarSeed": "Ryan",
+        "rating": 4
+      },
+      {
+        "name": "Maria Garcia",
+        "role": "Language Teacher",
+        "content": "I use educational prompts to create interactive lessons. My students love them!",
+        "avatarSeed": "Maria",
+        "rating": 4
+      },
+      {
+        "name": "Chris Anderson",
+        "role": "YouTube Creator",
+        "content": "Video ideas and scripts are ready in minutes. This platform is indispensable.",
+        "avatarSeed": "Chris",
+        "rating": 5
+      }
+    ]
+  },
+  "cta": {
+    "title": "Are you ready to start?",
+    "description": "Join thousands of users who benefit from AI prompts"
+  }
+}

@@ -3,7 +3,8 @@
 import type { Prompt } from "@/lib/schemas/api";
 import { useCartStore } from "@/stores/cart-store";
 import { CheckCircle2, Heart, Star } from "lucide-react";
-import Link from "next/link";
+import { LocaleLink } from "@/components/LocaleLink";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { Button } from "./ui/button";
 
@@ -61,6 +62,7 @@ const GamingCard = ({
 };
 
 export function GamingPromptCard({ prompt }: GamingPromptCardProps) {
+  const { t } = useTranslation("common");
   const { addItem, isInCart } = useCartStore();
   const inCart = isInCart(prompt.id);
   const isFree = prompt.isFree || prompt.price === 0;
@@ -75,11 +77,11 @@ export function GamingPromptCard({ prompt }: GamingPromptCardProps) {
       price: prompt.price,
       thumbnail: prompt.thumbnail,
     });
-    toast.success("تمت الإضافة إلى السلة");
+    toast.success(t("messages.addedToCart"));
   }
 
   return (
-    <Link href={`/prompt/${prompt.id}`}>
+    <LocaleLink href={`/prompt/${prompt.id}`}>
       <GamingCard className="h-full">
         {/* Top Image Section Wrapper */}
         <div className="relative">
@@ -104,7 +106,7 @@ export function GamingPromptCard({ prompt }: GamingPromptCardProps) {
               className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-[#5F3DEF] text-white transition-colors hover:bg-pink-600"
               onClick={(e) => {
                 e.preventDefault();
-                toast.success("تمت الإضافة إلى المفضلة");
+                toast.success(t("labels.addedToFavorites"));
               }}
             >
               <Heart className="h-4 w-4" />
@@ -140,7 +142,7 @@ export function GamingPromptCard({ prompt }: GamingPromptCardProps) {
                     `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(prompt.seller.name)}&backgroundColor=ffdfbf`
                   }
                   className="h-full w-full object-cover"
-                  alt="البائع"
+                  alt={prompt.seller.name}
                   onError={(e) => {
                     e.currentTarget.src = `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(prompt.seller.name)}&backgroundColor=ffdfbf`;
                   }}
@@ -152,7 +154,7 @@ export function GamingPromptCard({ prompt }: GamingPromptCardProps) {
                   {prompt.seller.name}
                 </span>
                 <span className="text-[10px] font-medium text-slate-400 flex items-center gap-1">
-                  موثق{" "}
+                  {t("labels.verified")}{" "}
                   <CheckCircle2
                     className="h-3 w-3 text-[#5F3DEF]"
                     fill="currentColor"
@@ -188,7 +190,7 @@ export function GamingPromptCard({ prompt }: GamingPromptCardProps) {
               <Button
                 className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-full h-9 shadow-[0_4px_14px_0_rgba(16,185,129,0.39)] hover:shadow-[0_6px_20px_rgba(16,185,129,0.23)] hover:-translate-y-0.5 transition-all"
               >
-                مجاني — عرض
+                {t("labels.freeView")}
               </Button>
             ) : (
               <Button
@@ -196,12 +198,12 @@ export function GamingPromptCard({ prompt }: GamingPromptCardProps) {
                 onClick={handleAddToCart}
                 disabled={inCart}
               >
-                {inCart ? "في السلة" : `$${prompt.price}`}
+                {inCart ? t("buttons.inCart") : t("price.currency", { amount: prompt.price })}
               </Button>
             )}
           </div>
         </div>
       </GamingCard>
-    </Link>
+    </LocaleLink>
   );
 }

@@ -1,0 +1,141 @@
+{
+  "header": {
+    "logo": "SouqPrompt",
+    "nav": {
+      "browse": "Browse",
+      "community": "Community",
+      "blog": "Blog"
+    },
+    "auth": {
+      "signIn": "Sign In",
+      "sellPrompt": "Sell Prompt"
+    }
+  },
+  "footer": {
+    "tagline": "The first Arabic platform for buying and selling AI prompts. Join the community of creators today.",
+    "sections": {
+      "discover": "Discover",
+      "forSellers": "For Sellers"
+    },
+    "links": {
+      "blog": "Blog",
+      "bestSellers": "Best Sellers",
+      "newArrivals": "New Arrivals",
+      "freeCollections": "Free Collections",
+      "howToSell": "How to Sell?",
+      "dashboard": "Dashboard",
+      "guidelines": "Guidelines"
+    },
+    "newsletter": {
+      "title": "Subscribe to Newsletter",
+      "placeholder": "Your email",
+      "button": "Subscribe",
+      "success": "Subscribed successfully!"
+    },
+    "legal": {
+      "copyright": "© 2026 SouqPrompt. All rights reserved.",
+      "privacy": "Privacy Policy",
+      "terms": "Terms & Conditions"
+    }
+  },
+  "brand": {
+    "part1": "Souq",
+    "part2": "Prompt"
+  },
+  "nav": {
+    "home": "Home",
+    "market": "Market",
+    "search": "Search"
+  },
+  "buttons": {
+    "start": "START",
+    "viewAll": "View All",
+    "retry": "Retry",
+    "search": "Search",
+    "viewFree": "View Free",
+    "reset": "Reset",
+    "clearAll": "Clear All",
+    "loadMore": "Load More",
+    "resetFilters": "Reset Filters",
+    "clearSearch": "Clear Search",
+    "newSearch": "New Search",
+    "browseMarket": "Browse Market",
+    "browseAll": "Browse All Prompts",
+    "viewProfile": "View Profile",
+    "viewPrompt": "View Prompt",
+    "buyNow": "Buy Now",
+    "addToCart": "Add to Cart",
+    "inCart": "In Cart",
+    "subscribe": "Subscribe Now",
+    "viewAllPlans": "View All Plans",
+    "viewFullRanking": "View Full Ranking",
+    "exploreBundle": "Explore Collection",
+    "signupFree": "Create Free Account",
+    "signIn": "Sign In",
+    "createAccount": "Create Account",
+    "backHome": "Back to Home",
+    "backToSignIn": "Back to Sign In",
+    "back": "Back",
+    "verify": "Verify",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "submitReview": "Submit Review",
+    "updateReview": "Update Review",
+    "buy": "Buy"
+  },
+  "labels": {
+    "free": "Free",
+    "sales": "Sales:",
+    "verified": "Verified",
+    "rank": "#{{rank}}",
+    "addedToFavorites": "Added to favorites",
+    "freeView": "Free — View",
+    "rating": "Rating",
+    "sellerRating": "Seller Rating",
+    "category": "Category:",
+    "tags": "Tags:",
+    "popular": "Most Popular",
+    "creditsPerMonth": "credits / month",
+    "credits": "credits",
+    "purchased": "Purchased",
+    "or": "or",
+    "filters": "Filters"
+  },
+  "price": {
+    "free": "Free",
+    "perMonth": "/monthly",
+    "currency": "${{amount}}",
+    "currencySymbol": "$"
+  },
+  "messages": {
+    "loading": "Loading...",
+    "searching": "Searching...",
+    "saving": "Saving...",
+    "noResults": "No results found",
+    "noExamples": "No examples available",
+    "noSellers": "No sellers currently",
+    "tryDifferentFilters": "Try adjusting filters or search with different keywords",
+    "tryDifferentKeywords": "Try different keywords or browse categories",
+    "addedToCart": "Added to cart",
+    "alreadyInCart": "This item is already in your cart",
+    "redirectingCheckout": "Redirecting to checkout...",
+    "loginToSeeContent": "Sign in to see content",
+    "reviewUpdated": "Review updated successfully!",
+    "reviewAdded": "Review added successfully!",
+    "noResultsForFilter": "No results for this filter"
+  },
+  "errors": {
+    "loadFailed": "Failed to load data",
+    "loadFailedRetry": "An error occurred while loading data. Please try again.",
+    "loadPageFailed": "Sorry, an error occurred while loading the page. Please try again.",
+    "unexpectedError": "An unexpected error occurred",
+    "pageNotFound": "Page Not Found",
+    "pageNotFoundDescription": "Sorry, we couldn't find the page you're looking for. It may have been moved or deleted.",
+    "notFoundCode": "404",
+    "saveFailed": "An error occurred while saving the review",
+    "searchFailed": "An error occurred while searching"
+  },
+  "search": {
+    "placeholder": "Search for a prompt..."
+  }
+}

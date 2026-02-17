@@ -1,0 +1,44 @@
+{
+  "tabs": {
+    "description": "Description",
+    "samples": "Samples",
+    "reviews": "Reviews"
+  },
+  "about": {
+    "title": "About this Prompt"
+  },
+  "useCases": {
+    "title": "Use Cases",
+    "item1": "Perfect for creating professional content in minutes",
+    "item2": "Saves time and effort in creative processes",
+    "item3": "Customizable results to fit your needs"
+  },
+  "recommendedModel": {
+    "title": "Recommended Model"
+  },
+  "fullContent": {
+    "title": "Full Prompt Content"
+  },
+  "relatedPrompts": {
+    "title": "Related Prompts"
+  },
+  "trust": {
+    "securePayment": "Secure and guaranteed payment",
+    "instantAccess": "Instant access after purchase",
+    "moneyBackGuarantee": "7-day money-back guarantee"
+  },
+  "review": {
+    "yourReview": "Your Review",
+    "editReview": "Edit Review",
+    "rateThis": "Rate this prompt",
+    "commentPlaceholder": "Write your comment (optional)..."
+  },
+  "sidebar": {
+    "reviewCount": "reviews",
+    "sellerRating": "Seller Rating",
+    "viewProfile": "View Profile"
+  },
+  "contentLock": {
+    "signInToView": "Sign in to see the content"
+  }
+}

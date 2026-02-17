@@ -1,17 +1,19 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
+import { LocaleLink } from "@/components/LocaleLink";
 import { AtSign, Share2, Zap } from "lucide-react";
-import Link from "next/link";
 import { type FormEvent, useState } from "react";
 import { toast } from "sonner";
 
 export function Footer() {
+  const { t } = useTranslation("common");
   const [email, setEmail] = useState("");
 
   function handleSubscribe(e: FormEvent) {
     e.preventDefault();
     if (!email) return;
-    toast.success("تم الاشتراك بنجاح!");
+    toast.success(t("footer.newsletter.success"));
     setEmail("");
   }
 
@@ -21,15 +23,14 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           {/* Brand / About */}
           <div className="col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-6">
+            <LocaleLink href="/" className="flex items-center gap-2 mb-6">
               <Zap className="w-7 h-7 text-[#7f0df2]" fill="currentColor" />
               <span className="text-2xl font-bold font-display text-white">
-                سوق<span className="text-[#7f0df2]">برومبت</span>
+                {t("brand.part1")}<span className="text-[#7f0df2]">{t("brand.part2")}</span>
               </span>
-            </Link>
+            </LocaleLink>
             <p className="text-gray-500 text-sm mb-6">
-              المنصة العربية الأولى لبيع وشراء أوامر الذكاء الاصطناعي. انضم إلى
-              مجتمع المبدعين اليوم.
+              {t("footer.tagline")}
             </p>
             <div className="flex gap-4">
               <a
@@ -49,66 +50,48 @@ export function Footer() {
 
           {/* Discover */}
           <div>
-            <h4 className="text-white font-bold mb-6">اكتشف</h4>
+            <h4 className="text-white font-bold mb-6">{t("footer.sections.discover")}</h4>
             <ul className="space-y-3 text-sm text-gray-500">
               <li>
-                <Link
-                  href="/market"
-                  className="hover:text-[#7f0df2] transition-colors"
-                >
-                  المدونة
-                </Link>
+                <LocaleLink href="/market" className="hover:text-[#7f0df2] transition-colors">
+                  {t("footer.links.blog")}
+                </LocaleLink>
               </li>
               <li>
-                <Link
-                  href="/market?sortBy=bestselling"
-                  className="hover:text-[#7f0df2] transition-colors"
-                >
-                  الأكثر مبيعاً
-                </Link>
+                <LocaleLink href="/market?sortBy=bestselling" className="hover:text-[#7f0df2] transition-colors">
+                  {t("footer.links.bestSellers")}
+                </LocaleLink>
               </li>
               <li>
-                <Link
-                  href="/market?sortBy=newest"
-                  className="hover:text-[#7f0df2] transition-colors"
-                >
-                  وصل حديثاً
-                </Link>
+                <LocaleLink href="/market?sortBy=newest" className="hover:text-[#7f0df2] transition-colors">
+                  {t("footer.links.newArrivals")}
+                </LocaleLink>
               </li>
               <li>
-                <Link
-                  href="/market?priceType=free"
-                  className="hover:text-[#7f0df2] transition-colors"
-                >
-                  مجموعات مجانية
-                </Link>
+                <LocaleLink href="/market?priceType=free" className="hover:text-[#7f0df2] transition-colors">
+                  {t("footer.links.freeCollections")}
+                </LocaleLink>
               </li>
             </ul>
           </div>
 
           {/* For Sellers */}
           <div>
-            <h4 className="text-white font-bold mb-6">للبائعين</h4>
+            <h4 className="text-white font-bold mb-6">{t("footer.sections.forSellers")}</h4>
             <ul className="space-y-3 text-sm text-gray-500">
               <li>
-                <Link
-                  href="/seller"
-                  className="hover:text-[#7f0df2] transition-colors"
-                >
-                  كيف تبيع؟
-                </Link>
+                <LocaleLink href="/seller" className="hover:text-[#7f0df2] transition-colors">
+                  {t("footer.links.howToSell")}
+                </LocaleLink>
               </li>
               <li>
-                <Link
-                  href="/dashboard"
-                  className="hover:text-[#7f0df2] transition-colors"
-                >
-                  لوحة التحكم
-                </Link>
+                <LocaleLink href="/dashboard" className="hover:text-[#7f0df2] transition-colors">
+                  {t("footer.links.dashboard")}
+                </LocaleLink>
               </li>
               <li>
                 <a href="#" className="hover:text-[#7f0df2] transition-colors">
-                  دليل الإرشادات
+                  {t("footer.links.guidelines")}
                 </a>
               </li>
             </ul>
@@ -116,20 +99,20 @@ export function Footer() {
 
           {/* Newsletter */}
           <div>
-            <h4 className="text-white font-bold mb-6">اشترك في النشرة</h4>
+            <h4 className="text-white font-bold mb-6">{t("footer.newsletter.title")}</h4>
             <form onSubmit={handleSubscribe} className="space-y-3">
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="بريدك الإلكتروني"
+                placeholder={t("footer.newsletter.placeholder")}
                 className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-2 text-white placeholder-zinc-600 focus:border-[#7f0df2] focus:ring-0 focus:outline-none text-sm"
               />
               <button
                 type="submit"
                 className="w-full bg-[#7f0df2] text-white font-bold py-2 rounded-lg hover:bg-[#9d4dff] transition-colors text-sm"
               >
-                اشترك
+                {t("footer.newsletter.button")}
               </button>
             </form>
           </div>
@@ -138,14 +121,14 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-gray-600 text-sm text-center md:text-right">
-            © 2026 SouqPrompt. جميع الحقوق محفوظة.
+            {t("footer.legal.copyright")}
           </p>
           <div className="flex gap-6 text-sm text-gray-600">
             <a href="#" className="hover:text-white transition-colors">
-              سياسة الخصوصية
+              {t("footer.legal.privacy")}
             </a>
             <a href="#" className="hover:text-white transition-colors">
-              الشروط والأحكام
+              {t("footer.legal.terms")}
             </a>
           </div>
         </div>

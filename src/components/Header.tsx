@@ -1,21 +1,15 @@
 "use client";
 
 import { useCartItemCount } from "@/hooks/use-cart";
+import { LanguageToggle } from "@/components/LanguageToggle";
+import { LocaleLink } from "@/components/LocaleLink";
 import { useUser } from "@clerk/nextjs";
 import { Menu, Plus, Search, X, Zap } from "lucide-react";
-import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 function useAdminPendingCount(isAdmin: boolean) {
   const [count, setCount] = useState(0);
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   useEffect(() => {
     if (!isAdmin) return;
@@ -36,7 +30,6 @@ function useAdminPendingCount(isAdmin: boolean) {
     };
 
     fetchCount();
-    // Poll every 5 minutes
     const interval = setInterval(fetchCount, 300_000);
     return () => {
       cancelled = true;
@@ -48,6 +41,7 @@ function useAdminPendingCount(isAdmin: boolean) {
 }
 
 export function Header() {
+  const { t } = useTranslation("common");
   const cartCount = useCartItemCount();
   const { user } = useUser();
   const isAdmin =
@@ -70,7 +64,7 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         {/* Logo & Links */}
         <div className="flex items-center gap-8">
-          <a href="#" className="flex items-center gap-2 group">
+          <LocaleLink href="/" className="flex items-center gap-2 group">
             <div className="relative">
               <div className="absolute inset-0 bg-[#7f0df2] blur-lg opacity-50 group-hover:opacity-100 transition-opacity"></div>
               <Zap
@@ -79,14 +73,14 @@ export function Header() {
               />
             </div>
             <span className="text-2xl font-bold font-display tracking-tight text-white z-10">
-              سوق<span className="text-[#7f0df2]">برومبت</span>
+              {t("header.logo")}
             </span>
-          </a>
+          </LocaleLink>
 
           <div className="hidden md:flex items-center gap-8 mr-4">
-            <Link href="#">تصفح</Link>
-            <Link href="#">المجتمع</Link>
-            <Link href="#">المدونة</Link>
+            <LocaleLink href="/market">{t("header.nav.browse")}</LocaleLink>
+            <LocaleLink href="#">{t("header.nav.community")}</LocaleLink>
+            <LocaleLink href="#">{t("header.nav.blog")}</LocaleLink>
           </div>
         </div>
 
@@ -98,26 +92,22 @@ export function Header() {
 
           <div className="h-6 w-px bg-zinc-800 mx-2 hidden sm:block"></div>
 
-          <a
-            href="#"
+          <LocaleLink
+            href="/sign-in"
             className="text-sm font-bold text-gray-300 hover:text-white hidden sm:block"
           >
-            تسجيل دخول
-          </a>
+            {t("header.auth.signIn")}
+          </LocaleLink>
 
-          <a
-            href="#"
+          <LocaleLink
+            href="/sell"
             className="bg-[#7f0df2]/10 border border-[#7f0df2] text-[#7f0df2] px-5 py-2 rounded-full text-sm font-bold hover:bg-[#7f0df2] hover:text-white hover:shadow-[0_0_20px_#7f0df2] transition-all duration-300 flex items-center gap-2 group"
           >
             <Plus className="w-4 h-4" />
-            <span>بيع برومبت</span>
-          </a>
+            <span>{t("header.auth.sellPrompt")}</span>
+          </LocaleLink>
 
-          <button className="hidden sm:flex items-center gap-1 text-[10px] font-bold bg-zinc-900 px-3 py-1.5 rounded-lg border border-zinc-800 text-zinc-400 hover:border-zinc-600 transition-colors">
-            <span className="text-white">AR</span>
-            <span className="text-zinc-700">|</span>
-            <span>EN</span>
-          </button>
+          <LanguageToggle />
 
           {/* Mobile Menu Toggle */}
           <button
@@ -128,6 +118,19 @@ export function Header() {
           </button>
         </div>
       </div>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-[#0f0f0f]/95 backdrop-blur-md border-t border-zinc-800 px-4 py-4 space-y-3">
+          <LocaleLink href="/market" className="block text-white text-sm py-2">{t("header.nav.browse")}</LocaleLink>
+          <LocaleLink href="#" className="block text-white text-sm py-2">{t("header.nav.community")}</LocaleLink>
+          <LocaleLink href="#" className="block text-white text-sm py-2">{t("header.nav.blog")}</LocaleLink>
+          <div className="pt-2 border-t border-zinc-800 flex items-center justify-between">
+            <LocaleLink href="/sign-in" className="text-sm font-bold text-gray-300">{t("header.auth.signIn")}</LocaleLink>
+            <LanguageToggle />
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

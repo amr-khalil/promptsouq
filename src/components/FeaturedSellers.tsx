@@ -10,8 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { ChevronRight, RefreshCw, Star } from "lucide-react";
-import Link from "next/link";
+import { LocaleLink } from "@/components/LocaleLink";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 // --- Types ---
 
@@ -160,9 +161,10 @@ function getRankConfig(rank: number) {
 
 function PodiumCard({ seller, rank }: { seller: Seller; rank: number }) {
   const config = getRankConfig(rank);
+  const { t } = useTranslation(["home", "common"]);
 
   return (
-    <Link href={`/seller/${seller.userId}`} className="block">
+    <LocaleLink href={`/seller/${seller.userId}`} className="block">
       <div
         className={cn(
           "relative flex flex-col items-center justify-between rounded-xl border bg-gradient-to-b text-white transition-transform hover:-translate-y-1 duration-300",
@@ -212,7 +214,7 @@ function PodiumCard({ seller, rank }: { seller: Seller; rank: number }) {
               config.badgeBg,
             )}
           >
-            #{rank}
+            {t("labels.rank", { ns: "common", rank })}
           </Badge>
         </div>
 
@@ -223,7 +225,7 @@ function PodiumCard({ seller, rank }: { seller: Seller; rank: number }) {
             <span className="text-slate-500">({seller.totalReviews})</span>
           </div>
           <p className="text-sm font-medium">
-            المبيعات:{" "}
+            {t("labels.sales", { ns: "common" })}{" "}
             <span className="text-white font-bold">{seller.totalSales}</span>
           </p>
         </div>
@@ -232,7 +234,7 @@ function PodiumCard({ seller, rank }: { seller: Seller; rank: number }) {
           <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-transparent to-pink-500/10 pointer-events-none" />
         )}
       </div>
-    </Link>
+    </LocaleLink>
   );
 }
 
@@ -276,22 +278,23 @@ export default function FeaturedSellers() {
   const [sellers, setSellers] = useState<Seller[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useTranslation(["home", "common"]);
 
   useEffect(() => {
     async function fetchSellers() {
       try {
         const res = await fetch("/api/sellers?sortBy=sales&limit=5");
-        if (!res.ok) throw new Error("فشل في تحميل البيانات");
+        if (!res.ok) throw new Error(t("errors.loadFailed", { ns: "common" }));
         const json = await res.json();
         setSellers(json.data);
       } catch {
-        setError("حدث خطأ في تحميل البائعين");
+        setError(t("errors.loadFailed", { ns: "common" }));
       } finally {
         setLoading(false);
       }
     }
     fetchSellers();
-  }, []);
+  }, [t]);
 
   return (
     <section className="py-16 bg-[#05050f] relative overflow-hidden">
@@ -306,10 +309,10 @@ export default function FeaturedSellers() {
         <div className="mb-8">
           <h2 className="flex items-center gap-2 text-3xl font-bold text-white tracking-tight">
             <ChevronRight className="h-6 w-6 text-purple-400 stroke-3" />
-            <span className="text-purple-400">أفضل</span> البائعين
+            <span className="text-purple-400">{t("sellers.titleHighlight", { ns: "home" })}</span> {t("sellers.titleRest", { ns: "home" })}
           </h2>
           <p className="mt-2 text-slate-400 text-sm">
-            البائعون الأكثر مبيعاً على المنصة
+            {t("sellers.subtitle", { ns: "home" })}
           </p>
         </div>
 
@@ -322,7 +325,7 @@ export default function FeaturedSellers() {
               onClick={() => window.location.reload()}
             >
               <RefreshCw className="w-4 h-4 ml-2" />
-              إعادة المحاولة
+              {t("buttons.retry", { ns: "common" })}
             </Button>
           </div>
         )}
@@ -335,7 +338,7 @@ export default function FeaturedSellers() {
           <>
             {sellers.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-slate-400">لا يوجد بائعين حالياً</p>
+                <p className="text-slate-400">{t("messages.noSellers", { ns: "common" })}</p>
               </div>
             ) : sellers.length >= 5 ? (
               <div className="overflow-x-auto pb-4">
@@ -369,10 +372,10 @@ export default function FeaturedSellers() {
                 size="lg"
                 className="border-purple-500/30 bg-[#1f1f2e] text-purple-400 hover:bg-purple-500/10 hover:text-purple-300 hover:border-purple-400 px-8 py-3 text-base font-medium rounded-full transition-all shadow-[0_0_15px_-5px_rgba(168,85,247,0.3)] hover:shadow-[0_0_20px_-3px_rgba(168,85,247,0.5)]"
               >
-                <Link href="/ranking">
-                  عرض الترتيب الكامل
+                <LocaleLink href="/ranking">
+                  {t("buttons.viewFullRanking", { ns: "common" })}
                   <ChevronRight className="mr-2 h-5 w-5 rotate-180" />
-                </Link>
+                </LocaleLink>
               </Button>
             </div>
           </>

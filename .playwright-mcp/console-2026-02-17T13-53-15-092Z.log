@@ -1,0 +1,31 @@
+[     936ms] [ERROR] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <ClerkProvider publishableKey="pk_test_Yn..." proxyUrl="" domain="" isSatellite={false} signInUrl="/sign-in" ...>
+      <ClerkProviderBase publishableKey="pk_test_Yn..." proxyUrl="" domain="" isSatellite={false} signInUrl="/sign-in" ...>
+        <ClerkContextProvider initialState={null} isomorphicClerkOptions={{...}}>
+          <OrganizationProvider organization={undefined}>
+            <SWRConfigCompat swrConfig={undefined}>
+              <SWRConfig value={undefined}>
+                <__experimental_CheckoutProvider value={undefined}>
+                  <RouterTelemetry>
+                  <ClerkJSScript>
+                  <html
+                    lang="en"
+                    dir="ltr"
+-                   className="light"
+-                   style={{color-scheme:"light"}}
+                  >
+ @ http://localhost:3000/_next/static/chunks/a5004_next_dist_481ca6bb._.js:3127
+[    1020ms] [WARNING] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview @ http://localhost:3000/_next/static/chunks/a5004_next_dist_481ca6bb._.js:2297
+[    1386ms] [ERROR] Failed to load resource: net::ERR_FILE_NOT_FOUND @ blob:http://localhost:3000/9b602579-7127-461d-95ad-20f79ba84b5e:0

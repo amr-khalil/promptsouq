@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import { Coins, Cpu, Globe, Image as ImageIcon, Sparkles } from "lucide-react";
 import BrandItem, { type BrandItemProps } from "./BrandItem";
 import TechCard from "./TechCard";
@@ -42,7 +43,6 @@ const brands: BrandItemProps[] = [
       </svg>
     ),
   },
-
   {
     name: "Copilot",
     color: "#fff",
@@ -55,17 +55,17 @@ const brands: BrandItemProps[] = [
 ];
 
 function Hero() {
+  const { t } = useTranslation(["home", "common"]);
+
   return (
     <section>
       {/* Hero Section */}
       <header className="relative pt-16 pb-12 lg:pt-20 lg:pb-24 overflow-hidden min-h-[90vh] flex flex-col justify-center">
         {/* Background Effects */}
         <div className="absolute inset-0 z-0 pointer-events-none">
-          {/* Top Glow */}
           <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-200 h-125 bg-[#7f0df2]/10 rounded-full blur-[120px] mix-blend-screen" />
           <div className="absolute inset-0 bg-noise opacity-20" />
           <div className="absolute inset-0 bg-circuit opacity-30" />
-          {/* Fade to bottom */}
           <div className="absolute inset-0 bg-linear-to-b from-transparent via-[#0f0f0f]/80 to-[#0f0f0f]" />
         </div>
 
@@ -73,27 +73,24 @@ function Hero() {
           {/* Search Bar Area */}
           <div className="relative max-w-2xl mx-auto mb-20 z-20">
             <div className="flex items-center gap-4 relative">
-              {/* Left Decorative Element */}
               <div className="absolute -right-6 top-1/2 -translate-y-1/2 hidden md:block">
                 <div className="w-2 h-8 bg-[#faff00]/80" />
               </div>
 
-              {/* Main Input Container */}
               <div className="flex-1 bg-[#1a1a20]/90 backdrop-blur-xl border border-[#7f0df2]/30 clip-search-container flex items-center p-1.5 focus-within:border-[#faff00] focus-within:shadow-[0_0_15px_rgba(250,255,0,0.3)] transition-all duration-300 shadow-xl">
                 <div className="pl-4 pr-6 text-[#7f0df2]">
                   <Sparkles className="w-6 h-6" />
                 </div>
                 <input
                   type="text"
-                  placeholder="Search prompts... ابحث عن أوامر..."
+                  placeholder={t("hero.searchPlaceholder", { ns: "home" })}
                   className="w-full bg-transparent border-none text-white text-base placeholder-zinc-500 focus:ring-0 focus:outline-none px-2 font-display tracking-wide h-12"
                 />
                 <button className="bg-[#7f0df2] hover:bg-[#9d4dff] text-white px-8 py-3 font-bold text-sm tracking-wider uppercase transition-colors shadow-[0_0_15px_rgba(127,13,242,0.4)] clip-button-start">
-                  START
+                  {t("buttons.start", { ns: "common" })}
                 </button>
               </div>
 
-              {/* Right Decorative Element */}
               <div className="absolute -left-6 top-1/2 -translate-y-1/2 hidden md:block">
                 <div className="w-2 h-8 bg-[#faff00]/80" />
               </div>
@@ -103,9 +100,9 @@ function Hero() {
           {/* Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
             <TechCard
-              title="استكشف"
-              subTitle="Explore"
-              desc="اكتشف أحدث الأعمال الفنية والأوامر المميزة."
+              title={t("hero.cards.explore.title", { ns: "home" })}
+              subTitle={t("hero.cards.explore.subtitle", { ns: "home" })}
+              desc={t("hero.cards.explore.description", { ns: "home" })}
               sysId="SYS.ID_01"
               colorClass="secondary"
               glowColor="rgba(127,13,242,0.5)"
@@ -114,9 +111,9 @@ function Hero() {
             />
 
             <TechCard
-              title="بع الآن"
-              subTitle="Sell Prompts"
-              desc="حول إبداعك إلى دخل مادي حقيقي."
+              title={t("hero.cards.sell.title", { ns: "home" })}
+              subTitle={t("hero.cards.sell.subtitle", { ns: "home" })}
+              desc={t("hero.cards.sell.description", { ns: "home" })}
               sysId="SYS.ID_02"
               colorClass="[#faff00]"
               glowColor="rgba(250,255,0,0.4)"
@@ -125,9 +122,9 @@ function Hero() {
             />
 
             <TechCard
-              title="توليد"
-              subTitle="Generate"
-              desc="أنشئ صوراً مذهلة باستخدام أدواتنا المدمجة."
+              title={t("hero.cards.generate.title", { ns: "home" })}
+              subTitle={t("hero.cards.generate.subtitle", { ns: "home" })}
+              desc={t("hero.cards.generate.description", { ns: "home" })}
               sysId="SYS.ID_03"
               colorClass="[#7f0df2]"
               glowColor="rgba(168,85,247,0.5)"
@@ -136,9 +133,9 @@ function Hero() {
             />
 
             <TechCard
-              title="المجتمع"
-              subTitle="Community"
-              desc="تواصل مع آلاف المصممين والمطورين."
+              title={t("hero.cards.community.title", { ns: "home" })}
+              subTitle={t("hero.cards.community.subtitle", { ns: "home" })}
+              desc={t("hero.cards.community.description", { ns: "home" })}
               sysId="SYS.ID_04"
               colorClass="blue-500"
               glowColor="rgba(59,130,246,0.5)"

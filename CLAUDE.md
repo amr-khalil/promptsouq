@@ -140,6 +140,8 @@ Future additions: Supabase anon key, Stripe publishable/secret keys.
 - Supabase Postgres 17.x via Drizzle ORM + postgres.js (`prepare: false`) (008-seller-leaderboard-storefront)
 - TypeScript 5.x (strict mode) + Next.js 16.x (App Router), React 19.x, Drizzle ORM, Zod 4.x, Clerk 6.x, shadcn/ui, Zustand, Sonner (009-free-prompts)
 - TypeScript 5.x (strict mode), Node.js 18+ + Next.js 16.x (App Router), React 19.x, Drizzle ORM, Stripe SDK (Billing + Customer Portal), Clerk 6.x, Zod 4.x, shadcn/ui, Zustand, Sonner (010-subscription-credits)
+- TypeScript 5.x (strict) + Next.js 16.x (App Router), React 19.x + i18next 25.x, react-i18next 16.x (already installed), Clerk 6.x, Tailwind CSS 4.x (011-i18n-localization)
+- JSON translation files (no database changes) (011-i18n-localization)
 
 ## Recent Changes
 - 001-api-mock-data: Added TypeScript 5.x (strict mode) + Next.js 16.x (App Router), React 19.x, Zod 4.x

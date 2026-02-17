@@ -1,0 +1,10 @@
+{
+  "resultsFor": "Search results for",
+  "found": "We found",
+  "result": "result",
+  "emptyState": {
+    "title": "Search for Prompts",
+    "description": "Type above to search for the prompts you need"
+  },
+  "noResults": "No results found"
+}

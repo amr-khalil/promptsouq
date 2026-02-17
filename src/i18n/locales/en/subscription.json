@@ -1,0 +1,41 @@
+{
+  "metaTitle": "Subscriptions | PromptSouq",
+  "metaDescription": "Choose the subscription plan that suits you",
+  "pageTitle": "Upgrade Your Account",
+  "pageSubtitle": "Choose the right plan and get monthly credits to download the best prompts",
+  "billing": {
+    "monthly": "Monthly",
+    "sixMonths": "6 Months",
+    "yearly": "Yearly"
+  },
+  "period": {
+    "monthly": "/monthly",
+    "sixMonths": "/6 months",
+    "yearly": "/yearly"
+  },
+  "labels": {
+    "currentPlan": "Current Plan",
+    "creditsPerMonth": "credits / month",
+    "credits": "credits",
+    "popular": "Most Popular",
+    "remainingBalance": "Remaining balance:",
+    "renewal": "Renewal:"
+  },
+  "buttons": {
+    "upgrade": "Upgrade",
+    "subscribe": "Subscribe Now",
+    "buy": "Buy",
+    "manageSubscription": "Manage Subscription"
+  },
+  "topup": {
+    "title": "Additional Credits",
+    "subtitle": "Buy additional credits for generation"
+  },
+  "messages": {
+    "subscriptionSuccess": "Subscribed successfully!",
+    "paymentCanceled": "Payment was canceled",
+    "alreadySubscribed": "You already have a subscription",
+    "unexpectedError": "An unexpected error occurred",
+    "connectionError": "An error occurred connecting to the server"
+  }
+}
