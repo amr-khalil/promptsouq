@@ -141,5 +141,17 @@
     "recentSearches": "عمليات البحث الأخيرة",
     "trendingSearches": "الأكثر بحثاً",
     "removeSearch": "إزالة"
+  },
+  "cart": {
+    "title": "سلة المشتريات",
+    "description": "أضف البرومبتات وأتمم الشراء",
+    "empty": "السلة فارغة",
+    "emptyHint": "ابدأ بإضافة البرومبتات!",
+    "total": "المجموع",
+    "checkout": "إتمام الشراء",
+    "securePayment": "دفع آمن عبر Stripe",
+    "removedFromCart": "تم الحذف من السلة",
+    "addToCartTitle": "أضف إلى السلة",
+    "inCartTitle": "في السلة"
   }
 }

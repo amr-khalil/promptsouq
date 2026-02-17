@@ -1,10 +1,10 @@
 "use client";
 
+import HeroSearchBar from "@/components/HeroSearchBar";
 import {
   PromptGridCard,
   PromptGridCardSkeleton,
 } from "@/components/PromptGridCard";
-import SearchInput from "@/components/SearchInput";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -336,11 +336,10 @@ export default function Market() {
           </h1>
           <p className="text-gray-400 mb-8 text-lg">{t("subtitle")}</p>
           <div className="max-w-2xl mx-auto">
-            <SearchInput
+            <HeroSearchBar
               key={searchQuery}
               onSearch={handleSearch}
               defaultValue={searchQuery}
-              placeholder={t("search.placeholder", { ns: "common" })}
             />
           </div>
         </div>

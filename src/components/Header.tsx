@@ -1,6 +1,6 @@
 "use client";
 
-import { useCartItemCount } from "@/hooks/use-cart";
+import { CartSheet } from "@/components/CartSheet";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { LocaleLink } from "@/components/LocaleLink";
 import { useUser } from "@clerk/nextjs";
@@ -42,7 +42,6 @@ function useAdminPendingCount(isAdmin: boolean) {
 
 export function Header() {
   const { t } = useTranslation("common");
-  const cartCount = useCartItemCount();
   const { user } = useUser();
   const isAdmin =
     (user?.publicMetadata as { role?: string } | undefined)?.role === "admin";
@@ -89,6 +88,8 @@ export function Header() {
           <button className="hidden lg:flex items-center justify-center w-10 h-10 rounded-full border border-zinc-700 text-zinc-400 hover:text-white hover:border-[#7f0df2] hover:shadow-[0_0_15px_#7f0df2] transition-all">
             <Search className="w-5 h-5" />
           </button>
+
+          <CartSheet />
 
           <div className="h-6 w-px bg-zinc-800 mx-2 hidden sm:block"></div>
 

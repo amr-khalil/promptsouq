@@ -13,11 +13,17 @@ interface TrendingItem {
 
 interface HeroSearchBarProps {
   className?: string;
+  onSearch?: (query: string) => void;
+  defaultValue?: string;
 }
 
-export default function HeroSearchBar({ className = "" }: HeroSearchBarProps) {
+export default function HeroSearchBar({
+  className = "",
+  onSearch,
+  defaultValue = "",
+}: HeroSearchBarProps) {
   const { t, i18n } = useTranslation(["home", "common"]);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(defaultValue);
   const [isFocused, setIsFocused] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [trendingItems, setTrendingItems] = useState<TrendingItem[]>([]);
@@ -27,8 +33,12 @@ export default function HeroSearchBar({ className = "" }: HeroSearchBarProps) {
   const locale = (params?.locale as string) ?? "en";
   const isArabic = i18n.language === "ar";
 
-  const { searches: recentSearches, addSearch, removeSearch, clearAll } =
-    useRecentSearchesStore();
+  const {
+    searches: recentSearches,
+    addSearch,
+    removeSearch,
+    clearAll,
+  } = useRecentSearchesStore();
 
   const localePath = useCallback(
     (path: string) => (locale === "ar" ? `/ar${path}` : path),
@@ -70,9 +80,13 @@ export default function HeroSearchBar({ className = "" }: HeroSearchBarProps) {
     setIsOpen(false);
     setIsFocused(false);
     setQuery(term);
-    router.push(
-      `${localePath("/market")}?search=${encodeURIComponent(term)}`,
-    );
+    if (onSearch) {
+      onSearch(term);
+    } else {
+      router.push(
+        `${localePath("/market")}?search=${encodeURIComponent(term)}`,
+      );
+    }
   };
 
   const handleSearch = (e: React.FormEvent) => {
