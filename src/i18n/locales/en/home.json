@@ -60,9 +60,9 @@
     }
   },
   "sellers": {
-    "title": "Top Sellers",
+    "title": "Top Creators",
     "titleHighlight": "Top",
-    "titleRest": "Sellers",
+    "titleRest": "Creators",
     "subtitle": "The best-selling sellers on the platform"
   },
   "howToSell": {
@@ -116,15 +116,33 @@
     "plans": {
       "standard": {
         "name": "Standard",
-        "features": ["50 credits monthly", "Text generation", "Image generation", "3 AI models"]
+        "features": [
+          "50 credits monthly",
+          "Text generation",
+          "Image generation",
+          "3 AI models"
+        ]
       },
       "pro": {
         "name": "Pro",
-        "features": ["150 credits monthly", "Text generation", "Image generation", "3 AI models", "Priority support"]
+        "features": [
+          "150 credits monthly",
+          "Text generation",
+          "Image generation",
+          "3 AI models",
+          "Priority support"
+        ]
       },
       "legendary": {
         "name": "Legendary",
-        "features": ["500 credits monthly", "Text generation", "Image generation", "3 AI models", "Priority support", "Early access to features"]
+        "features": [
+          "500 credits monthly",
+          "Text generation",
+          "Image generation",
+          "3 AI models",
+          "Priority support",
+          "Early access to features"
+        ]
       }
     }
   },
