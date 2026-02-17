@@ -136,6 +136,9 @@
     "searchFailed": "An error occurred while searching"
   },
   "search": {
-    "placeholder": "Search for a prompt..."
+    "placeholder": "Search for a prompt...",
+    "recentSearches": "Recent Searches",
+    "trendingSearches": "Trending Searches",
+    "removeSearch": "Remove"
   }
 }

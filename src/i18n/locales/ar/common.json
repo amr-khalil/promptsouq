@@ -136,6 +136,9 @@
     "searchFailed": "حدث خطأ أثناء البحث"
   },
   "search": {
-    "placeholder": "ابحث عن برومبت..."
+    "placeholder": "ابحث عن برومبت...",
+    "recentSearches": "عمليات البحث الأخيرة",
+    "trendingSearches": "الأكثر بحثاً",
+    "removeSearch": "إزالة"
   }
 }
