@@ -1,9 +1,12 @@
 "use client";
 
+import { BestSellersCarousel } from "@/components/BestSellersCarousel";
+import { FeaturedBanner } from "@/components/FeaturedBanner";
 import FeaturedSellers from "@/components/FeaturedSellers";
 import { GamingPromptCard } from "@/components/GamingPromptCard";
 import Hero from "@/components/Hero";
 import HowToSell from "@/components/HowToSell";
+import { NewArrivalsGrid } from "@/components/NewArrivalsGrid";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -74,6 +77,7 @@ export default function Home() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [trendingPrompts, setTrendingPrompts] = useState<Prompt[]>([]);
   const [freePrompts, setFreePrompts] = useState<Prompt[]>([]);
+  const [newPrompts, setNewPrompts] = useState<Prompt[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [plans, setPlans] = useState<PlanData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -83,29 +87,50 @@ export default function Home() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const [categoriesRes, promptsRes, freeRes, testimonialsRes, plansRes] = await Promise.all([
+        const [
+          categoriesRes,
+          promptsRes,
+          freeRes,
+          newRes,
+          testimonialsRes,
+          plansRes,
+        ] = await Promise.all([
           fetch("/api/categories"),
           fetch("/api/prompts?sortBy=bestselling&limit=8"),
           fetch("/api/prompts?priceType=free&limit=10"),
+          fetch("/api/prompts?sortBy=newest&limit=8"),
           fetch("/api/testimonials"),
           fetch("/api/subscription/plans"),
         ]);
 
-        if (!categoriesRes.ok || !promptsRes.ok || !freeRes.ok || !testimonialsRes.ok) {
+        if (
+          !categoriesRes.ok ||
+          !promptsRes.ok ||
+          !freeRes.ok ||
+          !newRes.ok ||
+          !testimonialsRes.ok
+        ) {
           throw new Error("فشل في تحميل البيانات");
         }
 
-        const [categoriesData, promptsData, freeData, testimonialsData] =
-          await Promise.all([
-            categoriesRes.json(),
-            promptsRes.json(),
-            freeRes.json(),
-            testimonialsRes.json(),
-          ]);
+        const [
+          categoriesData,
+          promptsData,
+          freeData,
+          newData,
+          testimonialsData,
+        ] = await Promise.all([
+          categoriesRes.json(),
+          promptsRes.json(),
+          freeRes.json(),
+          newRes.json(),
+          testimonialsRes.json(),
+        ]);
 
         setCategories(categoriesData.data);
         setTrendingPrompts([...promptsData.data]);
         setFreePrompts(freeData.data ?? []);
+        setNewPrompts(newData.data ?? []);
         setTestimonials(testimonialsData.data);
 
         if (plansRes.ok) {
@@ -134,6 +159,16 @@ export default function Home() {
   return (
     <div>
       <Hero />
+
+      {/* Best Sellers Carousel */}
+      <BestSellersCarousel prompts={trendingPrompts} loading={loading} />
+
+      {/* Featured Banner + Category Cards */}
+      <FeaturedBanner />
+
+      {/* New Arrivals Grid */}
+      <NewArrivalsGrid prompts={newPrompts} loading={loading} />
+
       {/* Featured Prompts - Gaming Style */}
       <section className="py-16 bg-[#0f0f16]">
         <div className="container mx-auto px-4">
@@ -281,7 +316,8 @@ export default function Home() {
                 <span className="text-purple-400">خطط</span> الاشتراك
               </h2>
               <p className="mt-3 text-sm text-slate-400">
-                اختر الخطة المناسبة واحصل على رصيد شهري لتوليد المحتوى بالذكاء الاصطناعي
+                اختر الخطة المناسبة واحصل على رصيد شهري لتوليد المحتوى بالذكاء
+                الاصطناعي
               </p>
             </div>
 
@@ -289,7 +325,9 @@ export default function Home() {
               {plans.map((plan) => {
                 const Icon = planIconMap[plan.icon] ?? Sword;
                 const theme = planThemes[plan.theme] ?? planThemes.blue;
-                const displayPrice = (plan.monthlyPrice / 100).toFixed(2).replace(/\.00$/, "");
+                const displayPrice = (plan.monthlyPrice / 100)
+                  .toFixed(2)
+                  .replace(/\.00$/, "");
 
                 return (
                   <Card
@@ -297,7 +335,9 @@ export default function Home() {
                     className="relative flex flex-col overflow-hidden border-[#2a2a3d] bg-[#161621] transition-all hover:scale-[1.02] hover:shadow-[0_0_30px_-5px_rgba(168,85,247,0.3)]"
                   >
                     {/* Gradient header */}
-                    <div className={`bg-gradient-to-l p-5 text-white ${theme.gradient}`}>
+                    <div
+                      className={`bg-gradient-to-l p-5 text-white ${theme.gradient}`}
+                    >
                       <div className="flex items-center gap-3">
                         <div className="rounded-xl bg-white/20 p-2">
                           <Icon className="h-5 w-5" />
@@ -309,32 +349,41 @@ export default function Home() {
                     <CardContent className="flex flex-1 flex-col gap-4 pt-5">
                       {/* Credits */}
                       <div className="text-center">
-                        <span className="text-3xl font-bold text-white">{plan.monthlyCredits}</span>
-                        <span className="text-slate-400 text-sm me-1"> رصيد / شهر</span>
+                        <span className="text-3xl font-bold text-white">
+                          {plan.monthlyCredits}
+                        </span>
+                        <span className="text-slate-400 text-sm me-1">
+                          {" "}
+                          رصيد / شهر
+                        </span>
                       </div>
 
                       {/* Price */}
                       <div className="text-center">
-                        <span className="text-3xl font-extrabold text-white">${displayPrice}</span>
+                        <span className="text-3xl font-extrabold text-white">
+                          ${displayPrice}
+                        </span>
                         <span className="text-slate-400 text-sm">/شهرياً</span>
                       </div>
 
                       {/* Features */}
                       <ul className="flex flex-col gap-2">
-                        {(plan.features as string[]).slice(0, 3).map((feature) => (
-                          <li key={feature} className="flex items-start gap-2 text-sm text-slate-300">
-                            <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
-                            <span>{feature}</span>
-                          </li>
-                        ))}
+                        {(plan.features as string[])
+                          .slice(0, 3)
+                          .map((feature) => (
+                            <li
+                              key={feature}
+                              className="flex items-start gap-2 text-sm text-slate-300"
+                            >
+                              <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
+                              <span>{feature}</span>
+                            </li>
+                          ))}
                       </ul>
                     </CardContent>
 
                     <CardFooter className="mt-auto pt-0">
-                      <Button
-                        asChild
-                        className={`w-full ${theme.button}`}
-                      >
+                      <Button asChild className={`w-full ${theme.button}`}>
                         <Link href="/subscription">اشترك الآن</Link>
                       </Button>
                     </CardFooter>

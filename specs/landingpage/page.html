@@ -1,0 +1,995 @@
+<!doctype html>
+<html class="dark" dir="rtl" lang="ar">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>SouqPrompt - AI Prompt Marketplace</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;700&amp;family=Space+Grotesk:wght@300;400;500;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#7f0df2",
+              "primary-light": "#9d4dff",
+              secondary: "#faff00", // Yellow accent
+              "background-light": "#f7f5f8",
+              "background-dark": "#0f0f0f",
+              "card-dark": "#18181b",
+              "card-lighter": "#27272a",
+              "console-gray": "#1a1a20",
+              "console-border": "#3f3f46",
+            },
+            fontFamily: {
+              display: ["Space Grotesk", "IBM Plex Sans Arabic", "sans-serif"],
+              sans: ["IBM Plex Sans Arabic", "Space Grotesk", "sans-serif"],
+            },
+            boxShadow: {
+              neon: "0 0 10px theme('colors.primary'), 0 0 20px theme('colors.primary')",
+              "neon-hover":
+                "0 0 15px theme('colors.primary'), 0 0 30px theme('colors.primary')",
+              "neon-yellow":
+                "0 0 5px theme('colors.secondary'), 0 0 10px theme('colors.secondary')",
+              "glow-card": "0 0 15px rgba(127, 13, 242, 0.3)",
+              "console-glow":
+                "0 0 20px rgba(127, 13, 242, 0.15), inset 0 0 10px rgba(0,0,0,0.5)",
+            },
+            backgroundImage: {
+              "circuit-pattern":
+                "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%237f0df2' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .hide-scroll::-webkit-scrollbar {
+        height: 6px;
+      }
+      .hide-scroll::-webkit-scrollbar-track {
+        background: #18181b;
+      }
+      .hide-scroll::-webkit-scrollbar-thumb {
+        background: #3f3f46;
+        border-radius: 10px;
+      }
+      .hide-scroll::-webkit-scrollbar-thumb:hover {
+        background: #7f0df2;
+      }
+      .text-gradient {
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+        background-image: linear-gradient(to right, #7f0df2, #d946ef);
+      }
+      .glass-nav {
+        background: rgba(15, 15, 15, 0.85);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(127, 13, 242, 0.2);
+      }
+      .tech-clip-tl {
+        clip-path: polygon(20px 0, 100% 0, 100% 100%, 0 100%, 0 20px);
+      }
+      .tech-clip-br {
+        clip-path: polygon(
+          0 0,
+          100% 0,
+          100% calc(100% - 20px),
+          calc(100% - 20px) 100%,
+          0 100%
+        );
+      }
+      .tech-clip-both {
+        clip-path: polygon(
+          20px 0,
+          100% 0,
+          100% calc(100% - 20px),
+          calc(100% - 20px) 100%,
+          0 100%,
+          0 20px
+        );
+      }
+      .glow-text-outline {
+        text-shadow:
+          0 0 2px rgba(255, 255, 255, 0.5),
+          0 0 10px rgba(127, 13, 242, 0.5);
+      }
+      .circuit-lines {
+        background-image:
+          linear-gradient(rgba(127, 13, 242, 0.1) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(127, 13, 242, 0.1) 1px, transparent 1px);
+        background-size: 20px 20px;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-white font-sans transition-colors duration-300 min-h-screen overflow-x-hidden"
+  >
+    <nav class="fixed top-0 w-full z-50 glass-nav h-20">
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between"
+      >
+        <div class="flex items-center gap-8">
+          <a class="flex items-center gap-2 group" href="#">
+            <span
+              class="material-icons text-primary text-3xl group-hover:animate-pulse"
+              >bolt</span
+            >
+            <span
+              class="text-2xl font-bold font-display tracking-tight text-white"
+            >
+              سوق<span class="text-primary">برومبت</span>
+            </span>
+          </a>
+          <div
+            class="hidden md:flex items-center gap-6 text-sm font-medium text-gray-300"
+          >
+            <a class="hover:text-primary transition-colors" href="#">تصفح</a>
+            <a class="hover:text-primary transition-colors" href="#">المجتمع</a>
+            <a class="hover:text-primary transition-colors" href="#">المدونة</a>
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <button
+            class="hidden lg:flex items-center justify-center w-10 h-10 rounded-full border border-gray-700 text-gray-400 hover:text-white hover:border-primary hover:shadow-neon transition-all"
+          >
+            <span class="material-icons text-xl">search</span>
+          </button>
+          <div class="h-6 w-px bg-gray-700 mx-2 hidden sm:block"></div>
+          <a
+            class="text-sm font-bold text-gray-300 hover:text-white hidden sm:block"
+            href="#"
+            >تسجيل دخول</a
+          >
+          <a
+            class="bg-primary/10 border border-primary text-primary px-5 py-2 rounded-full text-sm font-bold hover:bg-primary hover:text-white hover:shadow-neon transition-all duration-300 flex items-center gap-2"
+            href="#"
+          >
+            <span class="material-icons text-base">add</span>
+            بيع برومبت
+          </a>
+          <button
+            class="flex items-center gap-1 text-xs font-bold bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-700 text-gray-300 hover:border-gray-500 transition-colors"
+          >
+            <span>AR</span>
+            <span class="text-gray-500">|</span>
+            <span class="text-gray-500">EN</span>
+          </button>
+        </div>
+      </div>
+    </nav>
+    <header
+      class="relative pt-32 pb-12 lg:pt-36 lg:pb-20 overflow-hidden min-h-[85vh] flex flex-col justify-center"
+    >
+      <div class="absolute inset-0 z-0 pointer-events-none">
+        <div
+          class="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-primary/10 rounded-full blur-[120px] mix-blend-screen"
+        ></div>
+        <div
+          class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20"
+        ></div>
+        <div class="absolute inset-0 bg-circuit-pattern opacity-30"></div>
+        <div
+          class="absolute inset-0 bg-gradient-to-b from-transparent via-background-dark/80 to-background-dark"
+        ></div>
+      </div>
+      <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div class="relative max-w-2xl mx-auto mb-16 z-20">
+          <div class="flex items-center gap-4 relative">
+            <div
+              class="absolute -right-6 top-1/2 -translate-y-1/2 hidden md:block"
+            >
+              <div
+                class="w-2 h-8 bg-secondary/80 clip-path-polygon-[0_0,100%_20%,100%_80%,0_100%]"
+              ></div>
+            </div>
+            <div
+              class="flex-1 bg-console-gray/90 backdrop-blur-xl border border-primary/30 tech-clip-both flex items-center p-1.5 focus-within:border-secondary focus-within:shadow-neon-yellow transition-all duration-300 shadow-console-glow"
+            >
+              <div class="pl-4 pr-4 text-primary">
+                <span class="material-icons text-2xl">manage_search</span>
+              </div>
+              <input
+                class="w-full bg-transparent border-none text-white text-base placeholder-gray-500 focus:ring-0 px-2 font-display tracking-wide"
+                placeholder="Search prompts... ابحث عن أوامر..."
+                type="text"
+              />
+              <button
+                class="bg-primary hover:bg-primary-light text-white px-8 py-2.5 rounded-sm font-bold text-sm tracking-wider uppercase transition-colors shadow-[0_0_15px_rgba(127,13,242,0.4)] clip-path-polygon-[10%_0,100%_0,100%_100%,0_100%,0_20%]"
+              >
+                START
+              </button>
+            </div>
+            <div
+              class="absolute -left-6 top-1/2 -translate-y-1/2 hidden md:block"
+            >
+              <div
+                class="w-2 h-8 bg-secondary/80 clip-path-polygon-[100%_0,0_20%,0_80%,100%_100%]"
+              ></div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8"
+        >
+          <div
+            class="group relative bg-console-gray tech-clip-br border-t-2 border-l-2 border-white/10 hover:border-primary transition-all duration-500 h-[380px] flex flex-col overflow-hidden hover:shadow-neon"
+          >
+            <div
+              class="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-secondary/50 rounded-tr-lg opacity-50 group-hover:opacity-100 group-hover:w-full group-hover:h-full transition-all duration-700 pointer-events-none"
+            ></div>
+            <div
+              class="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-primary/50 opacity-50 group-hover:opacity-100 transition-all pointer-events-none"
+            ></div>
+            <div
+              class="absolute inset-0 circuit-lines opacity-10 group-hover:opacity-20 transition-opacity"
+            ></div>
+            <div
+              class="relative z-10 flex-1 flex flex-col items-center justify-center p-6 text-center"
+            >
+              <div class="w-32 h-32 mb-6 relative">
+                <div
+                  class="absolute inset-0 bg-primary/30 blur-2xl rounded-full group-hover:bg-primary/50 transition-all"
+                ></div>
+                <img
+                  alt="Glowing 3D chest icon"
+                  class="relative w-full h-full object-contain drop-shadow-[0_0_15px_rgba(127,13,242,0.6)] transform group-hover:scale-110 group-hover:-translate-y-2 transition-transform duration-500"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCy17PrQe4vyCG7lHq60OaemI8yRZi1lOecYZ84l46PxkExfsA-wZnnDxPzjebem1djf09-QoZYCZ7JIZTUT4uLMcx_uzuDGuSgL2QfK8UoTcfP2vF0oGqIFGRlZQpjbwXKsr-CF1K0sxb8q1uHD2HBzD_hwcGNh8BPih908U6VV-KwezY51zJeVKTzdSLG35eXvqMiIRFmbqc40pBlJa2u63P_Y6iK2PX9QL1xy8pzqJmlPxwx6Nmj4X0MIJbs_1Exx6pD-qWqT-QW"
+                />
+              </div>
+              <h2
+                class="text-3xl font-display font-bold text-white mb-2 glow-text-outline group-hover:text-secondary transition-colors"
+              >
+                استكشف
+              </h2>
+              <h3
+                class="text-sm font-bold text-primary tracking-[0.2em] uppercase mb-3"
+              >
+                Explore
+              </h3>
+              <p
+                class="text-gray-400 text-sm px-2 opacity-80 group-hover:opacity-100 transition-opacity"
+              >
+                اكتشف أحدث الأعمال الفنية والأوامر المميزة.
+              </p>
+            </div>
+            <div
+              class="bg-black/40 backdrop-blur-sm p-3 border-t border-white/5 flex justify-between items-center group-hover:bg-primary/10 transition-colors"
+            >
+              <span class="text-[10px] text-gray-500 font-mono">SYS.ID_01</span>
+              <span
+                class="material-icons text-secondary text-lg group-hover:translate-x-1 transition-transform"
+                >arrow_forward</span
+              >
+            </div>
+          </div>
+          <div
+            class="group relative bg-console-gray tech-clip-br border-t-2 border-l-2 border-white/10 hover:border-secondary transition-all duration-500 h-[380px] flex flex-col overflow-hidden hover:shadow-neon-yellow"
+          >
+            <div
+              class="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-primary/50 rounded-tr-lg opacity-50 group-hover:opacity-100 group-hover:w-full group-hover:h-full transition-all duration-700 pointer-events-none"
+            ></div>
+            <div
+              class="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-secondary/50 opacity-50 group-hover:opacity-100 transition-all pointer-events-none"
+            ></div>
+            <div
+              class="absolute inset-0 circuit-lines opacity-10 group-hover:opacity-20 transition-opacity"
+            ></div>
+            <div
+              class="relative z-10 flex-1 flex flex-col items-center justify-center p-6 text-center"
+            >
+              <div class="w-32 h-32 mb-6 relative">
+                <div
+                  class="absolute inset-0 bg-secondary/20 blur-2xl rounded-full group-hover:bg-secondary/40 transition-all"
+                ></div>
+                <img
+                  alt="3D digital coin icon"
+                  class="relative w-full h-full object-contain drop-shadow-[0_0_15px_rgba(250,255,0,0.4)] transform group-hover:scale-110 group-hover:-translate-y-2 transition-transform duration-500"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMxq8iOPcqjH_pqTboYQ6bFOI-aGnsrLfa8_cTD-ua-f0jrWVw_lzv--dS-921gJI5pwU8RcmeNc9a4r19KACU2Ixe-RN24tIsGPO3NWGJnxKzrQN7Dglx-ATlHPDNjRVIEsja5hv7CyMxTs0gJ4fLs27PBOPy6pEDadVZlPJbljFGjX_Wtsj7HLCKitQZ-dDY8blrRc7Bd8hYxP4q1LEzizB_mjVsXDeipOOh2zKB8Cew4SLVhr7p9C-tFiWKhWe94sMypJ6fpRl4"
+                />
+              </div>
+              <h2
+                class="text-3xl font-display font-bold text-white mb-2 glow-text-outline group-hover:text-primary transition-colors"
+              >
+                بع الآن
+              </h2>
+              <h3
+                class="text-sm font-bold text-secondary tracking-[0.2em] uppercase mb-3"
+              >
+                Sell Prompts
+              </h3>
+              <p
+                class="text-gray-400 text-sm px-2 opacity-80 group-hover:opacity-100 transition-opacity"
+              >
+                حول إبداعك إلى دخل مادي حقيقي.
+              </p>
+            </div>
+            <div
+              class="bg-black/40 backdrop-blur-sm p-3 border-t border-white/5 flex justify-between items-center group-hover:bg-secondary/10 transition-colors"
+            >
+              <span class="text-[10px] text-gray-500 font-mono">SYS.ID_02</span>
+              <span
+                class="material-icons text-white text-lg group-hover:translate-x-1 transition-transform"
+                >arrow_forward</span
+              >
+            </div>
+          </div>
+          <div
+            class="group relative bg-console-gray tech-clip-br border-t-2 border-l-2 border-white/10 hover:border-primary transition-all duration-500 h-[380px] flex flex-col overflow-hidden hover:shadow-neon"
+          >
+            <div
+              class="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-secondary/50 rounded-tr-lg opacity-50 group-hover:opacity-100 group-hover:w-full group-hover:h-full transition-all duration-700 pointer-events-none"
+            ></div>
+            <div
+              class="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-primary/50 opacity-50 group-hover:opacity-100 transition-all pointer-events-none"
+            ></div>
+            <div
+              class="absolute inset-0 circuit-lines opacity-10 group-hover:opacity-20 transition-opacity"
+            ></div>
+            <div
+              class="relative z-10 flex-1 flex flex-col items-center justify-center p-6 text-center"
+            >
+              <div class="w-32 h-32 mb-6 relative">
+                <div
+                  class="absolute inset-0 bg-purple-500/20 blur-2xl rounded-full group-hover:bg-purple-500/40 transition-all"
+                ></div>
+                <img
+                  alt="3D processor chip icon"
+                  class="relative w-full h-full object-contain drop-shadow-[0_0_15px_rgba(168,85,247,0.5)] transform group-hover:scale-110 group-hover:-translate-y-2 transition-transform duration-500"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8Blopr5HwsBM5k0LoPaLn0azDRw6nnwyMkfhtg7MoU5VUv89WLirWjkY8AxooFk46kIilnXhCxqW3IiOxrza7ElZ16BR8iHpZZCMKI5-Vo6lfLX0WTyzlCXR81BxCwSbMaECa10a-bJlXNI7WWrBotUv-uBtO3GNCFnKMUXXX4RCqWB-8ggv7VH6C37EiKZS6Ah9sdE8axs0T9QAPVhzb3U8xa5k-XvkeZiPG3g1UuqEQ6d0aClepvkVQ6kKVdZdqOhPaPsKjy3Pp"
+                />
+              </div>
+              <h2
+                class="text-3xl font-display font-bold text-white mb-2 glow-text-outline group-hover:text-secondary transition-colors"
+              >
+                توليد
+              </h2>
+              <h3
+                class="text-sm font-bold text-primary tracking-[0.2em] uppercase mb-3"
+              >
+                Generate
+              </h3>
+              <p
+                class="text-gray-400 text-sm px-2 opacity-80 group-hover:opacity-100 transition-opacity"
+              >
+                أنشئ صوراً مذهلة باستخدام أدواتنا المدمجة.
+              </p>
+            </div>
+            <div
+              class="bg-black/40 backdrop-blur-sm p-3 border-t border-white/5 flex justify-between items-center group-hover:bg-primary/10 transition-colors"
+            >
+              <span class="text-[10px] text-gray-500 font-mono">SYS.ID_03</span>
+              <span
+                class="material-icons text-secondary text-lg group-hover:translate-x-1 transition-transform"
+                >arrow_forward</span
+              >
+            </div>
+          </div>
+          <div
+            class="group relative bg-console-gray tech-clip-br border-t-2 border-l-2 border-white/10 hover:border-secondary transition-all duration-500 h-[380px] flex flex-col overflow-hidden hover:shadow-neon-yellow"
+          >
+            <div
+              class="absolute top-0 right-0 w-16 h-16 border-t-2 border-r-2 border-primary/50 rounded-tr-lg opacity-50 group-hover:opacity-100 group-hover:w-full group-hover:h-full transition-all duration-700 pointer-events-none"
+            ></div>
+            <div
+              class="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-secondary/50 opacity-50 group-hover:opacity-100 transition-all pointer-events-none"
+            ></div>
+            <div
+              class="absolute inset-0 circuit-lines opacity-10 group-hover:opacity-20 transition-opacity"
+            ></div>
+            <div
+              class="relative z-10 flex-1 flex flex-col items-center justify-center p-6 text-center"
+            >
+              <div class="w-32 h-32 mb-6 relative">
+                <div
+                  class="absolute inset-0 bg-blue-500/20 blur-2xl rounded-full group-hover:bg-blue-500/40 transition-all"
+                ></div>
+                <img
+                  alt="3D globe network icon"
+                  class="relative w-full h-full object-contain drop-shadow-[0_0_15px_rgba(59,130,246,0.5)] transform group-hover:scale-110 group-hover:-translate-y-2 transition-transform duration-500"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMIynAy0wLsmQA3RDTk1HdGPTwsNAeJ_aJnElzkV397kZqsZTs4Udxp9vHLsk4QmtQlTQc5UPKBcWBhEF4zWgu0UGaVs9lEBD2v8vr1oI1PJp13Fc92JkHwcOq7AGdWlKSSxIY4bWiTCg-vzNQhUWTTzdGXnan_VGSLxXg5zAmRMP1XX4p8UafqJAhx_ns-pC8wYKbmfIk2ekJxWjDaaaZaL5BjLrZHAF3H2KkJs4hJgaNdmdnX4lZTVRXWJJPcgJ9dOv47ur_qiOG"
+                />
+              </div>
+              <h2
+                class="text-3xl font-display font-bold text-white mb-2 glow-text-outline group-hover:text-primary transition-colors"
+              >
+                المجتمع
+              </h2>
+              <h3
+                class="text-sm font-bold text-secondary tracking-[0.2em] uppercase mb-3"
+              >
+                Community
+              </h3>
+              <p
+                class="text-gray-400 text-sm px-2 opacity-80 group-hover:opacity-100 transition-opacity"
+              >
+                تواصل مع آلاف المصممين والمطورين.
+              </p>
+            </div>
+            <div
+              class="bg-black/40 backdrop-blur-sm p-3 border-t border-white/5 flex justify-between items-center group-hover:bg-secondary/10 transition-colors"
+            >
+              <span class="text-[10px] text-gray-500 font-mono">SYS.ID_04</span>
+              <span
+                class="material-icons text-white text-lg group-hover:translate-x-1 transition-transform"
+                >arrow_forward</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <div
+      class="w-full border-y border-white/5 bg-white/[0.02] backdrop-blur-sm mb-16"
+    >
+      <div
+        class="max-w-7xl mx-auto px-4 py-8 flex justify-center gap-8 md:gap-16 flex-wrap opacity-50 grayscale hover:grayscale-0 transition-all duration-500"
+      >
+        <div
+          class="flex items-center gap-2 hover:text-white transition-colors cursor-pointer group"
+        >
+          <span class="material-icons text-3xl group-hover:text-[#10a37f]"
+            >smart_toy</span
+          >
+          <span class="font-display font-bold text-xl">ChatGPT</span>
+        </div>
+        <div
+          class="flex items-center gap-2 hover:text-white transition-colors cursor-pointer group"
+        >
+          <span class="material-icons text-3xl group-hover:text-white"
+            >image</span
+          >
+          <span class="font-display font-bold text-xl">Midjourney</span>
+        </div>
+        <div
+          class="flex items-center gap-2 hover:text-white transition-colors cursor-pointer group"
+        >
+          <span class="material-icons text-3xl group-hover:text-[#ff9900]"
+            >brush</span
+          >
+          <span class="font-display font-bold text-xl">DALL·E</span>
+        </div>
+        <div
+          class="flex items-center gap-2 hover:text-white transition-colors cursor-pointer group"
+        >
+          <span class="material-icons text-3xl group-hover:text-[#5865F2]"
+            >auto_awesome</span
+          >
+          <span class="font-display font-bold text-xl">Stable Diffusion</span>
+        </div>
+      </div>
+    </div>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+      <div class="mb-16">
+        <div class="flex items-end justify-between mb-8">
+          <div>
+            <h2
+              class="text-3xl font-bold text-white mb-2 flex items-center gap-2"
+            >
+              <span class="w-2 h-8 bg-secondary rounded-full block"></span>
+              الأكثر مبيعاً هذا الأسبوع
+            </h2>
+            <p class="text-gray-400 text-sm">
+              أوامر مختارة بعناية تحقق أفضل النتائج
+            </p>
+          </div>
+          <a
+            class="text-primary hover:text-white font-bold text-sm flex items-center gap-1 group"
+            href="#"
+          >
+            عرض الكل
+            <span
+              class="material-icons text-lg group-hover:-translate-x-1 transition-transform"
+              >arrow_back</span
+            >
+          </a>
+        </div>
+        <div class="flex overflow-x-auto gap-6 pb-8 hide-scroll snap-x">
+          <div
+            class="group relative min-w-[280px] w-[280px] bg-card-dark rounded-2xl overflow-hidden border border-white/10 hover:border-primary transition-all duration-300 hover:shadow-neon cursor-pointer snap-start"
+          >
+            <div class="relative aspect-[4/5] overflow-hidden">
+              <img
+                class="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700"
+                data-alt="Cyberpunk neon city street at night with rain"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCy17PrQe4vyCG7lHq60OaemI8yRZi1lOecYZ84l46PxkExfsA-wZnnDxPzjebem1djf09-QoZYCZ7JIZTUT4uLMcx_uzuDGuSgL2QfK8UoTcfP2vF0oGqIFGRlZQpjbwXKsr-CF1K0sxb8q1uHD2HBzD_hwcGNh8BPih908U6VV-KwezY51zJeVKTzdSLG35eXvqMiIRFmbqc40pBlJa2u63P_Y6iK2PX9QL1xy8pzqJmlPxwx6Nmj4X0MIJbs_1Exx6pD-qWqT-QW"
+              />
+              <div
+                class="absolute top-3 right-3 bg-black/60 backdrop-blur-md text-white text-xs font-bold px-2 py-1 rounded flex items-center gap-1"
+              >
+                <span class="material-icons text-[14px]">image</span> MJ v6
+              </div>
+            </div>
+            <div class="p-4 relative">
+              <div
+                class="absolute -top-4 left-4 bg-secondary text-black font-bold px-3 py-1 rounded shadow-lg"
+              >
+                $4.99
+              </div>
+              <h3
+                class="text-white font-bold text-lg mb-1 line-clamp-1 group-hover:text-primary transition-colors"
+              >
+                Cyberpunk Neon City
+              </h3>
+              <p class="text-gray-400 text-xs mb-3 line-clamp-2">
+                Prompt for generating ultra-realistic rainy cyberpunk streets
+                with neon lights.
+              </p>
+              <div
+                class="flex items-center justify-between border-t border-white/5 pt-3"
+              >
+                <div class="flex items-center gap-2">
+                  <div
+                    class="w-6 h-6 rounded-full bg-gradient-to-tr from-blue-400 to-purple-500"
+                  ></div>
+                  <span class="text-xs text-gray-300">أحمد.art</span>
+                </div>
+                <div
+                  class="flex items-center text-secondary text-xs font-bold gap-0.5"
+                >
+                  <span class="material-icons text-[14px]">star</span> 4.9
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="group relative min-w-[280px] w-[280px] bg-card-dark rounded-2xl overflow-hidden border border-white/10 hover:border-primary transition-all duration-300 hover:shadow-neon cursor-pointer snap-start"
+          >
+            <div class="relative aspect-[4/5] overflow-hidden">
+              <img
+                class="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700"
+                data-alt="Abstract 3D colorful fluid shapes rendering"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDecabxkWZi4kNXew-ysqHRxRBJvH3Z-fe1bsip17a84DHI5dxkleY29qjypeT3BvHAFMENqQvbAeu_wLx0dYXD1fcGjVpHdryZsGeEeRp7TZjwcmj1n-sEBNBshevp87u8EJgGRbwuTIjmlAiWO2-iyNUXEBnsFrO5Hl4jQPBtLSCLCE0YEYRQyytPsCAQJZXHfzr12oK1R50f9QVtPYhR0JsjfpvJ1AtllWAfZpFVgJwRf3yiqrWy7FyBSEDd66euged7Amn4OtJ_"
+              />
+              <div
+                class="absolute top-3 right-3 bg-black/60 backdrop-blur-md text-white text-xs font-bold px-2 py-1 rounded flex items-center gap-1"
+              >
+                <span class="material-icons text-[14px]">image</span> MJ v5.2
+              </div>
+            </div>
+            <div class="p-4 relative">
+              <div
+                class="absolute -top-4 left-4 bg-secondary text-black font-bold px-3 py-1 rounded shadow-lg"
+              >
+                $2.50
+              </div>
+              <h3
+                class="text-white font-bold text-lg mb-1 line-clamp-1 group-hover:text-primary transition-colors"
+              >
+                3D Abstract Fluids
+              </h3>
+              <p class="text-gray-400 text-xs mb-3 line-clamp-2">
+                Create stunning 3D liquid abstract wallpapers with high detail.
+              </p>
+              <div
+                class="flex items-center justify-between border-t border-white/5 pt-3"
+              >
+                <div class="flex items-center gap-2">
+                  <div
+                    class="w-6 h-6 rounded-full bg-gradient-to-tr from-green-400 to-teal-500"
+                  ></div>
+                  <span class="text-xs text-gray-300">PixelMaster</span>
+                </div>
+                <div
+                  class="flex items-center text-secondary text-xs font-bold gap-0.5"
+                >
+                  <span class="material-icons text-[14px]">star</span> 5.0
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="group relative min-w-[280px] w-[280px] bg-card-dark rounded-2xl overflow-hidden border border-white/10 hover:border-primary transition-all duration-300 hover:shadow-neon cursor-pointer snap-start"
+          >
+            <div class="relative aspect-[4/5] overflow-hidden">
+              <div
+                class="w-full h-full bg-gradient-to-br from-emerald-900 to-emerald-600 flex items-center justify-center p-6 group-hover:scale-110 transition-transform duration-700"
+              >
+                <span class="material-icons text-white text-6xl opacity-50"
+                  >description</span
+                >
+              </div>
+              <div
+                class="absolute top-3 right-3 bg-black/60 backdrop-blur-md text-white text-xs font-bold px-2 py-1 rounded flex items-center gap-1"
+              >
+                <span class="material-icons text-[14px]">smart_toy</span> GPT-4
+              </div>
+            </div>
+            <div class="p-4 relative">
+              <div
+                class="absolute -top-4 left-4 bg-secondary text-black font-bold px-3 py-1 rounded shadow-lg"
+              >
+                $9.99
+              </div>
+              <h3
+                class="text-white font-bold text-lg mb-1 line-clamp-1 group-hover:text-primary transition-colors"
+              >
+                SEO Blog Writer Pro
+              </h3>
+              <p class="text-gray-400 text-xs mb-3 line-clamp-2">
+                Complete prompt chain to write SEO optimized blog posts with
+                human touch.
+              </p>
+              <div
+                class="flex items-center justify-between border-t border-white/5 pt-3"
+              >
+                <div class="flex items-center gap-2">
+                  <div
+                    class="w-6 h-6 rounded-full bg-gradient-to-tr from-orange-400 to-red-500"
+                  ></div>
+                  <span class="text-xs text-gray-300">سارة_كاتبة</span>
+                </div>
+                <div
+                  class="flex items-center text-secondary text-xs font-bold gap-0.5"
+                >
+                  <span class="material-icons text-[14px]">star</span> 4.8
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="group relative min-w-[280px] w-[280px] bg-card-dark rounded-2xl overflow-hidden border border-white/10 hover:border-primary transition-all duration-300 hover:shadow-neon cursor-pointer snap-start"
+          >
+            <div class="relative aspect-[4/5] overflow-hidden">
+              <img
+                class="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700"
+                data-alt="Futuristic character portrait with glowing eyes"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMxq8iOPcqjH_pqTboYQ6bFOI-aGnsrLfa8_cTD-ua-f0jrWVw_lzv--dS-921gJI5pwU8RcmeNc9a4r19KACU2Ixe-RN24tIsGPO3NWGJnxKzrQN7Dglx-ATlHPDNjRVIEsja5hv7CyMxTs0gJ4fLs27PBOPy6pEDadVZlPJbljFGjX_Wtsj7HLCKitQZ-dDY8blrRc7Bd8hYxP4q1LEzizB_mjVsXDeipOOh2zKB8Cew4SLVhr7p9C-tFiWKhWe94sMypJ6fpRl4"
+              />
+              <div
+                class="absolute top-3 right-3 bg-black/60 backdrop-blur-md text-white text-xs font-bold px-2 py-1 rounded flex items-center gap-1"
+              >
+                <span class="material-icons text-[14px]">image</span> SD XL
+              </div>
+            </div>
+            <div class="p-4 relative">
+              <div
+                class="absolute -top-4 left-4 bg-secondary text-black font-bold px-3 py-1 rounded shadow-lg"
+              >
+                $3.00
+              </div>
+              <h3
+                class="text-white font-bold text-lg mb-1 line-clamp-1 group-hover:text-primary transition-colors"
+              >
+                Fantasy Character Portraits
+              </h3>
+              <p class="text-gray-400 text-xs mb-3 line-clamp-2">
+                Consistent style portraits for RPG games and storyboards.
+              </p>
+              <div
+                class="flex items-center justify-between border-t border-white/5 pt-3"
+              >
+                <div class="flex items-center gap-2">
+                  <div class="w-6 h-6 rounded-full bg-gray-500"></div>
+                  <span class="text-xs text-gray-300">GameDev_X</span>
+                </div>
+                <div
+                  class="flex items-center text-secondary text-xs font-bold gap-0.5"
+                >
+                  <span class="material-icons text-[14px]">star</span> 4.5
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-16">
+        <div
+          class="col-span-1 md:col-span-8 relative rounded-3xl overflow-hidden min-h-[300px] group cursor-pointer"
+        >
+          <img
+            class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            data-alt="Abstract colorful oil painting texture"
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQ2SPrppPt9IPvO3uBHOks-u8_B_AU6d3rLY1qFDYk_0LqHOYPVEULFQOIhpSPzrEz9vz9pZZUem6EFc-wDBjkXNr7OGwR2A4UhLQwBQR_0FNpdCKSEe84vGhdKi-TTIRnh_N_Q_RTImS-GGrUWdAtCdXb336MHDF5DzwcjS8xsgQwUBk4H2JSYavnK9pRsbiqjew4tJ2lj-XC3sJloB_7NjAyEfFu542YCZyljwvirnNZ9PTWfAjcnt_4hLF0J04usWFqRbedG0-J"
+          />
+          <div
+            class="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-transparent"
+          ></div>
+          <div class="absolute bottom-0 right-0 p-8 max-w-lg">
+            <span
+              class="bg-primary text-white text-xs font-bold px-2 py-1 rounded mb-3 inline-block"
+              >مجموعة حصرية</span
+            >
+            <h3 class="text-3xl font-bold text-white mb-2">
+              حزمة الفن الزيتي الرقمي
+            </h3>
+            <p class="text-gray-300 mb-4 line-clamp-2">
+              مجموعة كاملة من 50 أمر نصي لتوليد لوحات زيتية رقمية بأسلوب كلاسيكي
+              وحديث.
+            </p>
+            <button
+              class="bg-white text-black font-bold px-6 py-2 rounded-lg hover:bg-secondary transition-colors"
+            >
+              استكشف المجموعة
+            </button>
+          </div>
+        </div>
+        <div class="col-span-1 md:col-span-4 flex flex-col gap-6">
+          <div
+            class="flex-1 bg-card-dark rounded-3xl p-6 border border-white/5 hover:border-primary/50 transition-colors group cursor-pointer relative overflow-hidden"
+          >
+            <div
+              class="absolute right-0 top-0 w-32 h-32 bg-primary/10 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-primary/20 transition-all"
+            ></div>
+            <div class="relative z-10">
+              <div
+                class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors"
+              >
+                <span class="material-icons">architecture</span>
+              </div>
+              <h4 class="text-xl font-bold text-white">الهندسة المعمارية</h4>
+              <p class="text-gray-400 text-sm mt-1">تصاميم داخلية وخارجية</p>
+            </div>
+          </div>
+          <div
+            class="flex-1 bg-card-dark rounded-3xl p-6 border border-white/5 hover:border-primary/50 transition-colors group cursor-pointer relative overflow-hidden"
+          >
+            <div
+              class="absolute right-0 top-0 w-32 h-32 bg-secondary/10 rounded-full blur-2xl -mr-10 -mt-10 group-hover:bg-secondary/20 transition-all"
+            ></div>
+            <div class="relative z-10">
+              <div
+                class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center mb-4 group-hover:bg-secondary group-hover:text-black transition-colors"
+              >
+                <span class="material-icons">code</span>
+              </div>
+              <h4 class="text-xl font-bold text-white">مساعدي البرمجة</h4>
+              <p class="text-gray-400 text-sm mt-1">
+                تصحيح، كتابة، وتحسين الكود
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="flex items-center justify-between mb-8">
+          <h2 class="text-3xl font-bold text-white flex items-center gap-2">
+            <span class="material-icons text-primary animate-bounce"
+              >new_releases</span
+            >
+            وصل حديثاً
+          </h2>
+          <div
+            class="hidden md:flex bg-gray-800/50 p-1 rounded-lg border border-white/5"
+          >
+            <button
+              class="px-4 py-1.5 rounded-md text-sm font-medium bg-primary text-white shadow-lg"
+            >
+              الكل
+            </button>
+            <button
+              class="px-4 py-1.5 rounded-md text-sm font-medium text-gray-400 hover:text-white transition-colors"
+            >
+              صور
+            </button>
+            <button
+              class="px-4 py-1.5 rounded-md text-sm font-medium text-gray-400 hover:text-white transition-colors"
+            >
+              نصوص
+            </button>
+            <button
+              class="px-4 py-1.5 rounded-md text-sm font-medium text-gray-400 hover:text-white transition-colors"
+            >
+              صوت
+            </button>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div
+            class="group bg-card-dark rounded-xl overflow-hidden border border-white/5 hover:border-primary/50 transition-all hover:-translate-y-1 cursor-pointer"
+          >
+            <div class="h-48 overflow-hidden relative">
+              <img
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                data-alt="Minimalist product photography background"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8Blopr5HwsBM5k0LoPaLn0azDRw6nnwyMkfhtg7MoU5VUv89WLirWjkY8AxooFk46kIilnXhCxqW3IiOxrza7ElZ16BR8iHpZZCMKI5-Vo6lfLX0WTyzlCXR81BxCwSbMaECa10a-bJlXNI7WWrBotUv-uBtO3GNCFnKMUXXX4RCqWB-8ggv7VH6C37EiKZS6Ah9sdE8axs0T9QAPVhzb3U8xa5k-XvkeZiPG3g1UuqEQ6d0aClepvkVQ6kKVdZdqOhPaPsKjy3Pp"
+              />
+            </div>
+            <div class="p-4">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="text-white font-bold line-clamp-1">
+                  Minimalist Product
+                </h3>
+                <span class="text-secondary font-bold text-sm">$2.00</span>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-gray-400 mb-3">
+                <span class="bg-gray-800 px-1.5 py-0.5 rounded"
+                  >Midjourney</span
+                >
+                <span>Photography</span>
+              </div>
+            </div>
+          </div>
+          <div
+            class="group bg-card-dark rounded-xl overflow-hidden border border-white/5 hover:border-primary/50 transition-all hover:-translate-y-1 cursor-pointer"
+          >
+            <div
+              class="h-48 overflow-hidden relative bg-gradient-to-bl from-purple-900 to-indigo-900 flex items-center justify-center"
+            >
+              <span
+                class="material-icons text-white/30 text-5xl group-hover:text-white/60 transition-colors"
+                >translate</span
+              >
+            </div>
+            <div class="p-4">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="text-white font-bold line-clamp-1">
+                  Expert Translator
+                </h3>
+                <span class="text-secondary font-bold text-sm">$5.00</span>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-gray-400 mb-3">
+                <span class="bg-gray-800 px-1.5 py-0.5 rounded">GPT-4</span>
+                <span>Productivity</span>
+              </div>
+            </div>
+          </div>
+          <div
+            class="group bg-card-dark rounded-xl overflow-hidden border border-white/5 hover:border-primary/50 transition-all hover:-translate-y-1 cursor-pointer"
+          >
+            <div class="h-48 overflow-hidden relative">
+              <img
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                data-alt="Retro vaporwave 80s landscape"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMIynAy0wLsmQA3RDTk1HdGPTwsNAeJ_aJnElzkV397kZqsZTs4Udxp9vHLsk4QmtQlTQc5UPKBcWBhEF4zWgu0UGaVs9lEBD2v8vr1oI1PJp13Fc92JkHwcOq7AGdWlKSSxIY4bWiTCg-vzNQhUWTTzdGXnan_VGSLxXg5zAmRMP1XX4p8UafqJAhx_ns-pC8wYKbmfIk2ekJxWjDaaaZaL5BjLrZHAF3H2KkJs4hJgaNdmdnX4lZTVRXWJJPcgJ9dOv47ur_qiOG"
+              />
+            </div>
+            <div class="p-4">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="text-white font-bold line-clamp-1">Vaporwave 80s</h3>
+                <span class="text-secondary font-bold text-sm">$3.50</span>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-gray-400 mb-3">
+                <span class="bg-gray-800 px-1.5 py-0.5 rounded">DALL-E 3</span>
+                <span>Art</span>
+              </div>
+            </div>
+          </div>
+          <div
+            class="group bg-card-dark rounded-xl overflow-hidden border border-white/5 hover:border-primary/50 transition-all hover:-translate-y-1 cursor-pointer"
+          >
+            <div class="h-48 overflow-hidden relative">
+              <img
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                data-alt="Isomeric 3D room design"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAnC2taH4sDtle_0H1DPBcGB23k6VP6oM5NwFthACo8w7uPUAEExcQg-c_iyGFkEL3pRV2KFR1w9DP6qvayf9GlX5scwGmreoY8P75ZM3oPaQDp_49-Lplqjvw4HoRNgNByVI4l5GXfph7vV35XJBhyqBVx98WEXJTh6gi1p8t-ZHhbHQ5XDquTzOIOgJ4ZZ5eE5xA1KZflCWp3rMK7Iqbgqt6J_n7Bwqgvxnxan7n0ZrdDQXSbzqEpL3pPrsBx3Fpgkv0Vub3zWaan"
+              />
+            </div>
+            <div class="p-4">
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="text-white font-bold line-clamp-1">
+                  Isometric Rooms
+                </h3>
+                <span class="text-secondary font-bold text-sm">$4.25</span>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-gray-400 mb-3">
+                <span class="bg-gray-800 px-1.5 py-0.5 rounded"
+                  >Midjourney</span
+                >
+                <span>3D Design</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <footer class="border-t border-white/5 bg-black py-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+          <div class="col-span-1 md:col-span-1">
+            <a class="flex items-center gap-2 mb-6" href="#">
+              <span class="material-icons text-primary text-3xl">bolt</span>
+              <span class="text-2xl font-bold font-display text-white">
+                سوق<span class="text-primary">برومبت</span>
+              </span>
+            </a>
+            <p class="text-gray-500 text-sm mb-6">
+              المنصة العربية الأولى لبيع وشراء أوامر الذكاء الاصطناعي. انضم إلى
+              مجتمع المبدعين اليوم.
+            </p>
+            <div class="flex gap-4">
+              <a
+                class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-primary hover:text-white transition-colors"
+                href="#"
+              >
+                <span class="material-icons text-sm">alternate_email</span>
+              </a>
+              <a
+                class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-primary hover:text-white transition-colors"
+                href="#"
+              >
+                <span class="material-icons text-sm">share</span>
+              </a>
+            </div>
+          </div>
+          <div>
+            <h4 class="text-white font-bold mb-6">اكتشف</h4>
+            <ul class="space-y-3 text-sm text-gray-500">
+              <li>
+                <a class="hover:text-primary transition-colors" href="#"
+                  >المدونة</a
+                >
+              </li>
+              <li>
+                <a class="hover:text-primary transition-colors" href="#"
+                  >الأكثر مبيعاً</a
+                >
+              </li>
+              <li>
+                <a class="hover:text-primary transition-colors" href="#"
+                  >وصل حديثاً</a
+                >
+              </li>
+              <li>
+                <a class="hover:text-primary transition-colors" href="#"
+                  >مجموعات مجانية</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-white font-bold mb-6">للبائعين</h4>
+            <ul class="space-y-3 text-sm text-gray-500">
+              <li>
+                <a class="hover:text-primary transition-colors" href="#"
+                  >كيف تبيع؟</a
+                >
+              </li>
+              <li>
+                <a class="hover:text-primary transition-colors" href="#"
+                  >لوحة التحكم</a
+                >
+              </li>
+              <li>
+                <a class="hover:text-primary transition-colors" href="#"
+                  >دليل الإرشادات</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-white font-bold mb-6">اشترك في النشرة</h4>
+            <form class="space-y-3">
+              <input
+                class="w-full bg-gray-900 border border-gray-800 rounded-lg px-4 py-2 text-white placeholder-gray-600 focus:border-primary focus:ring-0 text-sm"
+                placeholder="بريدك الإلكتروني"
+                type="email"
+              />
+              <button
+                class="w-full bg-primary text-white font-bold py-2 rounded-lg hover:bg-primary-light transition-colors text-sm"
+              >
+                اشترك
+              </button>
+            </form>
+          </div>
+        </div>
+        <div
+          class="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4"
+        >
+          <p class="text-gray-600 text-sm text-center md:text-right">
+            © 2023 SouqPrompt. جميع الحقوق محفوظة.
+          </p>
+          <div class="flex gap-6 text-sm text-gray-600">
+            <a class="hover:text-white" href="#">سياسة الخصوصية</a>
+            <a class="hover:text-white" href="#">الشروط والأحكام</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
