@@ -1,8 +1,9 @@
 "use client";
 
 import { useTranslation } from "react-i18next";
-import { Coins, Cpu, Globe, Image as ImageIcon, Sparkles } from "lucide-react";
+import { Coins, Cpu, Globe, Image as ImageIcon } from "lucide-react";
 import BrandItem, { type BrandItemProps } from "./BrandItem";
+import HeroSearchBar from "./HeroSearchBar";
 import TechCard from "./TechCard";
 
 const brands: BrandItemProps[] = [
@@ -77,19 +78,7 @@ function Hero() {
                 <div className="w-2 h-8 bg-[#faff00]/80" />
               </div>
 
-              <div className="flex-1 bg-[#1a1a20]/90 backdrop-blur-xl border border-[#7f0df2]/30 clip-search-container flex items-center p-1.5 focus-within:border-[#faff00] focus-within:shadow-[0_0_15px_rgba(250,255,0,0.3)] transition-all duration-300 shadow-xl">
-                <div className="pl-4 pr-6 text-[#7f0df2]">
-                  <Sparkles className="w-6 h-6" />
-                </div>
-                <input
-                  type="text"
-                  placeholder={t("hero.searchPlaceholder", { ns: "home" })}
-                  className="w-full bg-transparent border-none text-white text-base placeholder-zinc-500 focus:ring-0 focus:outline-none px-2 font-display tracking-wide h-12"
-                />
-                <button className="bg-[#7f0df2] hover:bg-[#9d4dff] text-white px-8 py-3 font-bold text-sm tracking-wider uppercase transition-colors shadow-[0_0_15px_rgba(127,13,242,0.4)] clip-button-start">
-                  {t("buttons.start", { ns: "common" })}
-                </button>
-              </div>
+              <HeroSearchBar className="flex-1" />
 
               <div className="absolute -left-6 top-1/2 -translate-y-1/2 hidden md:block">
                 <div className="w-2 h-8 bg-[#faff00]/80" />
