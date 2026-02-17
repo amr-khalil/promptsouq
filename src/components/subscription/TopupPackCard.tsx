@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Coins, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface TopupPackCardProps {
   pack: {
@@ -19,6 +20,7 @@ export function TopupPackCard({
   onPurchase,
   isLoading,
 }: TopupPackCardProps) {
+  const { t } = useTranslation(["subscription", "common"]);
   const displayPrice = (pack.price / 100).toFixed(2).replace(/\.00$/, "");
 
   return (
@@ -32,7 +34,7 @@ export function TopupPackCard({
         {/* Credits */}
         <div className="text-center">
           <span className="text-3xl font-bold">{pack.credits}</span>
-          <span className="text-muted-foreground me-1 text-sm"> رصيد</span>
+          <span className="text-muted-foreground me-1 text-sm"> {t("subscription:labels.credits")}</span>
         </div>
 
         {/* Price */}
@@ -49,10 +51,10 @@ export function TopupPackCard({
           {isLoading ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" />
-              <span>جاري التحميل...</span>
+              <span>{t("common:messages.loading")}</span>
             </>
           ) : (
-            "شراء"
+            t("subscription:buttons.buy")
           )}
         </Button>
       </CardContent>

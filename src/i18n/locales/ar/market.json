@@ -1,0 +1,39 @@
+{
+  "title": "سوق البرومبتات",
+  "subtitle": "اكتشف أفضل برومبتات الذكاء الاصطناعي",
+  "filters": {
+    "type": "النوع",
+    "model": "النموذج",
+    "price": "السعر",
+    "generationTypes": {
+      "all": "الكل",
+      "text": "نص",
+      "image": "صورة",
+      "code": "كود",
+      "marketing": "تسويق",
+      "design": "تصميم"
+    },
+    "priceOptions": {
+      "all": "الكل",
+      "free": "مجاني",
+      "paid": "مدفوع"
+    }
+  },
+  "sortOptions": {
+    "trending": "الأكثر رواجاً",
+    "popular": "الأكثر شعبية",
+    "newest": "الأحدث",
+    "priceLow": "السعر: من الأقل",
+    "priceHigh": "السعر: من الأعلى",
+    "relevant": "الأكثر صلة",
+    "rating": "الأعلى تقييماً"
+  },
+  "sortLabel": "ترتيب:",
+  "results": {
+    "showing": "عرض {{count}} من {{total}}"
+  },
+  "freeBanner": {
+    "title": "برومبتات مجانية متاحة!",
+    "subtitle": "اكتشف مجموعة من البرومبتات المجانية الاحترافية"
+  }
+}

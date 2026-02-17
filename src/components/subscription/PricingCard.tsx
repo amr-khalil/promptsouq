@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Check, Crown, Loader2, Sword, Zap } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface PlanData {
   id: string;
@@ -70,12 +71,6 @@ const themeStyles: Record<
   },
 };
 
-const periodLabels: Record<BillingCycle, string> = {
-  monthly: "/شهرياً",
-  six_month: "/6 أشهر",
-  yearly: "/سنوياً",
-};
-
 function getPriceForCycle(plan: PlanData, cycle: BillingCycle): number {
   switch (cycle) {
     case "monthly":
@@ -97,6 +92,12 @@ export function PricingCard({
   isLoading,
   isUpgrading,
 }: PricingCardProps) {
+  const { t } = useTranslation(["subscription", "common"]);
+  const periodLabels: Record<BillingCycle, string> = {
+    monthly: t("subscription:period.monthly"),
+    six_month: t("subscription:period.sixMonths"),
+    yearly: t("subscription:period.yearly"),
+  };
   const IconComponent = iconMap[plan.icon] ?? Sword;
   const theme = themeStyles[plan.theme] ?? themeStyles.blue;
   const isCurrentPlan = currentPlanId === plan.id;
@@ -113,7 +114,7 @@ export function PricingCard({
     >
       {isPopular && (
         <div className="absolute top-4 start-4 z-10">
-          <Badge variant="default">الأكثر شيوعاً</Badge>
+          <Badge variant="default">{t("subscription:labels.popular")}</Badge>
         </div>
       )}
 
@@ -142,7 +143,7 @@ export function PricingCard({
           <span className="text-3xl font-bold">{plan.monthlyCredits}</span>
           <span className="text-muted-foreground me-1 text-sm">
             {" "}
-            رصيد / شهر
+            {t("subscription:labels.creditsPerMonth")}
           </span>
         </div>
 
@@ -172,7 +173,7 @@ export function PricingCard({
             variant="secondary"
             className="w-full justify-center py-2.5 text-sm"
           >
-            الخطة الحالية
+            {t("subscription:labels.currentPlan")}
           </Badge>
         ) : hasActiveSubscription ? (
           <Button
@@ -184,10 +185,10 @@ export function PricingCard({
             {isUpgrading ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                <span>جاري التحميل...</span>
+                <span>{t("common:messages.loading")}</span>
               </>
             ) : (
-              "ترقية"
+              t("subscription:buttons.upgrade")
             )}
           </Button>
         ) : (
@@ -199,10 +200,10 @@ export function PricingCard({
             {isLoading ? (
               <>
                 <Loader2 className="h-4 w-4 animate-spin" />
-                <span>جاري التحميل...</span>
+                <span>{t("common:messages.loading")}</span>
               </>
             ) : (
-              "اشترك الآن"
+              t("subscription:buttons.subscribe")
             )}
           </Button>
         )}

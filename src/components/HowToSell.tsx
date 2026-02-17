@@ -15,6 +15,7 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 function CornerAccent({
   position,
@@ -53,6 +54,7 @@ function SectionHeader({
 
 export default function HowToSell() {
   const [isPlaying, setIsPlaying] = useState(false);
+  const { t } = useTranslation(["home"]);
 
   return (
     <section className="bg-[#0f1016] py-16 text-white">
@@ -60,7 +62,7 @@ export default function HowToSell() {
         {/* Top Header */}
         <div className="flex items-center justify-between px-2">
           <h2 className="text-2xl md:text-3xl font-bold flex items-center gap-2">
-            كيف تبيع ؟ <span className="text-amber-400">«</span>
+            {t("howToSell.title", { ns: "home" })} <span className="text-amber-400">&laquo;</span>
           </h2>
           <div className="h-[1px] flex-1 bg-slate-800 mr-6 hidden sm:block" />
         </div>
@@ -81,7 +83,7 @@ export default function HowToSell() {
                 <iframe
                   className="w-full h-full"
                   src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
-                  title="كيف تبيع على برومبت سوق"
+                  title={t("howToSell.videoTitle", { ns: "home" })}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 />
@@ -98,13 +100,13 @@ export default function HowToSell() {
                 {/* COLUMN 1: HERO - Create Prompt (4 cols) */}
                 <div className="md:col-span-4 flex flex-col">
                   <SectionHeader
-                    title="اكتب البرومبت"
-                    subtitle="الخطوة الأولى في رحلتك."
+                    title={t("howToSell.step1.title", { ns: "home" })}
+                    subtitle={t("howToSell.step1.subtitle", { ns: "home" })}
                   />
                   <div className="flex-1 relative overflow-hidden rounded-xl border border-slate-800 bg-slate-900/50 cursor-pointer group/card min-h-[300px]">
                     <img
                       src="https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2670&auto=format&fit=crop"
-                      alt="اكتب البرومبت"
+                      alt={t("howToSell.step1.title", { ns: "home" })}
                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover/card:scale-110"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
@@ -114,15 +116,14 @@ export default function HowToSell() {
                           <Pen className="h-4 w-4 text-amber-950" />
                         </div>
                         <span className="text-xs font-bold text-amber-400">
-                          الخطوة ١
+                          {t("howToSell.step1.badge", { ns: "home" })}
                         </span>
                       </div>
                       <h4 className="text-xl font-bold mb-1">
-                        صمم برومبت احترافي
+                        {t("howToSell.step1.heading", { ns: "home" })}
                       </h4>
                       <p className="text-xs text-slate-300 line-clamp-2">
-                        اكتب أوامر ذكية تحقق نتائج مبهرة مع أدوات الذكاء
-                        الاصطناعي.
+                        {t("howToSell.step1.description", { ns: "home" })}
                       </p>
 
                       {/* Carousel Indicators */}
@@ -138,8 +139,8 @@ export default function HowToSell() {
                 {/* COLUMN 2: SERVICES (4 cols) */}
                 <div className="md:col-span-4 flex flex-col h-full">
                   <SectionHeader
-                    title="سعّر وانشر"
-                    subtitle="حدد سعرك وابدأ البيع."
+                    title={t("howToSell.step2.title", { ns: "home" })}
+                    subtitle={t("howToSell.step2.subtitle", { ns: "home" })}
                   />
                   <div className="flex flex-col gap-4 flex-1">
                     {/* Top Service Card (Purple) - Pricing */}
@@ -151,19 +152,19 @@ export default function HowToSell() {
                             <DollarSign className="h-4 w-4 text-amber-950" />
                           </div>
                           <span className="text-xs font-bold text-amber-300">
-                            الخطوة ٢
+                            {t("howToSell.step2.badge", { ns: "home" })}
                           </span>
                         </div>
                         <h4 className="text-xl font-extrabold leading-tight mb-2">
-                          <span className="text-amber-300">حدد</span> سعرك
-                          المناسب
+                          <span className="text-amber-300">{t("howToSell.step2.heading.part1", { ns: "home" })}</span>{" "}
+                          {t("howToSell.step2.heading.middle", { ns: "home" })}
                           <br />
                           <span className="text-white bg-violet-500 px-1">
-                            وابدأ الربح !!
+                            {t("howToSell.step2.heading.part2", { ns: "home" })}
                           </span>
                         </h4>
                         <div className="mt-auto flex -space-x-3 -space-x-reverse pt-4">
-                          {["سارة", "محمد", "خالد"].map((name) => (
+                          {(t("howToSell.step2.avatarNames", { ns: "home", returnObjects: true }) as string[]).map((name) => (
                             <div
                               key={name}
                               className="w-8 h-8 rounded-full border-2 border-violet-700 overflow-hidden"
@@ -186,10 +187,10 @@ export default function HowToSell() {
                       <div className="absolute top-0 left-0 w-32 h-32 bg-yellow-300 rounded-full blur-3xl opacity-20 -translate-x-10 -translate-y-10" />
                       <div className="h-full flex flex-col items-center justify-center text-center relative z-10 p-6">
                         <span className="inline-flex items-center rounded-full bg-black/20 text-yellow-950 px-2.5 py-0.5 text-xs font-semibold mb-2">
-                          الخطوة ٣
+                          {t("howToSell.step3.badge", { ns: "home" })}
                         </span>
                         <h4 className="text-xl font-bold text-yellow-950 mb-4">
-                          انشر واجذب المشترين
+                          {t("howToSell.step3.heading", { ns: "home" })}
                         </h4>
                         <div className="flex gap-4">
                           <button className="inline-flex items-center justify-center bg-black/10 hover:bg-black/20 text-yellow-950 rounded-xl h-12 w-12 transition-colors">
@@ -207,29 +208,29 @@ export default function HowToSell() {
                 {/* COLUMN 3: FEATURES (4 cols) */}
                 <div className="md:col-span-4 flex flex-col">
                   <SectionHeader
-                    title="لماذا برومبت سوق؟"
-                    subtitle="مميزات تجعلك تبيع أكثر."
+                    title={t("howToSell.whyUs.title", { ns: "home" })}
+                    subtitle={t("howToSell.whyUs.subtitle", { ns: "home" })}
                   />
                   <div className="grid grid-cols-2 gap-3 flex-1">
                     {[
                       {
                         icon: Users,
-                        title: "آلاف المشترين",
+                        title: t("howToSell.features.buyers", { ns: "home" }),
                         color: "from-violet-600/40 to-indigo-900/60",
                       },
                       {
                         icon: DollarSign,
-                        title: "أرباح فورية",
+                        title: t("howToSell.features.earnings", { ns: "home" }),
                         color: "from-emerald-600/40 to-green-900/60",
                       },
                       {
                         icon: Sparkles,
-                        title: "ذكاء اصطناعي",
+                        title: t("howToSell.features.ai", { ns: "home" }),
                         color: "from-amber-600/40 to-orange-900/60",
                       },
                       {
                         icon: Rocket,
-                        title: "انطلق الآن",
+                        title: t("howToSell.features.launch", { ns: "home" }),
                         color: "from-rose-600/40 to-pink-900/60",
                       },
                     ].map((feature) => (
@@ -275,20 +276,20 @@ export default function HowToSell() {
           <div className="absolute bottom-0 left-0 right-0 h-12 border-t border-slate-800 bg-slate-900/90 flex items-center justify-between px-6 z-30">
             {/* Steps Progress */}
             <div className="flex items-center gap-3 text-xs text-slate-400">
-              <span className="text-amber-400 font-bold">٣ خطوات</span>
+              <span className="text-amber-400 font-bold">{t("howToSell.footer.steps", { ns: "home" })}</span>
               <div className="w-24 h-1 bg-slate-700 rounded-full overflow-hidden">
                 <div className="h-full w-full bg-amber-400 rounded-full" />
               </div>
-              <span>لبدء البيع</span>
+              <span>{t("howToSell.footer.startSelling", { ns: "home" })}</span>
             </div>
 
             {/* Stat Badges */}
             <div className="flex gap-4 text-slate-400 text-xs">
               <span className="hidden sm:inline-flex items-center gap-1">
-                <Users className="h-3 w-3" /> +١٠٠٠ بائع
+                <Users className="h-3 w-3" /> {t("howToSell.stats.sellers", { ns: "home" })}
               </span>
               <span className="hidden sm:inline-flex items-center gap-1">
-                <DollarSign className="h-3 w-3" /> +٥٠ ألف ر.س
+                <DollarSign className="h-3 w-3" /> {t("howToSell.stats.revenue", { ns: "home" })}
               </span>
             </div>
           </div>
@@ -297,7 +298,7 @@ export default function HowToSell() {
         {/* Bottom Tagline */}
         <div className="text-center text-slate-500 text-sm flex items-center justify-center gap-2">
           <Trophy className="h-4 w-4 text-amber-500" />
-          <span>أكثر من ١٠٠٠ بائع يثقون بمنصتنا</span>
+          <span>{t("howToSell.tagline", { ns: "home" })}</span>
         </div>
       </div>
     </section>

@@ -2,7 +2,8 @@
 
 import type { Prompt } from "@/lib/schemas/api";
 import { Bot, ImageIcon, Sparkles, Star } from "lucide-react";
-import Link from "next/link";
+import { LocaleLink } from "@/components/LocaleLink";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { Skeleton } from "./ui/skeleton";
 
@@ -11,27 +12,28 @@ interface NewArrivalsGridProps {
   loading: boolean;
 }
 
-type FilterTab = "الكل" | "صور" | "نصوص" | "صوت";
+type FilterTab = "all" | "images" | "text" | "audio";
 
 const IMAGE_MODELS = ["midjourney", "dall-e", "stable diffusion", "sd", "mj"];
 const TEXT_MODELS = ["gpt", "claude", "gemini", "llama", "chatgpt"];
 
 function matchesFilter(prompt: Prompt, filter: FilterTab): boolean {
-  if (filter === "الكل") return true;
+  if (filter === "all") return true;
   const model = prompt.aiModel.toLowerCase();
-  if (filter === "صور") return IMAGE_MODELS.some((m) => model.includes(m));
-  if (filter === "نصوص") return TEXT_MODELS.some((m) => model.includes(m));
-  // "صوت" — audio models (none currently, show none)
+  if (filter === "images") return IMAGE_MODELS.some((m) => model.includes(m));
+  if (filter === "text") return TEXT_MODELS.some((m) => model.includes(m));
+  // "audio" — audio models (none currently, show none)
   return false;
 }
 
 function NewArrivalCard({ prompt }: { prompt: Prompt }) {
+  const { t } = useTranslation(["home", "common"]);
   const isTextPrompt = TEXT_MODELS.some((m) =>
     prompt.aiModel.toLowerCase().includes(m),
   );
 
   return (
-    <Link
+    <LocaleLink
       href={`/prompt/${prompt.id}`}
       className="group bg-[#18181b] rounded-xl overflow-hidden border border-white/5 hover:border-[#7f0df2]/50 transition-all hover:-translate-y-1 cursor-pointer"
     >
@@ -55,7 +57,7 @@ function NewArrivalCard({ prompt }: { prompt: Prompt }) {
         <div className="flex justify-between items-start mb-2">
           <h3 className="text-white font-bold line-clamp-1">{prompt.title}</h3>
           <span className="text-[#faff00] font-bold text-sm shrink-0 ms-2">
-            {prompt.isFree || prompt.price === 0 ? "مجاني" : `$${prompt.price}`}
+            {prompt.isFree || prompt.price === 0 ? t("price.free", { ns: "common" }) : t("price.currency", { ns: "common", amount: prompt.price })}
           </span>
         </div>
         <div className="flex items-center gap-2 text-xs text-gray-400 mb-3">
@@ -86,7 +88,7 @@ function NewArrivalCard({ prompt }: { prompt: Prompt }) {
           </span>
         </div>
       </div>
-    </Link>
+    </LocaleLink>
   );
 }
 
@@ -106,12 +108,20 @@ function CardSkeleton() {
   );
 }
 
-const FILTER_TABS: FilterTab[] = ["الكل", "صور", "نصوص", "صوت"];
+const FILTER_TABS: FilterTab[] = ["all", "images", "text", "audio"];
 
 export function NewArrivalsGrid({ prompts, loading }: NewArrivalsGridProps) {
-  const [activeTab, setActiveTab] = useState<FilterTab>("الكل");
+  const { t } = useTranslation(["home", "common"]);
+  const [activeTab, setActiveTab] = useState<FilterTab>("all");
 
   const filtered = prompts.filter((p) => matchesFilter(p, activeTab));
+
+  const filterTabLabels: Record<FilterTab, string> = {
+    all: t("newArrivals.filterTabs.all", { ns: "home" }),
+    images: t("newArrivals.filterTabs.images", { ns: "home" }),
+    text: t("newArrivals.filterTabs.text", { ns: "home" }),
+    audio: t("newArrivals.filterTabs.audio", { ns: "home" }),
+  };
 
   return (
     <section className="py-16 bg-[#0f0f0f]">
@@ -120,7 +130,7 @@ export function NewArrivalsGrid({ prompts, loading }: NewArrivalsGridProps) {
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-3xl font-bold text-white flex items-center gap-2">
             <Sparkles className="w-7 h-7 text-[#7f0df2] animate-bounce" />
-            وصل حديثاً
+            {t("newArrivals.title", { ns: "home" })}
           </h2>
           <div className="hidden md:flex bg-zinc-800/50 p-1 rounded-lg border border-white/5">
             {FILTER_TABS.map((tab) => (
@@ -133,7 +143,7 @@ export function NewArrivalsGrid({ prompts, loading }: NewArrivalsGridProps) {
                     : "text-gray-400 hover:text-white"
                 }`}
               >
-                {tab}
+                {filterTabLabels[tab]}
               </button>
             ))}
           </div>
@@ -151,7 +161,7 @@ export function NewArrivalsGrid({ prompts, loading }: NewArrivalsGridProps) {
               ))
           ) : (
             <div className="col-span-full text-center py-12 text-gray-500">
-              لا توجد نتائج لهذا الفلتر
+              {t("messages.noResultsForFilter", { ns: "common" })}
             </div>
           )}
         </div>

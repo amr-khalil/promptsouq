@@ -1,0 +1,141 @@
+{
+  "header": {
+    "logo": "سوقبرومبت",
+    "nav": {
+      "browse": "تصفح",
+      "community": "المجتمع",
+      "blog": "المدونة"
+    },
+    "auth": {
+      "signIn": "تسجيل دخول",
+      "sellPrompt": "بيع برومبت"
+    }
+  },
+  "footer": {
+    "tagline": "المنصة العربية الأولى لبيع وشراء أوامر الذكاء الاصطناعي. انضم إلى مجتمع المبدعين اليوم.",
+    "sections": {
+      "discover": "اكتشف",
+      "forSellers": "للبائعين"
+    },
+    "links": {
+      "blog": "المدونة",
+      "bestSellers": "الأكثر مبيعاً",
+      "newArrivals": "وصل حديثاً",
+      "freeCollections": "مجموعات مجانية",
+      "howToSell": "كيف تبيع؟",
+      "dashboard": "لوحة التحكم",
+      "guidelines": "دليل الإرشادات"
+    },
+    "newsletter": {
+      "title": "اشترك في النشرة",
+      "placeholder": "بريدك الإلكتروني",
+      "button": "اشترك",
+      "success": "تم الاشتراك بنجاح!"
+    },
+    "legal": {
+      "copyright": "© 2026 SouqPrompt. جميع الحقوق محفوظة.",
+      "privacy": "سياسة الخصوصية",
+      "terms": "الشروط والأحكام"
+    }
+  },
+  "brand": {
+    "part1": "سوق",
+    "part2": "برومبت"
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "market": "السوق",
+    "search": "البحث"
+  },
+  "buttons": {
+    "start": "ابدأ",
+    "viewAll": "عرض الكل",
+    "retry": "إعادة المحاولة",
+    "search": "بحث",
+    "viewFree": "عرض المجانية",
+    "reset": "إعادة تعيين",
+    "clearAll": "مسح الكل",
+    "loadMore": "عرض المزيد",
+    "resetFilters": "إعادة تعيين الفلاتر",
+    "clearSearch": "مسح البحث",
+    "newSearch": "بحث جديد",
+    "browseMarket": "تصفح السوق",
+    "browseAll": "تصفح جميع البرومبتات",
+    "viewProfile": "عرض الملف",
+    "viewPrompt": "عرض الأمر",
+    "buyNow": "شراء الآن",
+    "addToCart": "إضافة للسلة",
+    "inCart": "في السلة",
+    "subscribe": "اشترك الآن",
+    "viewAllPlans": "عرض جميع الخطط",
+    "viewFullRanking": "عرض الترتيب الكامل",
+    "exploreBundle": "استكشف المجموعة",
+    "signupFree": "إنشاء حساب مجاني",
+    "signIn": "تسجيل الدخول",
+    "createAccount": "إنشاء حساب",
+    "backHome": "العودة للرئيسية",
+    "backToSignIn": "العودة لتسجيل الدخول",
+    "back": "العودة",
+    "verify": "تحقق",
+    "edit": "تعديل",
+    "cancel": "إلغاء",
+    "submitReview": "إرسال التقييم",
+    "updateReview": "تحديث التقييم",
+    "buy": "شراء"
+  },
+  "labels": {
+    "free": "مجاني",
+    "sales": "المبيعات:",
+    "verified": "موثق",
+    "rank": "#{{rank}}",
+    "addedToFavorites": "تمت الإضافة إلى المفضلة",
+    "freeView": "مجاني — عرض",
+    "rating": "تقييم",
+    "sellerRating": "تقييم البائع",
+    "category": "الفئة:",
+    "tags": "الوسوم:",
+    "popular": "الأكثر شيوعاً",
+    "creditsPerMonth": "رصيد / شهر",
+    "credits": "رصيد",
+    "purchased": "تم الشراء",
+    "or": "أو",
+    "filters": "الفلاتر"
+  },
+  "price": {
+    "free": "مجاني",
+    "perMonth": "/شهرياً",
+    "currency": "{{amount}} ر.س",
+    "currencySymbol": "ر.س"
+  },
+  "messages": {
+    "loading": "جاري التحميل...",
+    "searching": "جاري البحث...",
+    "saving": "جارٍ الحفظ...",
+    "noResults": "لا توجد نتائج",
+    "noExamples": "لا توجد أمثلة متاحة",
+    "noSellers": "لا يوجد بائعين حالياً",
+    "tryDifferentFilters": "حاول تعديل الفلاتر أو البحث بكلمات مختلفة",
+    "tryDifferentKeywords": "جرب كلمات مفتاحية مختلفة أو تصفح الفئات",
+    "addedToCart": "تمت الإضافة إلى السلة",
+    "alreadyInCart": "هذا المنتج موجود بالفعل في السلة",
+    "redirectingCheckout": "جارٍ التوجيه للدفع...",
+    "loginToSeeContent": "سجل دخولك لرؤية المحتوى",
+    "reviewUpdated": "تم تحديث التقييم بنجاح!",
+    "reviewAdded": "تم إضافة التقييم بنجاح!",
+    "noResultsForFilter": "لا توجد نتائج لهذا الفلتر"
+  },
+  "errors": {
+    "loadFailed": "فشل في تحميل البيانات",
+    "loadFailedRetry": "حدث خطأ أثناء تحميل البيانات. يرجى المحاولة مرة أخرى.",
+    "loadPageFailed": "عذراً، حدث خطأ أثناء تحميل الصفحة. يرجى المحاولة مرة أخرى.",
+    "unexpectedError": "حدث خطأ غير متوقع",
+    "pageNotFound": "الصفحة غير موجودة",
+    "pageNotFoundDescription": "عذراً، لم نتمكن من العثور على الصفحة التي تبحث عنها. ربما تم نقلها أو حذفها.",
+    "notFoundCode": "404",
+    "saveFailed": "حدث خطأ أثناء حفظ التقييم",
+    "searchFailed": "حدث خطأ أثناء البحث"
+  },
+  "search": {
+    "placeholder": "ابحث عن برومبت..."
+  }
+}

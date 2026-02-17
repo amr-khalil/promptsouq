@@ -1,0 +1,41 @@
+{
+  "metaTitle": "الاشتراكات | سوق البرومبتات",
+  "metaDescription": "اختر خطة الاشتراك المناسبة لك",
+  "pageTitle": "ترقية حسابك",
+  "pageSubtitle": "اختر الخطة المناسبة واحصل على رصيد شهري لتحميل أفضل البرومبتات",
+  "billing": {
+    "monthly": "شهري",
+    "sixMonths": "6 أشهر",
+    "yearly": "سنوي"
+  },
+  "period": {
+    "monthly": "/شهرياً",
+    "sixMonths": "/6 أشهر",
+    "yearly": "/سنوياً"
+  },
+  "labels": {
+    "currentPlan": "الخطة الحالية",
+    "creditsPerMonth": "رصيد / شهر",
+    "credits": "رصيد",
+    "popular": "الأكثر شيوعاً",
+    "remainingBalance": "الرصيد المتبقي:",
+    "renewal": "التجديد:"
+  },
+  "buttons": {
+    "upgrade": "ترقية",
+    "subscribe": "اشترك الآن",
+    "buy": "شراء",
+    "manageSubscription": "إدارة الاشتراك"
+  },
+  "topup": {
+    "title": "رصيد إضافي",
+    "subtitle": "اشترِ رصيداً إضافياً لاستخدامه في التوليد"
+  },
+  "messages": {
+    "subscriptionSuccess": "تم الاشتراك بنجاح!",
+    "paymentCanceled": "تم إلغاء عملية الدفع",
+    "alreadySubscribed": "لديك اشتراك بالفعل",
+    "unexpectedError": "حدث خطأ غير متوقع",
+    "connectionError": "حدث خطأ في الاتصال بالخادم"
+  }
+}

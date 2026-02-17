@@ -1,0 +1,39 @@
+{
+  "title": "Prompts Market",
+  "subtitle": "Discover the best AI prompts",
+  "filters": {
+    "type": "Type",
+    "model": "Model",
+    "price": "Price",
+    "generationTypes": {
+      "all": "All",
+      "text": "Text",
+      "image": "Image",
+      "code": "Code",
+      "marketing": "Marketing",
+      "design": "Design"
+    },
+    "priceOptions": {
+      "all": "All",
+      "free": "Free",
+      "paid": "Paid"
+    }
+  },
+  "sortOptions": {
+    "trending": "Trending",
+    "popular": "Most Popular",
+    "newest": "Newest",
+    "priceLow": "Price: Low to High",
+    "priceHigh": "Price: High to Low",
+    "relevant": "Most Relevant",
+    "rating": "Highest Rated"
+  },
+  "sortLabel": "Sort:",
+  "results": {
+    "showing": "Showing {{count}} of {{total}}"
+  },
+  "freeBanner": {
+    "title": "Free prompts available!",
+    "subtitle": "Discover a collection of professional free prompts"
+  }
+}

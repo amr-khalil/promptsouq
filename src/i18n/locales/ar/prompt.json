@@ -1,0 +1,44 @@
+{
+  "tabs": {
+    "description": "الوصف",
+    "samples": "أمثلة",
+    "reviews": "التقييمات"
+  },
+  "about": {
+    "title": "عن هذا البرومبت"
+  },
+  "useCases": {
+    "title": "حالات الاستخدام",
+    "item1": "مثالي لإنشاء محتوى احترافي في دقائق",
+    "item2": "يوفر الوقت والجهد في العمليات الإبداعية",
+    "item3": "نتائج قابلة للتخصيص حسب احتياجاتك"
+  },
+  "recommendedModel": {
+    "title": "النموذج الموصى به"
+  },
+  "fullContent": {
+    "title": "محتوى البرومبت الكامل"
+  },
+  "relatedPrompts": {
+    "title": "برومبتات ذات صلة"
+  },
+  "trust": {
+    "securePayment": "دفع آمن ومضمون",
+    "instantAccess": "وصول فوري بعد الشراء",
+    "moneyBackGuarantee": "ضمان استرداد لمدة 7 أيام"
+  },
+  "review": {
+    "yourReview": "تقييمك",
+    "editReview": "تعديل التقييم",
+    "rateThis": "قيّم هذا البرومبت",
+    "commentPlaceholder": "اكتب تعليقك (اختياري)..."
+  },
+  "sidebar": {
+    "reviewCount": "تقييم",
+    "sellerRating": "تقييم البائع",
+    "viewProfile": "عرض الملف"
+  },
+  "contentLock": {
+    "signInToView": "سجل دخولك لرؤية المحتوى"
+  }
+}

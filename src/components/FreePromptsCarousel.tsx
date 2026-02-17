@@ -2,7 +2,8 @@
 
 import type { Prompt } from "@/lib/schemas/api";
 import { ArrowLeft, Bot, ImageIcon, Star } from "lucide-react";
-import Link from "next/link";
+import { LocaleLink } from "@/components/LocaleLink";
+import { useTranslation } from "react-i18next";
 import { Skeleton } from "./ui/skeleton";
 
 interface FreePromptsCarouselProps {
@@ -11,10 +12,11 @@ interface FreePromptsCarouselProps {
 }
 
 function PromptScrollCard({ prompt }: { prompt: Prompt }) {
+  const { t } = useTranslation(["home", "common"]);
   const isTextPrompt = prompt.aiModel.toLowerCase().includes("gpt");
 
   return (
-    <Link
+    <LocaleLink
       href={`/prompt/${prompt.id}`}
       className="group relative min-w-[280px] w-[280px] bg-[#18181b] rounded-2xl overflow-hidden border border-white/10 hover:border-[#7f0df2] transition-all duration-300 hover:shadow-[0_0_10px_#7f0df2,0_0_20px_#7f0df2] cursor-pointer snap-start shrink-0"
     >
@@ -47,7 +49,7 @@ function PromptScrollCard({ prompt }: { prompt: Prompt }) {
       <div className="p-4 relative">
         {/* Price Badge */}
         <div className="absolute -top-4 left-4 bg-[#faff00] text-black font-bold px-3 py-1 rounded shadow-lg text-sm">
-          مجاني
+          {t("price.free", { ns: "common" })}
         </div>
 
         <h3 className="text-white font-bold text-lg mb-1 line-clamp-1 group-hover:text-[#7f0df2] transition-colors">
@@ -80,7 +82,7 @@ function PromptScrollCard({ prompt }: { prompt: Prompt }) {
           </div>
         </div>
       </div>
-    </Link>
+    </LocaleLink>
   );
 }
 
@@ -105,6 +107,8 @@ export function FreePromptsCarousel({
   prompts,
   loading,
 }: FreePromptsCarouselProps) {
+  const { t } = useTranslation(["home", "common"]);
+
   return (
     <section className="py-16 bg-[#0f0f0f]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -113,19 +117,19 @@ export function FreePromptsCarousel({
           <div>
             <h2 className="text-3xl font-bold text-white mb-2 flex items-center gap-2">
               <span className="w-2 h-8 bg-[#faff00] rounded-full block" />
-              برومبتات مجانية
+              {t("freePrompts.title", { ns: "home" })}
             </h2>
             <p className="text-gray-400 text-sm">
-              جرّب برومبتات احترافية مجاناً — سجل دخولك واستفد
+              {t("freePrompts.subtitle", { ns: "home" })}
             </p>
           </div>
-          <Link
+          <LocaleLink
             href="/market?priceType=free"
             className="text-[#7f0df2] hover:text-white font-bold text-sm flex items-center gap-1 group"
           >
-            عرض الكل
+            {t("buttons.viewAll", { ns: "common" })}
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-          </Link>
+          </LocaleLink>
         </div>
 
         {/* Horizontal Scroll */}

@@ -19,7 +19,7 @@ import {
   Loader2,
   Sparkles,
 } from "lucide-react";
-import Link from "next/link";
+import { LocaleLink } from "@/components/LocaleLink";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
 
@@ -138,10 +138,10 @@ export function GenerationDialog({
               </p>
               <div className="flex justify-center gap-3">
                 <Button size="sm" asChild>
-                  <Link href="/subscription">اشتراك</Link>
+                  <LocaleLink href="/subscription">اشتراك</LocaleLink>
                 </Button>
                 <Button size="sm" variant="outline" asChild>
-                  <Link href="/subscription#topup">شراء رصيد</Link>
+                  <LocaleLink href="/subscription#topup">شراء رصيد</LocaleLink>
                 </Button>
               </div>
             </div>

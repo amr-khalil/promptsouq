@@ -1,12 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-
-const cycles = [
-  { value: "monthly", label: "شهري" },
-  { value: "six_month", label: "6 أشهر" },
-  { value: "yearly", label: "سنوي" },
-] as const;
+import { useTranslation } from "react-i18next";
 
 type BillingCycle = "monthly" | "six_month" | "yearly";
 
@@ -19,6 +14,13 @@ export function BillingCycleToggle({
   selectedCycle,
   onCycleChange,
 }: BillingCycleToggleProps) {
+  const { t } = useTranslation("subscription");
+  const cycles = [
+    { value: "monthly" as const, label: t("billing.monthly") },
+    { value: "six_month" as const, label: t("billing.sixMonths") },
+    { value: "yearly" as const, label: t("billing.yearly") },
+  ];
+
   return (
     <div className="inline-flex items-center rounded-full bg-muted p-1 gap-1">
       {cycles.map((cycle) => (

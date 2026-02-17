@@ -10,9 +10,10 @@ import {
   Star,
   X,
 } from "lucide-react";
-import Link from "next/link";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
+import { LocaleLink } from "./LocaleLink";
 import { FavoriteButton } from "./dashboard/FavoriteButton";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
@@ -24,6 +25,7 @@ interface PromptCardProps {
 }
 
 export function PromptCard({ prompt }: PromptCardProps) {
+  const { t } = useTranslation("common");
   const [previewOpen, setPreviewOpen] = useState(false);
   const { addItem, isInCart } = useCartStore();
   const inCart = isInCart(prompt.id);
@@ -38,7 +40,7 @@ export function PromptCard({ prompt }: PromptCardProps) {
       price: prompt.price,
       thumbnail: prompt.thumbnail,
     });
-    toast.success("تمت الإضافة إلى السلة");
+    toast.success(t("messages.addedToCart"));
   }
 
   function handlePreview(e: React.MouseEvent) {
@@ -86,9 +88,9 @@ export function PromptCard({ prompt }: PromptCardProps) {
               {prompt.title}
             </h3>
             {prompt.isFree ? (
-              <Badge className="bg-green-600 text-white hover:bg-green-700">مجاني</Badge>
+              <Badge className="bg-green-600 text-white hover:bg-green-700">{t("price.free")}</Badge>
             ) : (
-              <p className="text-sm font-bold text-white">${prompt.price}</p>
+              <p className="text-sm font-bold text-white">{t("price.currency", { amount: prompt.price })}</p>
             )}
           </CardContent>
         </Card>
@@ -125,12 +127,12 @@ export function PromptCard({ prompt }: PromptCardProps) {
                 size="icon"
                 className="h-8 w-8 rounded-md bg-[#1a1b26] text-white hover:bg-[#2e3048] [&_svg]:h-4 [&_svg]:w-4"
               />
-              <Link
+              <LocaleLink
                 href={`/prompt/${prompt.id}`}
                 className="flex h-8 w-8 items-center justify-center rounded-md bg-[#1a1b26] text-white transition-colors hover:bg-[#2e3048]"
               >
                 <ExternalLink className="h-4 w-4" />
-              </Link>
+              </LocaleLink>
             </div>
 
             <img
@@ -150,7 +152,7 @@ export function PromptCard({ prompt }: PromptCardProps) {
                 <p className="text-sm text-slate-400">{prompt.titleEn}</p>
               </div>
               {prompt.isFree ? (
-                <Badge className="bg-green-600 px-4 py-1.5 text-sm text-white hover:bg-green-700">مجاني</Badge>
+                <Badge className="bg-green-600 px-4 py-1.5 text-sm text-white hover:bg-green-700">{t("price.free")}</Badge>
               ) : (
                 <Button
                   className="shrink-0 bg-linear-to-r from-[#9333ea] to-[#6366f1] px-5 font-bold text-white hover:opacity-90"
@@ -159,7 +161,7 @@ export function PromptCard({ prompt }: PromptCardProps) {
                   disabled={inCart}
                 >
                   <ShoppingCart className="h-4 w-4" />
-                  {inCart ? "في السلة" : `$${prompt.price}`}
+                  {inCart ? t("buttons.inCart") : t("price.currency", { amount: prompt.price })}
                 </Button>
               )}
             </div>
@@ -176,7 +178,7 @@ export function PromptCard({ prompt }: PromptCardProps) {
               </span>
               <span className="flex items-center gap-1">
                 <Eye className="h-3.5 w-3.5" />
-                {prompt.sales} مبيعات
+                {prompt.sales} {t("labels.sales")}
               </span>
               <Badge
                 variant="outline"
@@ -215,7 +217,7 @@ export function PromptCard({ prompt }: PromptCardProps) {
                   className="h-9 w-9 rounded-md border border-slate-700 bg-transparent text-slate-400 hover:bg-[#2e3048] hover:text-white [&_svg]:h-4 [&_svg]:w-4"
                 />
                 <Button variant="neonGradient" size="sm" asChild>
-                  <Link href={`/prompt/${prompt.id}`}>عرض الأمر</Link>
+                  <LocaleLink href={`/prompt/${prompt.id}`}>{t("buttons.viewPrompt")}</LocaleLink>
                 </Button>
               </div>
             </div>
