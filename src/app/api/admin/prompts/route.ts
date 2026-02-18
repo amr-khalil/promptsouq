@@ -2,7 +2,7 @@ import { db } from "@/db";
 import { prompts } from "@/db/schema";
 import { checkAdmin } from "@/lib/auth";
 import { apiErrorResponse, adminPromptsQuerySchema } from "@/lib/schemas/api";
-import { asc, count, eq } from "drizzle-orm";
+import { and, asc, count, eq, isNull } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
       const [row] = await db
         .select({ count: count() })
         .from(prompts)
-        .where(eq(prompts.status, status));
+        .where(and(eq(prompts.status, status), isNull(prompts.deletedAt)));
       return NextResponse.json({ data: { count: row.count } });
     }
 
@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
         createdAt: prompts.createdAt,
       })
       .from(prompts)
-      .where(eq(prompts.status, status))
+      .where(and(eq(prompts.status, status), isNull(prompts.deletedAt)))
       .orderBy(asc(prompts.createdAt))
       .limit(limit);
 

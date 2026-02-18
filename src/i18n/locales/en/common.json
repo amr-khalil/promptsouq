@@ -8,7 +8,20 @@
     },
     "auth": {
       "signIn": "Sign In",
-      "sellPrompt": "Sell Prompt"
+      "sellPrompt": "Sell Prompt",
+      "signOut": "Sign Out"
+    },
+    "profile": {
+      "dashboard": "Dashboard",
+      "myPurchases": "My Purchases",
+      "myPrompts": "My Prompts",
+      "earnings": "Sales & Earnings",
+      "sellerProfile": "Seller Profile",
+      "adminPanel": "Admin Panel",
+      "moderation": "Moderation",
+      "orders": "Orders",
+      "analytics": "Analytics",
+      "settings": "Settings"
     }
   },
   "footer": {

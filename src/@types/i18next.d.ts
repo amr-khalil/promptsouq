@@ -7,6 +7,7 @@ import type prompt from "../i18n/locales/en/prompt.json";
 import type search from "../i18n/locales/en/search.json";
 import type sell from "../i18n/locales/en/sell.json";
 import type subscription from "../i18n/locales/en/subscription.json";
+import type dashboard from "../i18n/locales/en/dashboard.json";
 
 declare module "i18next" {
   interface CustomTypeOptions {
@@ -20,6 +21,7 @@ declare module "i18next" {
       subscription: typeof subscription;
       auth: typeof auth;
       sell: typeof sell;
+      dashboard: typeof dashboard;
     };
   }
 }

@@ -15,6 +15,7 @@ import enPrompt from "@/i18n/locales/en/prompt.json";
 import enSubscription from "@/i18n/locales/en/subscription.json";
 import enAuth from "@/i18n/locales/en/auth.json";
 import enSell from "@/i18n/locales/en/sell.json";
+import enDashboard from "@/i18n/locales/en/dashboard.json";
 
 import arCommon from "@/i18n/locales/ar/common.json";
 import arHome from "@/i18n/locales/ar/home.json";
@@ -24,6 +25,7 @@ import arPrompt from "@/i18n/locales/ar/prompt.json";
 import arSubscription from "@/i18n/locales/ar/subscription.json";
 import arAuth from "@/i18n/locales/ar/auth.json";
 import arSell from "@/i18n/locales/ar/sell.json";
+import arDashboard from "@/i18n/locales/ar/dashboard.json";
 
 const allResources = {
   en: {
@@ -35,6 +37,7 @@ const allResources = {
     subscription: enSubscription,
     auth: enAuth,
     sell: enSell,
+    dashboard: enDashboard,
   },
   ar: {
     common: arCommon,
@@ -45,6 +48,7 @@ const allResources = {
     subscription: arSubscription,
     auth: arAuth,
     sell: arSell,
+    dashboard: arDashboard,
   },
 };
 

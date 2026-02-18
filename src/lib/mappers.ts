@@ -1,5 +1,7 @@
-import type { categories, freePromptAccess, prompts, reviews, sellerProfiles, testimonials } from "@/db/schema";
+import type { categories, freePromptAccess, orders, orderItems, prompts, reviews, sellerProfiles, testimonials } from "@/db/schema";
 
+type OrderRow = typeof orders.$inferSelect;
+type OrderItemRow = typeof orderItems.$inferSelect;
 type PromptRow = typeof prompts.$inferSelect;
 type FreePromptAccessRow = typeof freePromptAccess.$inferSelect;
 type SellerProfileRow = typeof sellerProfiles.$inferSelect;
@@ -225,5 +227,89 @@ export function mapSellerStorefrontRow(row: SellerStorefrontRow) {
     ...mapSellerLeaderboardRow(row),
     totalFavorites: row.totalFavorites,
     joinedAt: row.joinedAt.toISOString(),
+  };
+}
+
+// ─── Admin & Seller Dashboard Mappers ────────────────────────────
+
+export function mapAdminOrderRow(row: OrderRow & { itemCount: number }) {
+  return {
+    id: row.id,
+    buyerId: row.userId,
+    amountTotal: row.amountTotal,
+    currency: row.currency,
+    status: row.status,
+    itemCount: row.itemCount,
+    createdAt: row.createdAt.toISOString(),
+  };
+}
+
+export function mapAdminOrderDetailRow(
+  order: OrderRow,
+  items: (OrderItemRow & { promptTitle: string; sellerId: string | null; sellerName: string })[],
+) {
+  return {
+    id: order.id,
+    buyerId: order.userId,
+    stripePaymentIntentId: order.stripePaymentIntentId,
+    amountTotal: order.amountTotal,
+    currency: order.currency,
+    status: order.status,
+    createdAt: order.createdAt.toISOString(),
+    items: items.map((item) => ({
+      id: item.id,
+      promptId: item.promptId,
+      promptTitle: item.promptTitle,
+      sellerId: item.sellerId,
+      sellerName: item.sellerName,
+      priceAtPurchase: item.priceAtPurchase,
+      commissionRate: item.commissionRate,
+      sellerPayoutAmount: item.sellerPayoutAmount,
+      sellerStripeAccountId: item.sellerStripeAccountId,
+    })),
+  };
+}
+
+export function mapSellerEarningRow(
+  row: {
+    orderId: string;
+    promptId: string;
+    promptTitle: string;
+    saleDate: Date;
+    priceAtPurchase: number;
+    commissionRate: number | null;
+    sellerPayoutAmount: number | null;
+  },
+  payoutsEnabled: boolean,
+) {
+  const net = row.sellerPayoutAmount ?? 0;
+  const commission = row.priceAtPurchase - net;
+  return {
+    orderId: row.orderId,
+    promptId: row.promptId,
+    promptTitle: row.promptTitle,
+    saleDate: row.saleDate.toISOString(),
+    priceAtPurchase: row.priceAtPurchase,
+    commissionRate: row.commissionRate ?? 0,
+    commissionAmount: commission,
+    netAmount: net,
+    payoutStatus: payoutsEnabled ? "paid" : "pending",
+  };
+}
+
+export function mapSellerProfileEditRow(row: SellerProfileRow) {
+  return {
+    userId: row.userId,
+    displayName: row.displayName,
+    avatar: row.avatar,
+    bio: row.bio,
+    country: row.country,
+    stripeAccountId: row.stripeAccountId,
+    chargesEnabled: row.chargesEnabled,
+    payoutsEnabled: row.payoutsEnabled,
+    detailsSubmitted: row.detailsSubmitted,
+    totalEarnings: row.totalEarnings,
+    totalSales: row.totalSales,
+    createdAt: row.createdAt.toISOString(),
   };
 }

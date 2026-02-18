@@ -3,6 +3,7 @@ export { creditBalances } from "./credit-balances";
 export { creditTopupPacks } from "./credit-topup-packs";
 export { creditTransactions } from "./credit-transactions";
 export { favorites } from "./favorites";
+export { marketplaceSettings } from "./marketplace-settings";
 export { freePromptAccess } from "./free-prompt-access";
 export { generations } from "./generations";
 export { orders, orderItems } from "./orders";

@@ -146,6 +146,8 @@ Future additions: Supabase anon key, Stripe publishable/secret keys.
 - Supabase Postgres (read-only for trending), localStorage (recent searches) (012-smart-search-bar)
 - TypeScript 5.x (strict mode) + Next.js 16.x (App Router), React 19.x, React Hook Form 7.x, Zod 4.x, @supabase/supabase-js (NEW), Clerk 6.x, Stripe SDK, i18next + react-i18nex (013-sell-form-enhancement)
 - Supabase Postgres 17.x (Drizzle ORM, existing), Supabase Storage (NEW — `prompt-images` bucket), localStorage (draft persistence, replacing sessionStorage) (013-sell-form-enhancement)
+- TypeScript 5.x (strict mode) + Next.js 16.x (App Router), React 19.x + Drizzle ORM, Clerk 6.x, Stripe SDK (Connect), Zod 4.x, React Hook Form 7.x, shadcn/ui (New York), i18next + react-i18next, Lucide React, Sonner (toast) (014-seller-admin-dashboards)
+- Supabase Postgres 17.x via Drizzle ORM + postgres.js (`prepare: false`), Supabase Storage (avatars) (014-seller-admin-dashboards)
 
 ## Recent Changes
 - 001-api-mock-data: Added TypeScript 5.x (strict mode) + Next.js 16.x (App Router), React 19.x, Zod 4.x

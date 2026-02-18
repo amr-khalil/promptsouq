@@ -1,7 +1,9 @@
 import { db } from "@/db";
 import { prompts } from "@/db/schema";
 import { checkAdmin } from "@/lib/auth";
+import { sendPromptApprovedEmail, sendPromptRejectedEmail } from "@/lib/email";
 import { adminReviewSchema, apiErrorResponse, uuidParamSchema } from "@/lib/schemas/api";
+import { clerkClient } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -48,7 +50,11 @@ export async function POST(
 
     // Check prompt exists and is pending
     const existing = await db
-      .select({ status: prompts.status })
+      .select({
+        status: prompts.status,
+        sellerId: prompts.sellerId,
+        title: prompts.title,
+      })
       .from(prompts)
       .where(eq(prompts.id, parsedId.data))
       .limit(1);
@@ -85,6 +91,23 @@ export async function POST(
         status: prompts.status,
         reviewedAt: prompts.reviewedAt,
       });
+
+    // Fire-and-forget email notification to seller
+    const { sellerId, title: promptTitle } = existing[0];
+    if (sellerId) {
+      const clerk = await clerkClient();
+      void clerk.users.getUser(sellerId).then((user) => {
+        const sellerEmail = user.emailAddresses[0]?.emailAddress;
+        if (!sellerEmail) return;
+        if (action === "approve") {
+          return sendPromptApprovedEmail({ sellerEmail, promptTitle });
+        } else {
+          return sendPromptRejectedEmail({ sellerEmail, promptTitle, reason });
+        }
+      }).catch((err) => {
+        console.error("Failed to send review email:", err);
+      });
+    }
 
     return NextResponse.json({
       data: {

@@ -46,6 +46,7 @@ export const prompts = pgTable(
     rejectionReason: text("rejection_reason"),
     reviewedAt: timestamp("reviewed_at", { withTimezone: true }),
     reviewedBy: text("reviewed_by"),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
   },
   (table) => [
     index("idx_prompts_seller_id").on(table.sellerId),

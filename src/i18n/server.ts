@@ -10,6 +10,7 @@ import enSearch from "./locales/en/search.json";
 import enPrompt from "./locales/en/prompt.json";
 import enSubscription from "./locales/en/subscription.json";
 import enAuth from "./locales/en/auth.json";
+import enDashboard from "./locales/en/dashboard.json";
 
 import arCommon from "./locales/ar/common.json";
 import arHome from "./locales/ar/home.json";
@@ -18,6 +19,7 @@ import arSearch from "./locales/ar/search.json";
 import arPrompt from "./locales/ar/prompt.json";
 import arSubscription from "./locales/ar/subscription.json";
 import arAuth from "./locales/ar/auth.json";
+import arDashboard from "./locales/ar/dashboard.json";
 
 const allResources: Record<Locale, Record<string, Record<string, unknown>>> = {
   en: {
@@ -28,6 +30,7 @@ const allResources: Record<Locale, Record<string, Record<string, unknown>>> = {
     prompt: enPrompt,
     subscription: enSubscription,
     auth: enAuth,
+    dashboard: enDashboard,
   },
   ar: {
     common: arCommon,
@@ -37,6 +40,7 @@ const allResources: Record<Locale, Record<string, Record<string, unknown>>> = {
     prompt: arPrompt,
     subscription: arSubscription,
     auth: arAuth,
+    dashboard: arDashboard,
   },
 };
 

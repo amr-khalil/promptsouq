@@ -16,6 +16,7 @@ import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
 const STORAGE_KEY = "promptsouq-sell-draft";
@@ -107,11 +108,16 @@ function clearDraft() {
 
 export default function SellPage() {
   const { t } = useTranslation("sell");
+  const searchParams = useSearchParams();
+  const editId = searchParams.get("edit");
+  const isEditMode = !!editId;
+
   const [currentStep, setCurrentStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [submittedPromptId, setSubmittedPromptId] = useState<string | null>(null);
   const [paymentActivated, setPaymentActivated] = useState(false);
   const [paymentLoading, setPaymentLoading] = useState(true);
+  const [editLoading, setEditLoading] = useState(isEditMode);
 
   const schema = useMemo(
     () => createPromptSubmissionSchema(t as (key: string) => string),
@@ -128,8 +134,12 @@ export default function SellPage() {
   // Paid: 3 steps (Payment → Details → Content). Free: 2 steps (Details → Content).
   const submitStep = isFree ? 2 : 3;
 
-  // Restore draft from localStorage and check payment status on mount
+  // Restore draft from localStorage and check payment status on mount (skip in edit mode)
   useEffect(() => {
+    if (isEditMode) {
+      setPaymentLoading(false);
+      return;
+    }
     const draft = loadDraft();
 
     if (isFree) {
@@ -172,6 +182,58 @@ export default function SellPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Edit mode: fetch prompt data and populate form
+  useEffect(() => {
+    if (!isEditMode || !editId) return;
+    let cancelled = false;
+    async function fetchPromptForEdit() {
+      setEditLoading(true);
+      try {
+        const res = await fetch(`/api/seller/prompts/${editId}`);
+        if (!res.ok) {
+          toast.error(t("toast.uploadError"));
+          return;
+        }
+        const json = await res.json();
+        if (cancelled) return;
+        const p = json.data;
+        form.reset({
+          title: p.title ?? "",
+          titleEn: p.titleEn ?? "",
+          description: p.description ?? "",
+          descriptionEn: p.descriptionEn ?? "",
+          isFree: p.isFree ?? p.price === 0,
+          price: p.price ?? 0,
+          category: p.category ?? "",
+          aiModel: p.aiModel ?? "",
+          generationType: p.generationType ?? "text",
+          modelVersion: p.modelVersion ?? "",
+          maxTokens: p.maxTokens ?? null,
+          temperature: p.temperature ?? null,
+          difficulty: p.difficulty ?? "مبتدئ",
+          tags: p.tags ?? [],
+          thumbnail: p.thumbnail ?? "",
+          fullContent: p.fullContent ?? "",
+          instructions: p.instructions ?? "",
+          exampleOutputs: p.exampleOutputs?.length ? p.exampleOutputs : ["", "", "", ""],
+          examplePrompts: p.examplePrompts?.length ? p.examplePrompts : [{ variables: {} }],
+          imageGenerationType: undefined,
+        });
+        // In edit mode, skip payment step and start on details
+        setPaymentActivated(true);
+        setPaymentLoading(false);
+        setCurrentStep(p.isFree || p.price === 0 ? 1 : 2);
+      } catch {
+        toast.error(t("toast.connectionError"));
+      } finally {
+        if (!cancelled) setEditLoading(false);
+      }
+    }
+    fetchPromptForEdit();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editId, isEditMode]);
+
   const handlePaymentActivated = useCallback(() => {
     setPaymentActivated(true);
     setCurrentStep(2);
@@ -187,8 +249,11 @@ export default function SellPage() {
     setSubmitting(true);
     try {
       const data = form.getValues();
-      const res = await fetch("/api/prompts", {
-        method: "POST",
+      const url = isEditMode ? `/api/seller/prompts/${editId}` : "/api/prompts";
+      const method = isEditMode ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
@@ -199,9 +264,9 @@ export default function SellPage() {
         return;
       }
 
-      clearDraft();
+      if (!isEditMode) clearDraft();
       setSubmittedPromptId(json.data?.id ?? "");
-      toast.success(t("toast.uploadSuccess"));
+      toast.success(isEditMode ? t("toast.updateSuccess") : t("toast.uploadSuccess"));
     } catch {
       toast.error(t("toast.connectionError"));
     } finally {
@@ -215,7 +280,7 @@ export default function SellPage() {
       if (currentStep === 1) {
         const valid = await form.trigger(detailsFields);
         if (!valid) return;
-        saveDraft(form.getValues(), 2, paymentActivated);
+        if (!isEditMode) saveDraft(form.getValues(), 2, paymentActivated);
         setCurrentStep(2);
       } else if (currentStep === 2) {
         const valid = await form.trigger(contentFields);
@@ -229,7 +294,7 @@ export default function SellPage() {
       // Paid flow: Step 1 (Payment) → Step 2 (Details) → Step 3 (Content/Submit)
       if (currentStep === 1) {
         if (!paymentActivated) return;
-        saveDraft(form.getValues(), 2, paymentActivated);
+        if (!isEditMode) saveDraft(form.getValues(), 2, paymentActivated);
         setCurrentStep(2);
       } else if (currentStep === 2) {
         const valid = await form.trigger(detailsFields);
@@ -238,7 +303,7 @@ export default function SellPage() {
           form.setError("price", { message: t("toast.minPrice") });
           return;
         }
-        saveDraft(form.getValues(), 3, paymentActivated);
+        if (!isEditMode) saveDraft(form.getValues(), 3, paymentActivated);
         setCurrentStep(3);
       } else if (currentStep === 3) {
         const valid = await form.trigger(contentFields);
@@ -253,7 +318,7 @@ export default function SellPage() {
 
   const handleBack = () => {
     if (currentStep > 1) {
-      saveDraft(form.getValues(), currentStep - 1, paymentActivated);
+      if (!isEditMode) saveDraft(form.getValues(), currentStep - 1, paymentActivated);
       setCurrentStep(currentStep - 1);
     }
   };
@@ -330,8 +395,12 @@ export default function SellPage() {
   return (
     <div className="container mx-auto max-w-3xl px-4 py-8">
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold mb-2">{t("header.title")}</h1>
-        <p className="text-muted-foreground">{t("header.subtitle")}</p>
+        <h1 className="text-3xl font-bold mb-2">
+          {isEditMode ? t("header.editTitle") : t("header.title")}
+        </h1>
+        <p className="text-muted-foreground">
+          {isEditMode ? t("header.editSubtitle") : t("header.subtitle")}
+        </p>
       </div>
 
       <div className="mb-8">
