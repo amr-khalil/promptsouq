@@ -6,7 +6,11 @@
     "myPrompts": "My Prompts",
     "salesEarnings": "Sales & Earnings",
     "sellerProfile": "Seller Profile",
+    "galleryImages": "Gallery Images",
+    "myIssues": "My Issues",
     "moderation": "Moderation",
+    "galleryModeration": "Gallery Moderation",
+    "issues": "Issues",
     "orders": "Orders",
     "analytics": "Analytics",
     "settings": "Settings"

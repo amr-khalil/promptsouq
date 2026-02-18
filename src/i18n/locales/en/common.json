@@ -58,7 +58,10 @@
   "nav": {
     "home": "Home",
     "market": "Market",
-    "search": "Search"
+    "search": "Search",
+    "gallery": "Gallery",
+    "featureRequests": "Feature Requests",
+    "notifications": "Notifications"
   },
   "buttons": {
     "start": "START",

@@ -1,0 +1,30 @@
+{
+  "title": "البلاغات",
+  "submit": "إرسال بلاغ",
+  "form": {
+    "title": "عنوان المشكلة",
+    "titlePlaceholder": "اكتب عنواناً واضحاً للمشكلة",
+    "description": "الوصف",
+    "descriptionPlaceholder": "اشرح المشكلة بالتفصيل...",
+    "image": "صورة توضيحية (اختياري)",
+    "submit": "إرسال البلاغ",
+    "success": "تم إرسال البلاغ بنجاح"
+  },
+  "status": {
+    "open": "مفتوح",
+    "in_progress": "قيد المعالجة",
+    "resolved": "تم الحل"
+  },
+  "myIssues": "بلاغاتي",
+  "adminIssues": "إدارة البلاغات",
+  "statusChange": {
+    "noteLabel": "ملاحظة",
+    "notePlaceholder": "اكتب ملاحظة حول تغيير الحالة...",
+    "submit": "تحديث الحالة",
+    "success": "تم تحديث حالة البلاغ"
+  },
+  "empty": "لا توجد بلاغات",
+  "all": "الكل",
+  "sortNewest": "الأحدث",
+  "sortOldest": "الأقدم"
+}

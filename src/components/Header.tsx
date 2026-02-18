@@ -3,6 +3,7 @@
 import { CartSheet } from "@/components/CartSheet";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { LocaleLink } from "@/components/LocaleLink";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -138,8 +139,8 @@ export function Header() {
 
           <div className="hidden md:flex items-center gap-8 mr-4">
             <LocaleLink href="/market">{t("header.nav.browse")}</LocaleLink>
-            <LocaleLink href="#">{t("header.nav.community")}</LocaleLink>
-            <LocaleLink href="#">{t("header.nav.blog")}</LocaleLink>
+            <LocaleLink href="/gallery">{t("nav.gallery")}</LocaleLink>
+            <LocaleLink href="/feature-requests">{t("nav.featureRequests")}</LocaleLink>
           </div>
         </div>
 
@@ -150,6 +151,8 @@ export function Header() {
           </button>
 
           <CartSheet />
+
+          {isSignedIn && <NotificationBell />}
 
           <div className="h-6 w-px bg-zinc-800 mx-2 hidden sm:block"></div>
 
@@ -195,8 +198,8 @@ export function Header() {
       {mobileMenuOpen && (
         <div className="md:hidden bg-[#0f0f0f]/95 backdrop-blur-md border-t border-zinc-800 px-4 py-4 space-y-3">
           <LocaleLink href="/market" className="block text-white text-sm py-2">{t("header.nav.browse")}</LocaleLink>
-          <LocaleLink href="#" className="block text-white text-sm py-2">{t("header.nav.community")}</LocaleLink>
-          <LocaleLink href="#" className="block text-white text-sm py-2">{t("header.nav.blog")}</LocaleLink>
+          <LocaleLink href="/gallery" className="block text-white text-sm py-2">{t("nav.gallery")}</LocaleLink>
+          <LocaleLink href="/feature-requests" className="block text-white text-sm py-2">{t("nav.featureRequests")}</LocaleLink>
 
           {isSignedIn ? (
             <>

@@ -7,11 +7,15 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { useUser } from "@clerk/nextjs";
 import {
+  AlertCircle,
+  AlertTriangle,
   BarChart3,
   Coins,
   DollarSign,
   FileText,
   Heart,
+  Image,
+  ImagePlus,
   Receipt,
   Settings,
   Shield,
@@ -37,6 +41,7 @@ const buyerNavItems: NavItem[] = [
   { href: "/dashboard/credits", label: "الرصيد", icon: Coins },
   { href: "/dashboard/generations", label: "التوليدات", icon: Sparkles },
   { href: "/dashboard/favorites", label: "المفضلة", icon: Heart },
+  { href: "/dashboard/issues", label: "البلاغات", icon: AlertTriangle },
   { href: "/dashboard/settings", label: "الإعدادات", icon: Settings },
 ];
 
@@ -53,11 +58,14 @@ export function DashboardSidebar({ isSeller, isAdmin }: DashboardSidebarProps) {
   const sellerNavItems: NavItem[] = [
     { href: "/dashboard/seller/prompts", label: t("sidebar.myPrompts"), icon: FileText },
     { href: "/dashboard/seller/earnings", label: t("sidebar.salesEarnings"), icon: DollarSign },
+    { href: "/dashboard/seller/gallery", label: t("sidebar.galleryImages"), icon: Image },
     { href: "/dashboard/seller/profile", label: t("sidebar.sellerProfile"), icon: Store },
   ];
 
   const adminNavItems: NavItem[] = [
     { href: "/dashboard/admin/moderation", label: t("sidebar.moderation"), icon: Shield },
+    { href: "/dashboard/admin/gallery", label: t("sidebar.galleryModeration"), icon: ImagePlus },
+    { href: "/dashboard/admin/issues", label: t("sidebar.issues"), icon: AlertCircle },
     { href: "/dashboard/admin/orders", label: t("sidebar.orders"), icon: Receipt },
     { href: "/dashboard/admin/analytics", label: t("sidebar.analytics"), icon: BarChart3 },
     { href: "/dashboard/admin/settings", label: t("sidebar.settings"), icon: SlidersHorizontal },

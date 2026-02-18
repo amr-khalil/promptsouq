@@ -57,6 +57,13 @@
       "when": 1771416052935,
       "tag": "0007_premium_gambit",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1771424503653,
+      "tag": "0008_ordinary_cammi",
+      "breakpoints": true
     }
   ]
 }

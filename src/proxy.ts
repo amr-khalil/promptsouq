@@ -13,6 +13,8 @@ const isPublicRoute = createRouteMatcher([
   "/subscription(.*)",
   "/ranking(.*)",
   "/seller(.*)",
+  "/gallery(.*)",
+  "/feature-requests(.*)",
   "/api(.*)",
   // Arabic (/ar prefix) — same routes
   "/ar",
@@ -24,6 +26,8 @@ const isPublicRoute = createRouteMatcher([
   "/ar/subscription(.*)",
   "/ar/ranking(.*)",
   "/ar/seller(.*)",
+  "/ar/gallery(.*)",
+  "/ar/feature-requests(.*)",
   // Internal locale segment (after rewrite)
   "/en(.*)",
 ]);

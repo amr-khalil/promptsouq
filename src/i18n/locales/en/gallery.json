@@ -1,0 +1,52 @@
+{
+  "title": "Image Gallery",
+  "filters": {
+    "today": "Today",
+    "week": "This Week",
+    "month": "This Month",
+    "all": "All Time"
+  },
+  "categories": "Categories",
+  "detail": {
+    "prompt": "Prompt",
+    "seller": "Seller",
+    "likes": "Likes",
+    "related": "Related Images",
+    "viewPrompt": "View Prompt",
+    "promptNotAvailable": "Prompt is no longer available",
+    "blurredText": "Paid content — purchase the prompt to see full text"
+  },
+  "empty": "No images in the gallery yet",
+  "loading": "Loading images...",
+  "like": "Like",
+  "unlike": "Unlike",
+  "upload": {
+    "title": "Upload Gallery Image",
+    "image": "Image",
+    "selectImage": "Select an image to upload",
+    "selectPrompt": "Linked Prompt",
+    "selectPromptPlaceholder": "Select a prompt",
+    "caption": "Caption",
+    "captionPlaceholder": "Add a caption for the image (optional)...",
+    "submit": "Upload Image",
+    "success": "Image uploaded successfully and is pending review"
+  },
+  "moderation": {
+    "title": "Gallery Image Moderation",
+    "approve": "Approve",
+    "reject": "Reject",
+    "rejectionReason": "Rejection Reason",
+    "rejectionPlaceholder": "Enter the reason for rejecting this image...",
+    "approved": "Image approved",
+    "rejected": "Image rejected",
+    "empty": "No images pending review"
+  },
+  "submissions": {
+    "title": "My Gallery Images",
+    "pending": "Pending",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "empty": "You haven't uploaded any images yet",
+    "rejectionReason": "Rejection Reason"
+  }
+}

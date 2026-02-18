@@ -11,6 +11,9 @@ import enPrompt from "./locales/en/prompt.json";
 import enSubscription from "./locales/en/subscription.json";
 import enAuth from "./locales/en/auth.json";
 import enDashboard from "./locales/en/dashboard.json";
+import enGallery from "./locales/en/gallery.json";
+import enFeatureRequests from "./locales/en/feature-requests.json";
+import enIssues from "./locales/en/issues.json";
 
 import arCommon from "./locales/ar/common.json";
 import arHome from "./locales/ar/home.json";
@@ -20,6 +23,9 @@ import arPrompt from "./locales/ar/prompt.json";
 import arSubscription from "./locales/ar/subscription.json";
 import arAuth from "./locales/ar/auth.json";
 import arDashboard from "./locales/ar/dashboard.json";
+import arGallery from "./locales/ar/gallery.json";
+import arFeatureRequests from "./locales/ar/feature-requests.json";
+import arIssues from "./locales/ar/issues.json";
 
 const allResources: Record<Locale, Record<string, Record<string, unknown>>> = {
   en: {
@@ -31,6 +37,9 @@ const allResources: Record<Locale, Record<string, Record<string, unknown>>> = {
     subscription: enSubscription,
     auth: enAuth,
     dashboard: enDashboard,
+    gallery: enGallery,
+    "feature-requests": enFeatureRequests,
+    issues: enIssues,
   },
   ar: {
     common: arCommon,
@@ -41,6 +50,9 @@ const allResources: Record<Locale, Record<string, Record<string, unknown>>> = {
     subscription: arSubscription,
     auth: arAuth,
     dashboard: arDashboard,
+    gallery: arGallery,
+    "feature-requests": arFeatureRequests,
+    issues: arIssues,
   },
 };
 

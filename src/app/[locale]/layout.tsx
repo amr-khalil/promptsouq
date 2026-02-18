@@ -16,6 +16,9 @@ import enSubscription from "@/i18n/locales/en/subscription.json";
 import enAuth from "@/i18n/locales/en/auth.json";
 import enSell from "@/i18n/locales/en/sell.json";
 import enDashboard from "@/i18n/locales/en/dashboard.json";
+import enGallery from "@/i18n/locales/en/gallery.json";
+import enFeatureRequests from "@/i18n/locales/en/feature-requests.json";
+import enIssues from "@/i18n/locales/en/issues.json";
 
 import arCommon from "@/i18n/locales/ar/common.json";
 import arHome from "@/i18n/locales/ar/home.json";
@@ -26,6 +29,9 @@ import arSubscription from "@/i18n/locales/ar/subscription.json";
 import arAuth from "@/i18n/locales/ar/auth.json";
 import arSell from "@/i18n/locales/ar/sell.json";
 import arDashboard from "@/i18n/locales/ar/dashboard.json";
+import arGallery from "@/i18n/locales/ar/gallery.json";
+import arFeatureRequests from "@/i18n/locales/ar/feature-requests.json";
+import arIssues from "@/i18n/locales/ar/issues.json";
 
 const allResources = {
   en: {
@@ -38,6 +44,9 @@ const allResources = {
     auth: enAuth,
     sell: enSell,
     dashboard: enDashboard,
+    gallery: enGallery,
+    "feature-requests": enFeatureRequests,
+    issues: enIssues,
   },
   ar: {
     common: arCommon,
@@ -49,6 +58,9 @@ const allResources = {
     auth: arAuth,
     sell: arSell,
     dashboard: arDashboard,
+    gallery: arGallery,
+    "feature-requests": arFeatureRequests,
+    issues: arIssues,
   },
 };
 

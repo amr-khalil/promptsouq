@@ -1,0 +1,26 @@
+{
+  "title": "Feature Requests",
+  "submit": "Suggest a Feature",
+  "form": {
+    "title": "Feature Title",
+    "titlePlaceholder": "Short title for the suggested feature",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe the suggested feature in detail...",
+    "submit": "Submit Suggestion",
+    "success": "Your suggestion was submitted successfully"
+  },
+  "vote": "Vote",
+  "voted": "Voted",
+  "sort": {
+    "votes": "Most Voted",
+    "newest": "Newest"
+  },
+  "status": {
+    "open": "Open",
+    "under_review": "Under Review",
+    "planned": "Planned",
+    "completed": "Completed"
+  },
+  "empty": "No suggestions yet. Be the first to suggest a feature!",
+  "signInPrompt": "Sign in to vote and suggest new features"
+}

@@ -1,0 +1,52 @@
+{
+  "title": "معرض الصور",
+  "filters": {
+    "today": "اليوم",
+    "week": "هذا الأسبوع",
+    "month": "هذا الشهر",
+    "all": "الكل"
+  },
+  "categories": "الفئات",
+  "detail": {
+    "prompt": "البرومبت",
+    "seller": "البائع",
+    "likes": "الإعجابات",
+    "related": "صور مشابهة",
+    "viewPrompt": "عرض البرومبت",
+    "promptNotAvailable": "البرومبت لم يعد متاحاً",
+    "blurredText": "محتوى مدفوع — اشترِ البرومبت لعرض النص الكامل"
+  },
+  "empty": "لا توجد صور في المعرض بعد",
+  "loading": "جاري تحميل الصور...",
+  "like": "إعجاب",
+  "unlike": "إلغاء الإعجاب",
+  "upload": {
+    "title": "رفع صورة للمعرض",
+    "image": "الصورة",
+    "selectImage": "اختر صورة للرفع",
+    "selectPrompt": "البرومبت المرتبط",
+    "selectPromptPlaceholder": "اختر البرومبت",
+    "caption": "وصف الصورة",
+    "captionPlaceholder": "أضف وصفاً للصورة (اختياري)...",
+    "submit": "رفع الصورة",
+    "success": "تم رفع الصورة بنجاح وهي قيد المراجعة"
+  },
+  "moderation": {
+    "title": "مراجعة صور المعرض",
+    "approve": "قبول",
+    "reject": "رفض",
+    "rejectionReason": "سبب الرفض",
+    "rejectionPlaceholder": "اكتب سبب رفض الصورة...",
+    "approved": "تمت الموافقة على الصورة",
+    "rejected": "تم رفض الصورة",
+    "empty": "لا توجد صور قيد المراجعة"
+  },
+  "submissions": {
+    "title": "صوري في المعرض",
+    "pending": "قيد المراجعة",
+    "approved": "مقبولة",
+    "rejected": "مرفوضة",
+    "empty": "لم ترفع أي صور بعد",
+    "rejectionReason": "سبب الرفض"
+  }
+}

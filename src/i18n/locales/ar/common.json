@@ -58,7 +58,10 @@
   "nav": {
     "home": "الرئيسية",
     "market": "السوق",
-    "search": "البحث"
+    "search": "البحث",
+    "gallery": "المعرض",
+    "featureRequests": "طلبات الميزات",
+    "notifications": "الإشعارات"
   },
   "buttons": {
     "start": "ابدأ",
