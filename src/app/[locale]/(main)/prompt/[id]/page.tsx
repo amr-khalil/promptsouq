@@ -15,7 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Prompt, Review } from "@/lib/schemas/api";
 import { useCartStore } from "@/stores/cart-store";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth } from "@/hooks/use-auth";
 import { CheckCircle2, Share2, ShoppingCart, Star } from "lucide-react";
 import {
   notFound,

@@ -14,7 +14,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useUser } from "@clerk/nextjs";
+import { useAuth } from "@/hooks/use-auth";
+import { getStorageClient } from "@/lib/supabase-storage";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Camera,
@@ -22,7 +23,6 @@ import {
   Check,
   Loader2,
   Mail,
-  Shield,
   Calendar,
   Clock,
   User,
@@ -42,7 +42,7 @@ type ProfileFormValues = z.infer<typeof profileSchema>;
 
 export default function SettingsPage() {
   const { t } = useTranslation("dashboard");
-  const { user, isLoaded } = useUser();
+  const { user, isLoaded } = useAuth();
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState("");
@@ -63,7 +63,7 @@ export default function SettingsPage() {
         firstName: user.firstName ?? "",
         lastName: user.lastName ?? "",
       });
-      setAvatarPreview(user.imageUrl);
+      setAvatarPreview(user.avatarUrl ?? "");
     }
   }, [isLoaded, user, form]);
 
@@ -73,8 +73,29 @@ export default function SettingsPage() {
 
     setUploading(true);
     try {
-      await user.setProfileImage({ file });
-      setAvatarPreview(user.imageUrl);
+      const storageClient = getStorageClient();
+      const ext = file.name.split(".").pop();
+      const filePath = `avatars/${user.id}.${ext}`;
+
+      const { error: uploadError } = await storageClient.storage
+        .from("prompt-images")
+        .upload(filePath, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data } = storageClient.storage
+        .from("prompt-images")
+        .getPublicUrl(filePath);
+
+      const avatarUrl = data.publicUrl;
+
+      await fetch("/api/user/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ avatarUrl }),
+      });
+
+      setAvatarPreview(avatarUrl);
       toast.success(t("userSettings.saved"));
     } catch {
       toast.error(t("userSettings.error"));
@@ -87,10 +108,18 @@ export default function SettingsPage() {
     if (!user) return;
     setSaving(true);
     try {
-      await user.update({
-        firstName: values.firstName,
-        lastName: values.lastName,
+      const displayName = `${values.firstName} ${values.lastName}`.trim();
+      const res = await fetch("/api/user/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName: values.firstName,
+          lastName: values.lastName,
+          displayName,
+        }),
       });
+
+      if (!res.ok) throw new Error("Update failed");
       toast.success(t("userSettings.saved"));
     } catch {
       toast.error(t("userSettings.error"));
@@ -135,10 +164,6 @@ export default function SettingsPage() {
   }
 
   if (!user) return null;
-
-  const primaryEmail = user.primaryEmailAddress?.emailAddress;
-  const connectedAccounts = user.externalAccounts ?? [];
-  const hasTwoFactor = (user.twoFactorEnabled) ?? false;
 
   return (
     <div className="space-y-6">
@@ -245,10 +270,12 @@ export default function SettingsPage() {
                 {t("userSettings.email")}
               </p>
               <div className="flex items-center gap-2">
-                <p className="font-medium truncate">{primaryEmail}</p>
-                <Badge variant="secondary" className="text-xs shrink-0">
-                  Primary
-                </Badge>
+                <p className="font-medium truncate">{user.email}</p>
+                {user.emailVerified && (
+                  <Badge variant="secondary" className="text-xs shrink-0">
+                    {t("userSettings.verified")}
+                  </Badge>
+                )}
               </div>
             </div>
           </div>
@@ -267,7 +294,7 @@ export default function SettingsPage() {
                       month: "long",
                       day: "numeric",
                     })
-                  : "—"}
+                  : "\u2014"}
               </p>
             </div>
           </div>
@@ -288,7 +315,7 @@ export default function SettingsPage() {
                       hour: "2-digit",
                       minute: "2-digit",
                     })
-                  : "—"}
+                  : "\u2014"}
               </p>
             </div>
           </div>
@@ -317,55 +344,6 @@ export default function SettingsPage() {
                   )}
                 </Button>
               </div>
-            </div>
-          </div>
-
-          {/* Connected Accounts */}
-          {connectedAccounts.length > 0 && (
-            <div className="flex items-start gap-3 pt-2 border-t">
-              <Shield className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
-              <div>
-                <p className="text-sm text-muted-foreground">
-                  {t("userSettings.connectedAccounts")}
-                </p>
-                <div className="space-y-1 mt-1">
-                  {connectedAccounts.map((account) => (
-                    <div
-                      key={account.id}
-                      className="flex items-center gap-2"
-                    >
-                      <Badge variant="outline" className="text-xs capitalize">
-                        {account.provider}
-                      </Badge>
-                      <span className="text-sm truncate">
-                        {account.emailAddress}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* 2FA Status */}
-          <div className="flex items-center gap-3 pt-2 border-t">
-            <Shield className="h-4 w-4 text-muted-foreground shrink-0" />
-            <div>
-              <p className="text-sm text-muted-foreground">
-                {t("userSettings.twoFactor")}
-              </p>
-              <Badge
-                variant={hasTwoFactor ? "default" : "secondary"}
-                className={
-                  hasTwoFactor
-                    ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                    : ""
-                }
-              >
-                {hasTwoFactor
-                  ? t("userSettings.twoFactorEnabled")
-                  : t("userSettings.twoFactorDisabled")}
-              </Badge>
             </div>
           </div>
         </CardContent>

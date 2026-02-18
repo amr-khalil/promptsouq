@@ -7,6 +7,7 @@ import {
   Receipt,
   Shield,
   SlidersHorizontal,
+  Users,
 } from "lucide-react";
 import { LocaleLink } from "@/components/LocaleLink";
 import {
@@ -25,6 +26,7 @@ export function DashboardNavAdmin() {
   const { t } = useTranslation("dashboard");
 
   const items = [
+    { href: "/dashboard/admin/users", label: t("sidebar.users"), icon: Users },
     { href: "/dashboard/admin/moderation", label: t("sidebar.moderation"), icon: Shield },
     { href: "/dashboard/admin/gallery", label: t("sidebar.galleryModeration"), icon: ImagePlus },
     { href: "/dashboard/admin/issues", label: t("sidebar.issues"), icon: AlertCircle },

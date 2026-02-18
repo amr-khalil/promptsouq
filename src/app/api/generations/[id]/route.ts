@@ -1,7 +1,7 @@
 import { db } from "@/db";
 import { generations, prompts } from "@/db/schema";
 import { apiErrorResponse } from "@/lib/schemas/api";
-import { auth } from "@clerk/nextjs/server";
+import { checkAuth } from "@/lib/auth";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -13,7 +13,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { userId } = await auth();
+    const userId = await checkAuth();
     if (!userId) {
       return NextResponse.json(
         apiErrorResponse("FORBIDDEN", "غير مصرح"),

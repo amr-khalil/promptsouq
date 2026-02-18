@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { FeatureRequestCard, type FeatureRequest } from "./FeatureRequestCard";
 import { FeatureRequestForm } from "./FeatureRequestForm";

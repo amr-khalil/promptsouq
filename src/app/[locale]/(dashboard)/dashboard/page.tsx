@@ -2,26 +2,24 @@
 
 import { LocaleLink } from "@/components/LocaleLink";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { useUser } from "@clerk/nextjs";
+import { useAuth } from "@/hooks/use-auth";
 import {
   Calendar,
   Clock,
   Heart,
   Mail,
   Pencil,
-  Phone,
-  Shield,
   ShoppingBag,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-function formatDate(date: Date | undefined | null, locale: string) {
-  if (!date) return "—";
+function formatDate(date: string | undefined | null, locale: string) {
+  if (!date) return "\u2014";
   return new Date(date).toLocaleDateString(locale === "ar" ? "ar-SA" : "en-US", {
     year: "numeric",
     month: "long",
@@ -29,8 +27,8 @@ function formatDate(date: Date | undefined | null, locale: string) {
   });
 }
 
-function formatDateTime(date: Date | undefined | null, locale: string) {
-  if (!date) return "—";
+function formatDateTime(date: string | undefined | null, locale: string) {
+  if (!date) return "\u2014";
   return new Date(date).toLocaleDateString(locale === "ar" ? "ar-SA" : "en-US", {
     year: "numeric",
     month: "short",
@@ -41,11 +39,19 @@ function formatDateTime(date: Date | undefined | null, locale: string) {
 }
 
 export default function DashboardProfile() {
-  const { user } = useUser();
+  const { user, isLoaded } = useAuth();
   const { t, i18n } = useTranslation("dashboard");
   const locale = i18n.language;
+  const router = useRouter();
   const [purchaseCount, setPurchaseCount] = useState<number | null>(null);
   const [favoriteCount, setFavoriteCount] = useState<number | null>(null);
+
+  // Redirect to onboarding if not completed
+  useEffect(() => {
+    if (isLoaded && user && !user.onboardingCompleted) {
+      router.push(`/${locale}/dashboard/onboarding`);
+    }
+  }, [isLoaded, user, locale, router]);
 
   useEffect(() => {
     fetch("/api/user/purchases")
@@ -59,9 +65,6 @@ export default function DashboardProfile() {
       .catch(() => setFavoriteCount(0));
   }, []);
 
-  const hasPhone = !!user?.primaryPhoneNumber;
-  const has2FA = !!user?.twoFactorEnabled;
-
   return (
     <div className="space-y-6">
       {/* Profile Header */}
@@ -69,7 +72,7 @@ export default function DashboardProfile() {
         <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row items-start gap-4">
             <Avatar className="w-20 h-20 border-2 border-primary/20">
-              <AvatarImage src={user?.imageUrl} />
+              <AvatarImage src={user?.avatarUrl ?? undefined} />
               <AvatarFallback className="text-2xl">
                 {user?.firstName?.charAt(0) ?? "U"}
               </AvatarFallback>
@@ -78,13 +81,8 @@ export default function DashboardProfile() {
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <h2 className="text-xl font-bold">
-                    {user?.fullName || user?.firstName || t("sidebar.profile")}
+                    {user?.displayName || user?.firstName || t("sidebar.profile")}
                   </h2>
-                  {user?.username && (
-                    <p className="text-sm text-muted-foreground">
-                      @{user.username}
-                    </p>
-                  )}
                 </div>
                 <Button variant="outline" size="sm" asChild>
                   <LocaleLink href="/dashboard/settings">
@@ -92,15 +90,6 @@ export default function DashboardProfile() {
                     {t("sidebar.settings")}
                   </LocaleLink>
                 </Button>
-              </div>
-
-              <div className="flex flex-wrap gap-2 mt-3">
-                {has2FA && (
-                  <Badge variant="secondary" className="gap-1">
-                    <Shield className="h-3 w-3" />
-                    2FA
-                  </Badge>
-                )}
               </div>
             </div>
           </div>
@@ -117,7 +106,7 @@ export default function DashboardProfile() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">{purchaseCount ?? "—"}</p>
+            <p className="text-2xl font-bold">{purchaseCount ?? "\u2014"}</p>
           </CardContent>
         </Card>
         <Card>
@@ -128,7 +117,7 @@ export default function DashboardProfile() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">{favoriteCount ?? "—"}</p>
+            <p className="text-2xl font-bold">{favoriteCount ?? "\u2014"}</p>
           </CardContent>
         </Card>
       </div>
@@ -145,29 +134,19 @@ export default function DashboardProfile() {
             <div className="flex items-center gap-3">
               <Mail className="h-4 w-4 text-muted-foreground shrink-0" />
               <span className="text-muted-foreground min-w-24">
-                {locale === "ar" ? "البريد الإلكتروني" : "Email"}
+                {locale === "ar" ? "\u0627\u0644\u0628\u0631\u064a\u062f \u0627\u0644\u0625\u0644\u0643\u062a\u0631\u0648\u0646\u064a" : "Email"}
               </span>
               <span className="truncate">
-                {user?.primaryEmailAddress?.emailAddress ?? "—"}
+                {user?.email ?? "\u2014"}
               </span>
             </div>
-
-            {hasPhone && (
-              <div className="flex items-center gap-3">
-                <Phone className="h-4 w-4 text-muted-foreground shrink-0" />
-                <span className="text-muted-foreground min-w-24">
-                  {locale === "ar" ? "رقم الهاتف" : "Phone"}
-                </span>
-                <span>{user?.primaryPhoneNumber?.phoneNumber}</span>
-              </div>
-            )}
 
             <Separator />
 
             <div className="flex items-center gap-3">
               <Calendar className="h-4 w-4 text-muted-foreground shrink-0" />
               <span className="text-muted-foreground min-w-24">
-                {locale === "ar" ? "تاريخ الانضمام" : "Joined"}
+                {locale === "ar" ? "\u062a\u0627\u0631\u064a\u062e \u0627\u0644\u0627\u0646\u0636\u0645\u0627\u0645" : "Joined"}
               </span>
               <span>{formatDate(user?.createdAt, locale)}</span>
             </div>
@@ -175,7 +154,7 @@ export default function DashboardProfile() {
             <div className="flex items-center gap-3">
               <Clock className="h-4 w-4 text-muted-foreground shrink-0" />
               <span className="text-muted-foreground min-w-24">
-                {locale === "ar" ? "آخر تسجيل دخول" : "Last sign in"}
+                {locale === "ar" ? "\u0622\u062e\u0631 \u062a\u0633\u062c\u064a\u0644 \u062f\u062e\u0648\u0644" : "Last sign in"}
               </span>
               <span>{formatDateTime(user?.lastSignInAt, locale)}</span>
             </div>

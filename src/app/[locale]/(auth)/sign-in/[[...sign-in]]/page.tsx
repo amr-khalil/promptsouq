@@ -1,5 +1,7 @@
 "use client";
 
+import { OAuthButtons } from "@/components/auth/OAuthButtons";
+import { LocaleLink } from "@/components/LocaleLink";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,196 +13,64 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { useSignIn } from "@clerk/nextjs";
-import type { EmailCodeFactor, OAuthStrategy } from "@clerk/types";
-import { Facebook, Loader2, Mail } from "lucide-react";
-import { LocaleLink } from "@/components/LocaleLink";
-import { useTranslation } from "react-i18next";
-import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+import { signInSchema, type SignInInput } from "@/lib/schemas/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 import * as React from "react";
+import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
 export default function SignIn() {
   const { t } = useTranslation(["auth", "common"]);
-  const { isLoaded, signIn, setActive } = useSignIn();
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [code, setCode] = React.useState("");
-  const [showEmailCode, setShowEmailCode] = React.useState(false);
-  const [error, setError] = React.useState("");
-  const [loading, setLoading] = React.useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const supabase = createClient();
+  const [serverError, setServerError] = React.useState("");
 
-  // Handle email/password sign-in
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isLoaded) return;
-
-    setError("");
-    setLoading(true);
-
-    try {
-      const signInAttempt = await signIn.create({
-        identifier: email,
-        password,
-      });
-
-      if (signInAttempt.status === "complete") {
-        await setActive({
-          session: signInAttempt.createdSessionId,
-          navigate: async ({ session }) => {
-            if (session?.currentTask) {
-              console.log(session?.currentTask);
-              return;
-            }
-            router.push("/dashboard");
-          },
-        });
-      } else if (signInAttempt.status === "needs_second_factor") {
-        const emailCodeFactor = signInAttempt.supportedSecondFactors?.find(
-          (factor): factor is EmailCodeFactor =>
-            factor.strategy === "email_code",
-        );
-
-        if (emailCodeFactor) {
-          await signIn.prepareSecondFactor({
-            strategy: "email_code",
-            emailAddressId: emailCodeFactor.emailAddressId,
-          });
-          setShowEmailCode(true);
-        }
-      } else {
-        console.error(JSON.stringify(signInAttempt, null, 2));
-      }
-    } catch (err: unknown) {
-      console.error(JSON.stringify(err, null, 2));
-      const clerkErr = err as { errors?: Array<{ longMessage?: string; message?: string }> };
-      setError(
-        clerkErr.errors?.[0]?.longMessage ||
-          clerkErr.errors?.[0]?.message ||
-          t("auth:errors.signInFailed"),
-      );
-    } finally {
-      setLoading(false);
+  // Show error from URL params (e.g., from callback failures)
+  React.useEffect(() => {
+    const urlError = searchParams.get("error");
+    if (urlError === "auth-code-error") {
+      setServerError(t("auth:errors.oauthFailed"));
+    } else if (urlError === "verification-failed") {
+      setServerError(t("auth:errors.verificationFailed"));
     }
-  };
+  }, [searchParams, t]);
 
-  // Handle email code verification (2FA / Client Trust)
-  const handleEmailCode = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!isLoaded) return;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<SignInInput>({
+    resolver: zodResolver(signInSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
-    setError("");
-    setLoading(true);
+  const onSubmit = async (data: SignInInput) => {
+    setServerError("");
 
-    try {
-      const signInAttempt = await signIn.attemptSecondFactor({
-        strategy: "email_code",
-        code,
-      });
+    const { error } = await supabase.auth.signInWithPassword({
+      email: data.email,
+      password: data.password,
+    });
 
-      if (signInAttempt.status === "complete") {
-        await setActive({
-          session: signInAttempt.createdSessionId,
-          navigate: async ({ session }) => {
-            if (session?.currentTask) {
-              console.log(session?.currentTask);
-              return;
-            }
-            router.push("/dashboard");
-          },
-        });
+    if (error) {
+      if (error.message.includes("Email not confirmed")) {
+        setServerError(t("auth:errors.emailNotVerified"));
       } else {
-        console.error(JSON.stringify(signInAttempt, null, 2));
+        setServerError(t("auth:errors.invalidCredentials"));
       }
-    } catch (err: unknown) {
-      console.error(JSON.stringify(err, null, 2));
-      const clerkErr = err as { errors?: Array<{ longMessage?: string; message?: string }> };
-      setError(
-        clerkErr.errors?.[0]?.longMessage ||
-          clerkErr.errors?.[0]?.message ||
-          t("auth:errors.invalidCode"),
-      );
-    } finally {
-      setLoading(false);
+      return;
     }
+
+    router.push("/dashboard");
+    router.refresh();
   };
-
-  // Handle OAuth sign-in (Google / Facebook)
-  const signInWith = (strategy: OAuthStrategy) => {
-    if (!signIn) return;
-    signIn
-      .authenticateWithRedirect({
-        strategy,
-        redirectUrl: "/sign-in/sso-callback",
-        redirectUrlComplete: "/dashboard",
-      })
-      .catch((err: unknown) => {
-        console.error(JSON.stringify(err, null, 2));
-        setError(t("auth:errors.signInFailed"));
-      });
-  };
-
-  // Email code verification UI
-  if (showEmailCode) {
-    return (
-      <div className="container mx-auto px-4 py-12">
-        <div className="max-w-md mx-auto">
-          <Card>
-            <CardHeader className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-blue-500 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <span className="text-white font-bold text-2xl">PS</span>
-              </div>
-              <CardTitle className="text-2xl">{t("auth:emailVerification.title")}</CardTitle>
-              <CardDescription>
-                {t("auth:emailVerification.description")}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleEmailCode} className="space-y-4">
-                <div>
-                  <Label htmlFor="code">{t("auth:labels.verificationCode")}</Label>
-                  <Input
-                    id="code"
-                    type="text"
-                    inputMode="numeric"
-                    placeholder={t("auth:placeholders.verificationCode")}
-                    value={code}
-                    onChange={(e) => setCode(e.target.value)}
-                    required
-                    className="mt-1.5"
-                  />
-                </div>
-
-                {error && (
-                  <p className="text-sm text-destructive text-center">
-                    {error}
-                  </p>
-                )}
-
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
-                  {t("common:buttons.verify")}
-                </Button>
-              </form>
-
-              <div className="mt-4 text-center">
-                <Button
-                  variant="ghost"
-                  onClick={() => {
-                    setShowEmailCode(false);
-                    setCode("");
-                    setError("");
-                  }}
-                >
-                  {t("common:buttons.backToSignIn")}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="container mx-auto px-4 py-12">
@@ -210,24 +80,27 @@ export default function SignIn() {
             <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-blue-500 rounded-lg flex items-center justify-center mx-auto mb-4">
               <span className="text-white font-bold text-2xl">PS</span>
             </div>
-            <CardTitle className="text-2xl">{t("auth:signIn.title")}</CardTitle>
-            <CardDescription>
-              {t("auth:signIn.subtitle")}
-            </CardDescription>
+            <CardTitle className="text-2xl">
+              {t("auth:signIn.title")}
+            </CardTitle>
+            <CardDescription>{t("auth:signIn.subtitle")}</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div>
                 <Label htmlFor="email">{t("auth:labels.email")}</Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="example@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
+                  {...register("email")}
                   className="mt-1.5"
                 />
+                {errors.email && (
+                  <p className="text-sm text-destructive mt-1">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -244,19 +117,26 @@ export default function SignIn() {
                   id="password"
                   type="password"
                   placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
+                  {...register("password")}
                   className="mt-1.5"
                 />
+                {errors.password && (
+                  <p className="text-sm text-destructive mt-1">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
 
-              {error && (
-                <p className="text-sm text-destructive text-center">{error}</p>
+              {serverError && (
+                <p className="text-sm text-destructive text-center">
+                  {serverError}
+                </p>
               )}
 
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting && (
+                  <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                )}
                 {t("auth:buttons.signIn")}
               </Button>
             </form>
@@ -269,30 +149,15 @@ export default function SignIn() {
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 mt-6">
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => signInWith("oauth_google")}
-                  type="button"
-                >
-                  <Mail className="ml-2 h-4 w-4" />
-                  Google
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-full"
-                  onClick={() => signInWith("oauth_facebook")}
-                  type="button"
-                >
-                  <Facebook className="ml-2 h-4 w-4" />
-                  Facebook
-                </Button>
+              <div className="mt-6">
+                <OAuthButtons mode="sign-in" />
               </div>
             </div>
 
             <div className="mt-6 text-center text-sm">
-              <span className="text-muted-foreground">{t("auth:signIn.noAccount")} </span>
+              <span className="text-muted-foreground">
+                {t("auth:signIn.noAccount")}{" "}
+              </span>
               <LocaleLink
                 href="/sign-up"
                 className="text-primary hover:underline font-bold"

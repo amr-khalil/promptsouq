@@ -8,7 +8,7 @@ import {
 import { Heart, ExternalLink } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 
 interface ImageDetail {

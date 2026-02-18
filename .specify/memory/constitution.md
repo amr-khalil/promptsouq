@@ -1,21 +1,15 @@
 <!--
 === Sync Impact Report ===
-Version change: 1.2.0 → 1.3.0
+Version change: 1.3.0 → 1.4.0
 Modified principles:
-  - IV. Supabase as Data Layer — migration workflow changed from
-    Supabase MCP apply_migration to Drizzle ORM schema + drizzle-kit
+  - Technology Stack — replaced Clerk with Supabase Auth (@supabase/ssr)
 Modified sections:
-  - Technology Stack — added Drizzle ORM + drizzle-kit
-  - Development Workflow — updated schema-first step to reference
-    Drizzle schema files and drizzle-kit commands
+  - Technology Stack — Auth row: Clerk (@clerk/nextjs) 6.x → Supabase Auth (@supabase/ssr) latest
+  - Environment variables — Clerk keys → Supabase keys
 Added principles: (none)
 Removed sections: (none)
 Templates requiring updates:
-  - .specify/templates/plan-template.md — ✅ no changes needed (generic)
-  - .specify/templates/spec-template.md — ✅ no changes needed (generic)
-  - .specify/templates/tasks-template.md — ✅ no changes needed (generic)
-  - .specify/templates/agent-file-template.md — ✅ no changes needed (generic)
-  - CLAUDE.md — ⚠ pending (update Supabase migration references)
+  - CLAUDE.md — ✅ updated (Auth section, env vars)
 Follow-up TODOs: (none)
 -->
 
@@ -206,7 +200,7 @@ require a constitution amendment.
 | Language | TypeScript (strict) | 5.x |
 | Styling | Tailwind CSS | 4.x |
 | Components | shadcn/ui (New York) | latest |
-| Auth | Clerk (@clerk/nextjs) | 6.x |
+| Auth | Supabase Auth (@supabase/ssr) | latest |
 | Database | Supabase (Postgres) | via MCP |
 | ORM / Migrations | Drizzle ORM + drizzle-kit | latest |
 | Payments | Stripe | latest |
@@ -247,7 +241,7 @@ require a constitution amendment.
 **Branching**: Feature branches off `main`. PRs MUST pass
 lint, build, and Playwright tests before merge.
 
-**Environment variables**: Secrets (Clerk keys, Stripe keys,
+**Environment variables**: Secrets (Supabase keys, Stripe keys,
 Supabase connection string) MUST be in `.env.local` and MUST
 NOT be committed. Use `NEXT_PUBLIC_` prefix only for values
 safe to expose to the browser.
@@ -270,4 +264,4 @@ safe to expose to the browser.
 - Runtime development guidance lives in `CLAUDE.md` at
   the repository root.
 
-**Version**: 1.3.0 | **Ratified**: 2026-02-11 | **Last Amended**: 2026-02-11
+**Version**: 1.4.0 | **Ratified**: 2026-02-11 | **Last Amended**: 2026-02-18

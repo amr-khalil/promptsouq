@@ -6,13 +6,13 @@ import {
 } from "@/db/schema";
 import { subscriptionCheckoutSchema } from "@/lib/schemas/subscription";
 import { stripe } from "@/lib/stripe";
-import { auth } from "@clerk/nextjs/server";
+import { checkAuth } from "@/lib/auth";
 import { eq, and } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = await auth();
+    const userId = await checkAuth();
 
     if (!userId) {
       return NextResponse.json(

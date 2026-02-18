@@ -25,7 +25,8 @@
     "dashboard": "لوحة التحكم",
     "signOut": "تسجيل الخروج",
     "account": "الحساب",
-    "notifications": "الإشعارات"
+    "notifications": "الإشعارات",
+    "users": "المستخدمون"
   },
   "seller": {
     "prompts": {
@@ -160,6 +161,27 @@
       "next": "التالي",
       "page": "صفحة {{current}} من {{total}}"
     },
+    "users": {
+      "title": "إدارة المستخدمين",
+      "search": "ابحث عن مستخدم...",
+      "allRoles": "جميع الأدوار",
+      "admins": "المشرفون",
+      "users": "المستخدمون",
+      "user": "المستخدم",
+      "email": "البريد الإلكتروني",
+      "role": "الدور",
+      "joined": "تاريخ الانضمام",
+      "actions": "الإجراءات",
+      "admin": "مشرف",
+      "userRole": "مستخدم",
+      "promote": "ترقية",
+      "demote": "تخفيض",
+      "confirmTitle": "تأكيد تغيير الدور",
+      "promoteConfirm": "هل تريد ترقية {{name}} إلى مشرف؟",
+      "demoteConfirm": "هل تريد تخفيض {{name}} إلى مستخدم عادي؟",
+      "roleUpdated": "تم تحديث الدور بنجاح",
+      "empty": "لا يوجد مستخدمون"
+    },
     "settings": {
       "title": "إعدادات السوق",
       "commissionRate": "نسبة العمولة",
@@ -207,7 +229,27 @@
     "twoFactor": "المصادقة الثنائية",
     "twoFactorEnabled": "مفعّلة",
     "twoFactorDisabled": "غير مفعّلة",
-    "changePassword": "تغيير كلمة المرور"
+    "changePassword": "تغيير كلمة المرور",
+    "verified": "موثّق"
+  },
+  "onboarding": {
+    "title": "مرحباً بك في بروبمت سوق!",
+    "step": "الخطوة {{current}} من {{total}}",
+    "firstName": "الاسم الأول",
+    "lastName": "اسم العائلة",
+    "uploadAvatar": "رفع صورة",
+    "uploadError": "فشل رفع الصورة",
+    "featureBrowse": "تصفّح البرومبتات",
+    "featureBrowseDesc": "اكتشف آلاف البرومبتات الجاهزة للاستخدام مع أدوات الذكاء الاصطناعي",
+    "featureSell": "بيع البرومبتات",
+    "featureSellDesc": "شارك إبداعاتك واكسب من بيع البرومبتات للمجتمع",
+    "featureCredits": "الرصيد والاشتراكات",
+    "featureCreditsDesc": "استخدم الرصيد لتوليد محتوى أو اشترك للحصول على مزايا إضافية",
+    "skip": "تخطي",
+    "next": "التالي",
+    "back": "السابق",
+    "complete": "ابدأ الآن",
+    "error": "حدث خطأ، حاول مرة أخرى"
   },
   "status": {
     "pending": "قيد المراجعة",

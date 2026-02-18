@@ -5,13 +5,13 @@ import {
   apiErrorResponse,
   favoriteRequestSchema,
 } from "@/lib/schemas/api";
-import { auth } from "@clerk/nextjs/server";
+import { checkAuth } from "@/lib/auth";
 import { desc, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const { userId } = await auth();
+    const userId = await checkAuth();
     if (!userId) {
       return NextResponse.json(
         { error: "يجب تسجيل الدخول أولاً" },
@@ -45,7 +45,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = await auth();
+    const userId = await checkAuth();
     if (!userId) {
       return NextResponse.json(
         { error: "يجب تسجيل الدخول أولاً" },

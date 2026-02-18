@@ -25,7 +25,8 @@
     "dashboard": "Dashboard",
     "signOut": "Sign Out",
     "account": "Account",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "users": "Users"
   },
   "seller": {
     "prompts": {
@@ -160,6 +161,27 @@
       "next": "Next",
       "page": "Page {{current}} of {{total}}"
     },
+    "users": {
+      "title": "User Management",
+      "search": "Search users...",
+      "allRoles": "All Roles",
+      "admins": "Admins",
+      "users": "Users",
+      "user": "User",
+      "email": "Email",
+      "role": "Role",
+      "joined": "Joined",
+      "actions": "Actions",
+      "admin": "Admin",
+      "userRole": "User",
+      "promote": "Promote",
+      "demote": "Demote",
+      "confirmTitle": "Confirm Role Change",
+      "promoteConfirm": "Are you sure you want to promote {{name}} to admin?",
+      "demoteConfirm": "Are you sure you want to demote {{name}} to regular user?",
+      "roleUpdated": "Role updated successfully",
+      "empty": "No users found"
+    },
     "settings": {
       "title": "Marketplace Settings",
       "commissionRate": "Commission Rate",
@@ -207,7 +229,27 @@
     "twoFactor": "Two-Factor Authentication",
     "twoFactorEnabled": "Enabled",
     "twoFactorDisabled": "Not enabled",
-    "changePassword": "Change Password"
+    "changePassword": "Change Password",
+    "verified": "Verified"
+  },
+  "onboarding": {
+    "title": "Welcome to PromptSouq!",
+    "step": "Step {{current}} of {{total}}",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "uploadAvatar": "Upload Photo",
+    "uploadError": "Failed to upload photo",
+    "featureBrowse": "Browse Prompts",
+    "featureBrowseDesc": "Discover thousands of ready-to-use prompts for AI tools",
+    "featureSell": "Sell Prompts",
+    "featureSellDesc": "Share your creations and earn by selling prompts to the community",
+    "featureCredits": "Credits & Subscriptions",
+    "featureCreditsDesc": "Use credits to generate content or subscribe for additional benefits",
+    "skip": "Skip",
+    "next": "Next",
+    "back": "Back",
+    "complete": "Get Started",
+    "error": "Something went wrong, please try again"
   },
   "status": {
     "pending": "Pending",

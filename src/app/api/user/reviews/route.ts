@@ -2,13 +2,13 @@ import { db } from "@/db";
 import { reviews } from "@/db/schema";
 import { mapReviewRow } from "@/lib/mappers";
 import { apiErrorResponse, uuidParamSchema } from "@/lib/schemas/api";
-import { auth } from "@clerk/nextjs/server";
+import { checkAuth } from "@/lib/auth";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
-    const { userId } = await auth();
+    const userId = await checkAuth();
     if (!userId) {
       return NextResponse.json(
         { error: "يجب تسجيل الدخول أولاً" },

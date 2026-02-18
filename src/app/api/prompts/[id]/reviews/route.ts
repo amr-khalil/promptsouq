@@ -6,7 +6,7 @@ import {
   reviewSubmitSchema,
   uuidParamSchema,
 } from "@/lib/schemas/api";
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { checkAuth, getAuthUser } from "@/lib/auth";
 import { and, avg, count, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -75,7 +75,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { userId } = await auth();
+    const userId = await checkAuth();
     if (!userId) {
       return NextResponse.json(
         { error: "يجب تسجيل الدخول أولاً" },
@@ -150,7 +150,7 @@ export async function POST(
       );
     }
 
-    const user = await currentUser();
+    const user = await getAuthUser();
     const today = new Date().toISOString().split("T")[0];
 
     const [newReview] = await db
@@ -158,8 +158,11 @@ export async function POST(
       .values({
         promptId: id,
         userId,
-        userName: user?.fullName ?? user?.firstName ?? "مستخدم",
-        userAvatar: user?.imageUrl ?? "",
+        userName:
+          user?.firstName && user?.lastName
+            ? `${user.firstName} ${user.lastName}`
+            : user?.firstName ?? "مستخدم",
+        userAvatar: user?.avatarUrl ?? "",
         rating: bodyParsed.data.rating,
         comment: bodyParsed.data.comment ?? "",
         date: today,
@@ -182,7 +185,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { userId } = await auth();
+    const userId = await checkAuth();
     if (!userId) {
       return NextResponse.json(
         { error: "يجب تسجيل الدخول أولاً" },

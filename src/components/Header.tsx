@@ -14,7 +14,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useClerk, useUser } from "@clerk/nextjs";
+import { useAuth } from "@/hooks/use-auth";
+import type { AuthUser } from "@/types/auth";
 import {
   BarChart3,
   ChevronDown,
@@ -67,12 +68,11 @@ function useAdminPendingCount(isAdmin: boolean) {
   return count;
 }
 
-function useIsSeller() {
-  const { user } = useUser();
+function useIsSeller(userId: string | undefined) {
   const [isSeller, setIsSeller] = useState(false);
 
   useEffect(() => {
-    if (!user) return;
+    if (!userId) return;
     let cancelled = false;
 
     async function check() {
@@ -90,19 +90,17 @@ function useIsSeller() {
     return () => {
       cancelled = true;
     };
-  }, [user]);
+  }, [userId]);
 
   return isSeller;
 }
 
 export function Header() {
   const { t } = useTranslation("common");
-  const { user, isSignedIn } = useUser();
-  const { signOut } = useClerk();
-  const isAdmin =
-    (user?.publicMetadata as { role?: string } | undefined)?.role === "admin";
+  const { user, isSignedIn, signOut } = useAuth();
+  const isAdmin = user?.role === "admin";
   const pendingCount = useAdminPendingCount(isAdmin);
-  const isSeller = useIsSeller();
+  const isSeller = useIsSeller(user?.id);
 
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -156,14 +154,14 @@ export function Header() {
 
           <div className="h-6 w-px bg-zinc-800 mx-2 hidden sm:block"></div>
 
-          {isSignedIn ? (
+          {isSignedIn && user ? (
             <ProfileDropdown
               user={user}
               initials={initials}
               isAdmin={isAdmin}
               isSeller={isSeller}
               pendingCount={pendingCount}
-              onSignOut={() => signOut({ redirectUrl: "/" })}
+              onSignOut={signOut}
             />
           ) : (
             <LocaleLink
@@ -201,10 +199,10 @@ export function Header() {
           <LocaleLink href="/gallery" className="block text-white text-sm py-2">{t("nav.gallery")}</LocaleLink>
           <LocaleLink href="/feature-requests" className="block text-white text-sm py-2">{t("nav.featureRequests")}</LocaleLink>
 
-          {isSignedIn ? (
+          {isSignedIn && user ? (
             <>
               <div className="pt-2 border-t border-zinc-800 space-y-1">
-                <p className="text-xs text-zinc-500 px-1 pb-1">{user?.fullName ?? user?.primaryEmailAddress?.emailAddress}</p>
+                <p className="text-xs text-zinc-500 px-1 pb-1">{user.displayName ?? user.email}</p>
                 <LocaleLink href="/dashboard" className="flex items-center gap-2 text-white text-sm py-2">
                   <LayoutDashboard className="w-4 h-4" />
                   {t("header.profile.dashboard")}
@@ -260,7 +258,7 @@ export function Header() {
               </div>
               <div className="pt-2 border-t border-zinc-800 flex items-center justify-between">
                 <button
-                  onClick={() => signOut({ redirectUrl: "/" })}
+                  onClick={signOut}
                   className="text-sm font-bold text-red-400 flex items-center gap-2"
                 >
                   <LogOut className="w-4 h-4" />
@@ -289,7 +287,7 @@ function ProfileDropdown({
   pendingCount,
   onSignOut,
 }: {
-  user: NonNullable<ReturnType<typeof useUser>["user"]>;
+  user: AuthUser;
   initials: string;
   isAdmin: boolean;
   isSeller: boolean;
@@ -302,7 +300,7 @@ function ProfileDropdown({
       <DropdownMenuTrigger asChild>
         <button className="hidden sm:flex items-center gap-2 rounded-full border border-zinc-700 pe-3 ps-1 py-1 text-sm text-gray-300 hover:text-white hover:border-[#7f0df2]/50 transition-all focus:outline-none">
           <Avatar className="h-7 w-7">
-            <AvatarImage src={user.imageUrl} alt={user.fullName ?? ""} />
+            <AvatarImage src={user.avatarUrl ?? undefined} alt={user.displayName ?? ""} />
             <AvatarFallback className="bg-[#7f0df2]/20 text-[#7f0df2] text-xs">
               {initials || "U"}
             </AvatarFallback>
@@ -313,9 +311,9 @@ function ProfileDropdown({
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user.fullName}</p>
+            <p className="text-sm font-medium leading-none">{user.displayName}</p>
             <p className="text-xs text-muted-foreground leading-none">
-              {user.primaryEmailAddress?.emailAddress}
+              {user.email}
             </p>
           </div>
         </DropdownMenuLabel>
