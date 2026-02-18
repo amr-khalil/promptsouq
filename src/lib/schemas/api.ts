@@ -1,5 +1,27 @@
 import { z } from "zod";
 
+// ─── Upload Schemas ──────────────────────────────────────────────
+
+const ALLOWED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+] as const;
+
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10 MB
+
+export const uploadImageSchema = z.object({
+  file: z
+    .instanceof(File)
+    .refine((f) => f.size <= MAX_IMAGE_SIZE, "File exceeds 10 MB limit")
+    .refine(
+      (f) =>
+        (ALLOWED_IMAGE_TYPES as readonly string[]).includes(f.type),
+      "File type not supported. Accepted: JPEG, PNG, GIF, WebP",
+    ),
+});
+
 // ─── Entity Schemas ───────────────────────────────────────────────
 
 const sellerSchema = z.object({

@@ -4,8 +4,10 @@
     "subtitle": "Share your creations and start earning money from your prompts"
   },
   "steps": {
+    "payment": "Payment",
     "details": "Prompt Details",
     "file": "Prompt File",
+    "content": "Content",
     "payout": "Payments",
     "confirmation": "Confirmation"
   },
@@ -162,5 +164,23 @@
     "description": "We're now reviewing your prompt. Review typically takes 15 minutes to 36 hours. You'll receive a notification once the review is complete.",
     "viewPrompts": "View My Prompts",
     "uploadAnother": "Upload Another Prompt"
+  },
+  "paymentBadge": {
+    "activated": "Payment Activated",
+    "notActivated": "Payment Not Activated",
+    "goToSetup": "Go to Payment Setup"
+  },
+  "upload": {
+    "sizeError": "File exceeds 10 MB limit",
+    "typeError": "File type not supported. Accepted: JPEG, PNG, GIF, WebP",
+    "networkError": "A network error occurred while uploading the image",
+    "retry": "Retry",
+    "uploading": "Uploading..."
+  },
+  "inlineSuccess": {
+    "title": "Prompt Uploaded Successfully!",
+    "description": "We're now reviewing your prompt. Review typically takes 15 minutes to 36 hours.",
+    "viewPrompt": "View Prompt",
+    "sellAnother": "Sell Another Prompt"
   }
 }

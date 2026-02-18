@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
 
     const accountLink = await stripe.accountLinks.create({
       account: rows[0].stripeAccountId,
-      refresh_url: `${appUrl}/sell?step=3`,
+      refresh_url: `${appUrl}/sell?step=1`,
       return_url: `${appUrl}/seller/onboarding/complete`,
       type: "account_onboarding",
     });

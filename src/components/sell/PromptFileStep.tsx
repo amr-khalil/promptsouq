@@ -1,5 +1,6 @@
 "use client";
 
+import { PaymentBadge } from "@/components/sell/PaymentBadge";
 import { Button } from "@/components/ui/button";
 import {
   FormControl,
@@ -18,14 +19,18 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import type { PromptSubmission } from "@/lib/schemas/api";
-import { ImagePlus, Plus, Sparkles, Trash2, X } from "lucide-react";
+import { uploadImage } from "@/lib/upload-image";
+import { ImagePlus, Loader2, Plus, RotateCw, Sparkles, Trash2, X } from "lucide-react";
 import Image from "next/image";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 interface PromptFileStepProps {
   form: UseFormReturn<PromptSubmission>;
+  paymentActivated?: boolean;
+  paymentLoading?: boolean;
+  onGoToPaymentSetup?: () => void;
 }
 
 type TFn = (key: string, options?: Record<string, string>) => string;
@@ -434,6 +439,8 @@ function PromptExamplesSection({
   isImage?: boolean;
 }) {
   const examplePrompts = form.watch("examplePrompts") ?? [];
+  const [uploadProgress, setUploadProgress] = useState<Record<number, number>>({});
+  const [uploadError, setUploadError] = useState<Record<number, string | null>>({});
 
   const addExample = useCallback(() => {
     const current = form.getValues("examplePrompts") ?? [];
@@ -459,14 +466,35 @@ function PromptExamplesSection({
   );
 
   const handleExampleImage = useCallback(
-    (exIndex: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    async (exIndex: number, e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
       if (!file) return;
-      const url = URL.createObjectURL(file);
-      form.setValue(`examplePrompts.${exIndex}.image`, url, { shouldValidate: true });
       e.target.value = "";
+
+      setUploadError((prev) => ({ ...prev, [exIndex]: null }));
+      setUploadProgress((prev) => ({ ...prev, [exIndex]: 0 }));
+
+      try {
+        const url = await uploadImage(file, (percent) => {
+          setUploadProgress((prev) => ({ ...prev, [exIndex]: percent }));
+        });
+        form.setValue(`examplePrompts.${exIndex}.image`, url, { shouldValidate: true });
+      } catch (err) {
+        const code = err instanceof Error ? err.message : "Upload failed";
+        let msg = code;
+        if (code === "FILE_TOO_LARGE") msg = t("upload.sizeError");
+        else if (code === "INVALID_TYPE") msg = t("upload.typeError");
+        else if (code === "NETWORK_ERROR") msg = t("upload.networkError");
+        setUploadError((prev) => ({ ...prev, [exIndex]: msg }));
+      } finally {
+        setUploadProgress((prev) => {
+          const next = { ...prev };
+          delete next[exIndex];
+          return next;
+        });
+      }
     },
-    [form],
+    [form, t],
   );
 
   const removeExampleImage = useCallback(
@@ -555,7 +583,28 @@ function PromptExamplesSection({
           {isImage && (
             <div className="space-y-1.5">
               <p className="text-xs font-medium text-muted-foreground">{t("file.outputImage")}</p>
-              {example?.image ? (
+              {uploadProgress[exIndex] !== undefined ? (
+                <div className="flex h-32 w-32 flex-col items-center justify-center gap-2 rounded-lg border bg-muted/50">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                  <span className="text-xs text-muted-foreground">{uploadProgress[exIndex]}%</span>
+                </div>
+              ) : uploadError[exIndex] ? (
+                <div className="flex h-32 w-32 flex-col items-center justify-center gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-2 text-center">
+                  <p className="text-xs text-destructive">{uploadError[exIndex]}</p>
+                  <label className="cursor-pointer">
+                    <span className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline">
+                      <RotateCw className="h-3 w-3" />
+                      {t("upload.retry")}
+                    </span>
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/gif,image/webp"
+                      className="hidden"
+                      onChange={(e) => handleExampleImage(exIndex, e)}
+                    />
+                  </label>
+                </div>
+              ) : example?.image ? (
                 <div className="relative h-32 w-32 overflow-hidden rounded-lg border">
                   <Image
                     src={example.image}
@@ -577,7 +626,7 @@ function PromptExamplesSection({
                   <span className="text-xs">{t("file.attachImage")}</span>
                   <input
                     type="file"
-                    accept="image/*"
+                    accept="image/jpeg,image/png,image/gif,image/webp"
                     className="hidden"
                     onChange={(e) => handleExampleImage(exIndex, e)}
                   />
@@ -598,7 +647,7 @@ function PromptExamplesSection({
 }
 
 // ─── Main Component ─────────────────────────────────────────────
-export function PromptFileStep({ form }: PromptFileStepProps) {
+export function PromptFileStep({ form, paymentActivated, paymentLoading, onGoToPaymentSetup }: PromptFileStepProps) {
   const { t } = useTranslation("sell");
   const fullContent = form.watch("fullContent");
   const generationType = form.watch("generationType");
@@ -606,11 +655,19 @@ export function PromptFileStep({ form }: PromptFileStepProps) {
   const templateSegments = useMemo(() => parseTemplate(fullContent ?? ""), [fullContent]);
   const charCount = (fullContent ?? "").length;
   const isImage = generationType === "image";
+  const showPaymentBadge = paymentActivated !== undefined;
 
   const tCast = t as TFn;
 
   return (
     <div className="space-y-6">
+      {showPaymentBadge && (
+        <PaymentBadge
+          isActivated={paymentActivated}
+          isLoading={paymentLoading ?? false}
+          onGoToSetup={onGoToPaymentSetup}
+        />
+      )}
       <div className="space-y-1">
         <p className="text-sm text-muted-foreground">
           {t("file.fileIntro")}

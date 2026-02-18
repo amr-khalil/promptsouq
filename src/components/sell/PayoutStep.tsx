@@ -25,7 +25,11 @@ const countryCodes = [
   "SA", "AE", "EG", "JO", "KW", "BH", "QA", "OM", "MA", "TN", "US", "GB", "DE", "FR",
 ] as const;
 
-export function PayoutStep() {
+interface PayoutStepProps {
+  onPaymentActivated?: () => void;
+}
+
+export function PayoutStep({ onPaymentActivated }: PayoutStepProps) {
   const { t } = useTranslation("sell");
   const [status, setStatus] = useState<ConnectStatus | null>(null);
   const [loading, setLoading] = useState(true);
@@ -36,13 +40,17 @@ export function PayoutStep() {
     try {
       const res = await fetch("/api/connect/status");
       const json = await res.json();
-      setStatus(json.data);
+      const data = json.data as ConnectStatus | undefined;
+      setStatus(data ?? null);
+      if (data?.isFullyOnboarded) {
+        onPaymentActivated?.();
+      }
     } catch {
       // Ignore — will show default not-connected state
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [onPaymentActivated]);
 
   useEffect(() => {
     fetchStatus();

@@ -7,13 +7,15 @@ import { useTranslation } from "react-i18next";
 interface StepIndicatorProps {
   currentStep: number;
   isFree?: boolean;
+  paymentActivated?: boolean;
 }
 
-export function StepIndicator({ currentStep, isFree = false }: StepIndicatorProps) {
+export function StepIndicator({ currentStep, isFree = false, paymentActivated = false }: StepIndicatorProps) {
   const { t } = useTranslation("sell");
 
-  const paidStepKeys = ["details", "file", "payout", "confirmation"] as const;
-  const freeStepKeys = ["details", "file", "confirmation"] as const;
+  // Paid: Payment → Details → Content. Free: Details → Content.
+  const paidStepKeys = ["payout", "details", "content"] as const;
+  const freeStepKeys = ["details", "content"] as const;
   const stepKeys = isFree ? freeStepKeys : paidStepKeys;
 
   return (
@@ -22,6 +24,8 @@ export function StepIndicator({ currentStep, isFree = false }: StepIndicatorProp
         const stepNumber = index + 1;
         const isCompleted = stepNumber < currentStep;
         const isActive = stepNumber === currentStep;
+        // Show green checkmark on payment step when activated (even if active)
+        const isPaymentDone = !isFree && key === "payout" && paymentActivated;
 
         return (
           <div key={key} className="flex items-center gap-2 sm:gap-4">
@@ -29,16 +33,18 @@ export function StepIndicator({ currentStep, isFree = false }: StepIndicatorProp
               <div
                 className={cn(
                   "flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-colors sm:h-10 sm:w-10",
-                  isCompleted &&
+                  isPaymentDone &&
+                    "bg-green-500 text-white",
+                  !isPaymentDone && isCompleted &&
                     "bg-primary text-primary-foreground",
-                  isActive &&
+                  !isPaymentDone && isActive &&
                     "bg-primary text-primary-foreground ring-2 ring-primary/30 ring-offset-2 ring-offset-background",
-                  !isCompleted &&
+                  !isPaymentDone && !isCompleted &&
                     !isActive &&
                     "bg-muted text-muted-foreground",
                 )}
               >
-                {isCompleted ? (
+                {isPaymentDone || isCompleted ? (
                   <Check className="h-4 w-4" />
                 ) : (
                   stepNumber
