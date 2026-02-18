@@ -1,0 +1,297 @@
+[      84ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/sign-in:0
+[     141ms] [ERROR] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <ClerkProvider publishableKey="pk_test_Yn..." proxyUrl="" domain="" isSatellite={false} signInUrl="/sign-in" ...>
+      <ClerkProviderBase publishableKey="pk_test_Yn..." proxyUrl="" domain="" isSatellite={false} signInUrl="/sign-in" ...>
+        <ClerkContextProvider initialState={null} isomorphicClerkOptions={{...}}>
+          <OrganizationProvider organization={undefined}>
+            <SWRConfigCompat swrConfig={undefined}>
+              <SWRConfig value={undefined}>
+                <__experimental_CheckoutProvider value={undefined}>
+                  <RouterTelemetry>
+                  <ClerkJSScript>
+                  <html
+                    lang="en"
+                    dir="ltr"
+-                   className="dark"
+-                   style={{color-scheme:"dark"}}
+                  >
+ @ http://localhost:3000/_next/static/chunks/a5004_next_dist_481ca6bb._.js:3127
+[     172ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/sign-in:0
+[     238ms] [WARNING] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview @ http://localhost:3000/_next/static/chunks/a5004_next_dist_481ca6bb._.js:2297
+[   26598ms] [WARNING] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview @ http://localhost:3000/_next/static/chunks/a5004_next_dist_481ca6bb._.js:2297
+[   26622ms] [ERROR] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <ClerkProvider publishableKey="pk_test_Yn..." proxyUrl="" domain="" isSatellite={false} signInUrl="/sign-in" ...>
+      <ClerkProviderBase publishableKey="pk_test_Yn..." proxyUrl="" domain="" isSatellite={false} signInUrl="/sign-in" ...>
+        <ClerkContextProvider initialState={null} isomorphicClerkOptions={{...}}>
+          <OrganizationProvider organization={undefined}>
+            <SWRConfigCompat swrConfig={undefined}>
+              <SWRConfig value={undefined}>
+                <__experimental_CheckoutProvider value={undefined}>
+                  <RouterTelemetry>
+                  <ClerkJSScript>
+                  <html
+                    lang="en"
+                    dir="ltr"
+-                   className="dark"
+-                   style={{color-scheme:"dark"}}
+                  >
+ @ http://localhost:3000/_next/static/chunks/a5004_next_dist_481ca6bb._.js:3127
+[   27675ms] [ERROR] Failed to load resource: net::ERR_FILE_NOT_FOUND @ blob:http://localhost:3000/9b602579-7127-461d-95ad-20f79ba84b5e:0
+[   29136ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/sign-in?_rsc=13llz:0
+[   29204ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/sign-in:0
+[   29255ms] [ERROR] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <ClerkProvider publishableKey="pk_test_Yn..." proxyUrl="" domain="" isSatellite={false} signInUrl="/sign-in" ...>
+      <ClerkProviderBase publishableKey="pk_test_Yn..." proxyUrl="" domain="" isSatellite={false} signInUrl="/sign-in" ...>
+        <ClerkContextProvider initialState={null} isomorphicClerkOptions={{...}}>
+          <OrganizationProvider organization={undefined}>
+            <SWRConfigCompat swrConfig={undefined}>
+              <SWRConfig value={undefined}>
+                <__experimental_CheckoutProvider value={undefined}>
+                  <RouterTelemetry>
+                  <ClerkJSScript>
+                  <html
+                    lang="en"
+                    dir="ltr"
+-                   className="dark"
+-                   style={{color-scheme:"dark"}}
+                  >
+ @ http://localhost:3000/_next/static/chunks/a5004_next_dist_481ca6bb._.js:3127
+[   29271ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/sign-in:0
+[   29354ms] [WARNING] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview @ http://localhost:3000/_next/static/chunks/a5004_next_dist_481ca6bb._.js:2297
+[   31201ms] [WARNING] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview @ http://localhost:3000/_next/static/chunks/a5004_next_dist_481ca6bb._.js:2297
+[   31224ms] [ERROR] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <ClerkProvider publishableKey="pk_test_Yn..." proxyUrl="" domain="" isSatellite={false} signInUrl="/sign-in" ...>
+      <ClerkProviderBase publishableKey="pk_test_Yn..." proxyUrl="" domain="" isSatellite={false} signInUrl="/sign-in" ...>
+        <ClerkContextProvider initialState={null} isomorphicClerkOptions={{...}}>
+          <OrganizationProvider organization={undefined}>
+            <SWRConfigCompat swrConfig={undefined}>
+              <SWRConfig value={undefined}>
+                <__experimental_CheckoutProvider value={undefined}>
+                  <RouterTelemetry>
+                  <ClerkJSScript>
+                  <html
+                    lang="en"
+                    dir="ltr"
+-                   className="dark"
+-                   style={{color-scheme:"dark"}}
+                  >
+ @ http://localhost:3000/_next/static/chunks/a5004_next_dist_481ca6bb._.js:3127
+[   31554ms] [ERROR] Failed to load resource: net::ERR_FILE_NOT_FOUND @ blob:http://localhost:3000/9b602579-7127-461d-95ad-20f79ba84b5e:0
+[   41230ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/sign-in?redirect_url=http%3A%2F%2Flocalhost%3A3000%2Flogin:0
+[   41280ms] [ERROR] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <ClerkProvider publishableKey="pk_test_Yn..." proxyUrl="" domain="" isSatellite={false} signInUrl="/sign-in" ...>
+      <ClerkProviderBase publishableKey="pk_test_Yn..." proxyUrl="" domain="" isSatellite={false} signInUrl="/sign-in" ...>
+        <ClerkContextProvider initialState={null} isomorphicClerkOptions={{...}}>
+          <OrganizationProvider organization={undefined}>
+            <SWRConfigCompat swrConfig={undefined}>
+              <SWRConfig value={undefined}>
+                <__experimental_CheckoutProvider value={undefined}>
+                  <RouterTelemetry>
+                  <ClerkJSScript>
+                  <html
+                    lang="en"
+                    dir="ltr"
+-                   className="dark"
+-                   style={{color-scheme:"dark"}}
+                  >
+ @ http://localhost:3000/_next/static/chunks/a5004_next_dist_481ca6bb._.js:3127
+[   41307ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/sign-in?redirect_url=http%3A%2F%2Flocalhost%3A3000%2Flogin:0
+[   41379ms] [WARNING] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview @ http://localhost:3000/_next/static/chunks/a5004_next_dist_481ca6bb._.js:2297
+[   44315ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/sign-in?redirect_url=http%3A%2F%2Flocalhost%3A3000%2Flogin:0
+[   44365ms] [ERROR] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <ClerkProvider publishableKey="pk_test_Yn..." proxyUrl="" domain="" isSatellite={false} signInUrl="/sign-in" ...>
+      <ClerkProviderBase publishableKey="pk_test_Yn..." proxyUrl="" domain="" isSatellite={false} signInUrl="/sign-in" ...>
+        <ClerkContextProvider initialState={null} isomorphicClerkOptions={{...}}>
+          <OrganizationProvider organization={undefined}>
+            <SWRConfigCompat swrConfig={undefined}>
+              <SWRConfig value={undefined}>
+                <__experimental_CheckoutProvider value={undefined}>
+                  <RouterTelemetry>
+                  <ClerkJSScript>
+                  <html
+                    lang="en"
+                    dir="ltr"
+-                   className="dark"
+-                   style={{color-scheme:"dark"}}
+                  >
+ @ http://localhost:3000/_next/static/chunks/a5004_next_dist_481ca6bb._.js:3127
+[   44393ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://localhost:3000/sign-in?redirect_url=http%3A%2F%2Flocalhost%3A3000%2Flogin:0
+[   44463ms] [WARNING] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview @ http://localhost:3000/_next/static/chunks/a5004_next_dist_481ca6bb._.js:2297
+[   45923ms] [WARNING] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview @ http://localhost:3000/_next/static/chunks/a5004_next_dist_481ca6bb._.js:2297
+[   45938ms] [ERROR] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <ClerkProvider publishableKey="pk_test_Yn..." proxyUrl="" domain="" isSatellite={false} signInUrl="/sign-in" ...>
+      <ClerkProviderBase publishableKey="pk_test_Yn..." proxyUrl="" domain="" isSatellite={false} signInUrl="/sign-in" ...>
+        <ClerkContextProvider initialState={null} isomorphicClerkOptions={{...}}>
+          <OrganizationProvider organization={undefined}>
+            <SWRConfigCompat swrConfig={undefined}>
+              <SWRConfig value={undefined}>
+                <__experimental_CheckoutProvider value={undefined}>
+                  <RouterTelemetry>
+                  <ClerkJSScript>
+                  <html
+                    lang="en"
+                    dir="ltr"
+-                   className="dark"
+-                   style={{color-scheme:"dark"}}
+                  >
+ @ http://localhost:3000/_next/static/chunks/a5004_next_dist_481ca6bb._.js:3127
+[   46287ms] [ERROR] Failed to load resource: net::ERR_FILE_NOT_FOUND @ blob:http://localhost:3000/9b602579-7127-461d-95ad-20f79ba84b5e:0
+[   53638ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/api/sellers?sortBy=sales&limit=5:0
+[   53638ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/api/categories:0
+[   53640ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/api/prompts?sortBy=newest&limit=8:0
+[   53640ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/api/subscription/plans:0
+[   53640ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/api/prompts?priceType=free&limit=10:0
+[   53640ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/api/trending:0
+[   53640ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/api/prompts?sortBy=bestselling&limit=8:0
+[   53640ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/api/prompts?sortBy=newest&limit=8:0
+[   53640ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/api/subscription/plans:0
+[   53640ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/api/prompts?priceType=free&limit=10:0
+[   53640ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/api/prompts?sortBy=bestselling&limit=8:0
+[   54639ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=ABjbTJTz1VnIdAMcFayIW' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/a5004_next_dist_client_8de7e089._.js:10878
+[   55640ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=ABjbTJTz1VnIdAMcFayIW' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/a5004_next_dist_client_8de7e089._.js:10878
+[   56642ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=ABjbTJTz1VnIdAMcFayIW' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/a5004_next_dist_client_8de7e089._.js:10878
+[   57644ms] [ERROR] WebSocket connection to 'ws://localhost:3000/_next/webpack-hmr?id=ABjbTJTz1VnIdAMcFayIW' failed: Error in connection establishment: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/_next/static/chunks/a5004_next_dist_client_8de7e089._.js:10878
+[  135710ms] [ERROR] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <ClerkProvider publishableKey="pk_test_Yn..." proxyUrl="" domain="" isSatellite={false} signInUrl="/sign-in" ...>
+      <ClerkProviderBase publishableKey="pk_test_Yn..." proxyUrl="" domain="" isSatellite={false} signInUrl="/sign-in" ...>
+        <ClerkContextProvider initialState={null} isomorphicClerkOptions={{...}}>
+          <OrganizationProvider organization={undefined}>
+            <SWRConfigCompat swrConfig={undefined}>
+              <SWRConfig value={undefined}>
+                <__experimental_CheckoutProvider value={undefined}>
+                  <RouterTelemetry>
+                  <ClerkJSScript>
+                  <html
+                    lang="en"
+                    dir="ltr"
+-                   className="dark"
+-                   style={{color-scheme:"dark"}}
+                  >
+ @ http://localhost:3000/_next/static/chunks/a5004_next_dist_481ca6bb._.js:3127
+[  135790ms] [WARNING] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview @ http://localhost:3000/_next/static/chunks/a5004_next_dist_481ca6bb._.js:2297
+[  144983ms] [ERROR] A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+%s%s https://react.dev/link/hydration-mismatch 
+
+  ...
+    <ClerkProvider publishableKey="pk_test_Yn..." proxyUrl="" domain="" isSatellite={false} signInUrl="/sign-in" ...>
+      <ClerkProviderBase publishableKey="pk_test_Yn..." proxyUrl="" domain="" isSatellite={false} signInUrl="/sign-in" ...>
+        <ClerkContextProvider initialState={null} isomorphicClerkOptions={{...}}>
+          <OrganizationProvider organization={undefined}>
+            <SWRConfigCompat swrConfig={undefined}>
+              <SWRConfig value={undefined}>
+                <__experimental_CheckoutProvider value={undefined}>
+                  <RouterTelemetry>
+                  <ClerkJSScript>
+                  <html
+                    lang="en"
+                    dir="ltr"
+-                   className="dark"
+-                   style={{color-scheme:"dark"}}
+                  >
+ @ http://localhost:3000/_next/static/chunks/a5004_next_dist_481ca6bb._.js:3127
+[  145063ms] [WARNING] Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview @ http://localhost:3000/_next/static/chunks/a5004_next_dist_481ca6bb._.js:2297
