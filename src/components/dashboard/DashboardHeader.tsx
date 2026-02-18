@@ -1,7 +1,9 @@
 "use client";
 
+import { CreditBadge } from "@/components/credits/CreditBadge";
 import { DashboardBreadcrumb } from "@/components/dashboard/DashboardBreadcrumb";
 import { LanguageToggle } from "@/components/LanguageToggle";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
@@ -16,6 +18,8 @@ export function DashboardHeader() {
         />
         <DashboardBreadcrumb />
         <div className="ms-auto flex items-center gap-2">
+          <CreditBadge />
+          <NotificationBell />
           <LanguageToggle />
         </div>
       </div>

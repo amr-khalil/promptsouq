@@ -38,7 +38,7 @@ export function NotificationBell() {
       onUnreadCountChange={setUnreadCount}
       trigger={
         <button
-          className="relative flex items-center justify-center w-10 h-10 rounded-full border border-zinc-700 text-zinc-400 hover:text-white hover:border-[#7f0df2] hover:shadow-[0_0_15px_#7f0df2] transition-all"
+          className="relative flex items-center justify-center w-9 h-9 rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
           aria-label="Notifications"
         >
           <Bell className="w-5 h-5" />

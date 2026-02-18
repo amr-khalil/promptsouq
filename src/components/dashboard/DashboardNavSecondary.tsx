@@ -1,6 +1,6 @@
 "use client";
 
-import { ExternalLink, Settings } from "lucide-react";
+import { Settings } from "lucide-react";
 import { LocaleLink } from "@/components/LocaleLink";
 import {
   SidebarGroup,
@@ -33,14 +33,6 @@ export function DashboardNavSecondary({
               <LocaleLink href="/dashboard/settings">
                 <Settings />
                 <span>{t("sidebar.settings")}</span>
-              </LocaleLink>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild tooltip={t("sidebar.backToMarket")}>
-              <LocaleLink href="/market">
-                <ExternalLink />
-                <span>{t("sidebar.backToMarket")}</span>
               </LocaleLink>
             </SidebarMenuButton>
           </SidebarMenuItem>

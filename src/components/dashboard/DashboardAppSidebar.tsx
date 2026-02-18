@@ -15,8 +15,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Zap } from "lucide-react";
+import { Plus, Store, Zap } from "lucide-react";
 import { useParams } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 interface DashboardAppSidebarProps
   extends React.ComponentProps<typeof Sidebar> {
@@ -31,10 +32,11 @@ export function DashboardAppSidebar({
 }: DashboardAppSidebarProps) {
   const params = useParams();
   const isRtl = params?.locale === "ar";
+  const { t } = useTranslation("dashboard");
 
   return (
     <Sidebar
-      collapsible="offcanvas"
+      collapsible="icon"
       side={isRtl ? "right" : "left"}
       {...props}
     >
@@ -48,6 +50,32 @@ export function DashboardAppSidebar({
               <LocaleLink href="/dashboard">
                 <Zap className="!size-5 text-primary" />
                 <span className="text-base font-semibold">SouqPrompt</span>
+              </LocaleLink>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              tooltip={t("sidebar.sellPrompt")}
+              className="data-[slot=sidebar-menu-button]:!p-1.5"
+            >
+              <LocaleLink href="/sell">
+                <div className="flex size-5 items-center justify-center rounded-full border bg-background">
+                  <Plus className="!size-3" />
+                </div>
+                <span className="text-sm">{t("sidebar.sellPrompt")}</span>
+              </LocaleLink>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              asChild
+              tooltip={t("sidebar.backToMarket")}
+              className="data-[slot=sidebar-menu-button]:!p-1.5"
+            >
+              <LocaleLink href="/market">
+                <Store className="!size-5" />
+                <span className="text-sm">{t("sidebar.backToMarket")}</span>
               </LocaleLink>
             </SidebarMenuButton>
           </SidebarMenuItem>
