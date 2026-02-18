@@ -11,6 +11,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { CheckCircle, ExternalLink, Loader2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface ConnectStatus {
   hasAccount: boolean;
@@ -20,24 +21,12 @@ interface ConnectStatus {
   isFullyOnboarded: boolean;
 }
 
-const countries = [
-  { code: "SA", name: "المملكة العربية السعودية" },
-  { code: "AE", name: "الإمارات العربية المتحدة" },
-  { code: "EG", name: "مصر" },
-  { code: "JO", name: "الأردن" },
-  { code: "KW", name: "الكويت" },
-  { code: "BH", name: "البحرين" },
-  { code: "QA", name: "قطر" },
-  { code: "OM", name: "عمان" },
-  { code: "MA", name: "المغرب" },
-  { code: "TN", name: "تونس" },
-  { code: "US", name: "الولايات المتحدة" },
-  { code: "GB", name: "المملكة المتحدة" },
-  { code: "DE", name: "ألمانيا" },
-  { code: "FR", name: "فرنسا" },
-];
+const countryCodes = [
+  "SA", "AE", "EG", "JO", "KW", "BH", "QA", "OM", "MA", "TN", "US", "GB", "DE", "FR",
+] as const;
 
 export function PayoutStep() {
+  const { t } = useTranslation("sell");
   const [status, setStatus] = useState<ConnectStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [connecting, setConnecting] = useState(false);
@@ -106,9 +95,9 @@ export function PayoutStep() {
     return (
       <div className="flex flex-col items-center gap-4 py-8">
         <CheckCircle className="h-16 w-16 text-green-500" />
-        <h3 className="text-xl font-semibold">تم ربط حساب Stripe</h3>
+        <h3 className="text-xl font-semibold">{t("payout.connected")}</h3>
         <p className="text-muted-foreground text-center">
-          حسابك جاهز لاستقبال المدفوعات. يمكنك المتابعة لرفع البرومبت.
+          {t("payout.connectedDesc")}
         </p>
       </div>
     );
@@ -121,13 +110,13 @@ export function PayoutStep() {
         <div className="rounded-full bg-yellow-100 p-4 dark:bg-yellow-900/30">
           <ExternalLink className="h-8 w-8 text-yellow-600 dark:text-yellow-400" />
         </div>
-        <h3 className="text-xl font-semibold">إكمال إعداد Stripe</h3>
+        <h3 className="text-xl font-semibold">{t("payout.completeSetupTitle")}</h3>
         <p className="text-muted-foreground text-center">
-          تم إنشاء حسابك لكن يجب إكمال عملية الإعداد لبدء استقبال المدفوعات.
+          {t("payout.completeSetupDesc")}
         </p>
         <Button onClick={handleCompleteOnboarding} disabled={connecting}>
           {connecting && <Loader2 className="h-4 w-4 animate-spin me-2" />}
-          إكمال الإعداد
+          {t("payout.completeSetup")}
         </Button>
       </div>
     );
@@ -137,23 +126,23 @@ export function PayoutStep() {
   return (
     <div className="space-y-6">
       <div className="text-center space-y-2">
-        <h3 className="text-xl font-semibold">تفعيل المدفوعات</h3>
+        <h3 className="text-xl font-semibold">{t("payout.title")}</h3>
         <p className="text-muted-foreground">
-          اربط حساب Stripe لبدء استقبال المدفوعات من مبيعات البرومبتات
+          {t("payout.subtitle")}
         </p>
       </div>
 
       <div className="mx-auto max-w-sm space-y-4">
         <div className="space-y-2">
-          <label className="text-sm font-medium">بلد الإقامة</label>
+          <label className="text-sm font-medium">{t("payout.country")}</label>
           <Select value={country} onValueChange={setCountry}>
             <SelectTrigger>
-              <SelectValue placeholder="اختر البلد" />
+              <SelectValue placeholder={t("payout.countryPlaceholder")} />
             </SelectTrigger>
             <SelectContent>
-              {countries.map((c) => (
-                <SelectItem key={c.code} value={c.code}>
-                  {c.name}
+              {countryCodes.map((code) => (
+                <SelectItem key={code} value={code}>
+                  {t(`payout.countries.${code}`)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -166,16 +155,16 @@ export function PayoutStep() {
           disabled={!country || connecting}
         >
           {connecting && <Loader2 className="h-4 w-4 animate-spin me-2" />}
-          تفعيل المدفوعات
+          {t("payout.enablePayments")}
         </Button>
       </div>
 
       <div className="rounded-lg border p-4 space-y-2 text-sm">
-        <p className="font-medium">معلومات المدفوعات:</p>
+        <p className="font-medium">{t("payout.infoTitle")}</p>
         <ul className="space-y-1 text-muted-foreground list-disc list-inside">
-          <li>بيع عبر رابطك الخاص — بدون عمولة (0%)</li>
-          <li>بيع عبر السوق — عمولة 20%</li>
-          <li>الدفعات عبر Stripe بشكل آمن</li>
+          <li>{t("payout.infoPersonalLink")}</li>
+          <li>{t("payout.infoMarketplace")}</li>
+          <li>{t("payout.infoSecure")}</li>
         </ul>
       </div>
     </div>

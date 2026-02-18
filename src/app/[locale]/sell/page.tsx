@@ -1,18 +1,22 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
 import { ConfirmationStep } from "@/components/sell/ConfirmationStep";
 import { PayoutStep } from "@/components/sell/PayoutStep";
 import { PromptDetailsStep } from "@/components/sell/PromptDetailsStep";
 import { PromptFileStep } from "@/components/sell/PromptFileStep";
 import { StepIndicator } from "@/components/sell/StepIndicator";
-import { promptSubmissionSchema, type PromptSubmission } from "@/lib/schemas/api";
+import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
+import {
+  createPromptSubmissionSchema,
+  type PromptSubmission,
+} from "@/lib/schemas/api";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 const STORAGE_KEY = "promptsouq-sell-draft";
@@ -27,7 +31,6 @@ const step1Fields: (keyof PromptSubmission)[] = [
   "category",
   "difficulty",
   "tags",
-  "thumbnail",
 ];
 
 const step2Fields: (keyof PromptSubmission)[] = [
@@ -42,7 +45,7 @@ const defaultValues: PromptSubmission = {
   description: "",
   descriptionEn: "",
   isFree: false,
-  price: 0,
+  price: 4,
   category: "",
   aiModel: "",
   generationType: "text",
@@ -55,7 +58,8 @@ const defaultValues: PromptSubmission = {
   fullContent: "",
   instructions: "",
   exampleOutputs: ["", "", "", ""],
-  examplePrompts: [{}, {}, {}, {}],
+  examplePrompts: [{ variables: {} }],
+  imageGenerationType: undefined,
 };
 
 function loadDraft(): PromptSubmission | null {
@@ -85,12 +89,18 @@ function clearDraft() {
 }
 
 export default function SellPage() {
+  const { t } = useTranslation("sell");
   const searchParams = useSearchParams();
   const [currentStep, setCurrentStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
 
+  const schema = useMemo(
+    () => createPromptSubmissionSchema(t as (key: string) => string),
+    [t],
+  );
+
   const form = useForm<PromptSubmission>({
-    resolver: zodResolver(promptSubmissionSchema),
+    resolver: zodResolver(schema),
     defaultValues,
   });
 
@@ -121,7 +131,7 @@ export default function SellPage() {
   const submitPrompt = async () => {
     const valid = await form.trigger();
     if (!valid) {
-      toast.error("يرجى مراجعة جميع الحقول المطلوبة");
+      toast.error(t("toast.reviewFields"));
       return;
     }
 
@@ -136,15 +146,15 @@ export default function SellPage() {
 
       if (!res.ok) {
         const json = await res.json();
-        toast.error(json.error?.message ?? "حدث خطأ في رفع البرومبت");
+        toast.error(json.error?.message ?? t("toast.uploadError"));
         return;
       }
 
       clearDraft();
       setCurrentStep(confirmationStep);
-      toast.success("تم رفع البرومبت بنجاح!");
+      toast.success(t("toast.uploadSuccess"));
     } catch {
-      toast.error("حدث خطأ في الاتصال بالخادم");
+      toast.error(t("toast.connectionError"));
     } finally {
       setSubmitting(false);
     }
@@ -155,15 +165,15 @@ export default function SellPage() {
       const valid = await form.trigger(step1Fields);
       if (!valid) return;
       // Manual price check for paid prompts (superRefine doesn't run on partial trigger)
-      if (!form.getValues("isFree") && form.getValues("price") < 1.99) {
-        form.setError("price", { message: "الحد الأدنى للسعر 1.99$" });
+      if (!form.getValues("isFree") && form.getValues("price") < 1) {
+        form.setError("price", { message: t("toast.minPrice") });
         return;
       }
       setCurrentStep(2);
     } else if (currentStep === 2) {
       const valid = await form.trigger(step2Fields);
       if (!valid) {
-        toast.error("يرجى مراجعة حقول ملف البرومبت");
+        toast.error(t("toast.reviewFileFields"));
         return;
       }
       if (isFree) {
@@ -194,10 +204,8 @@ export default function SellPage() {
   return (
     <div className="container mx-auto max-w-3xl px-4 py-8">
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold mb-2">بيع برومبت</h1>
-        <p className="text-muted-foreground">
-          شارك إبداعاتك وابدأ في كسب المال من البرومبتات الخاصة بك
-        </p>
+        <h1 className="text-3xl font-bold mb-2">{t("header.title")}</h1>
+        <p className="text-muted-foreground">{t("header.subtitle")}</p>
       </div>
 
       <div className="mb-8">
@@ -213,26 +221,26 @@ export default function SellPage() {
         </Form>
 
         {currentStep === 3 && !isFree && <PayoutStep />}
-        {currentStep === confirmationStep && <ConfirmationStep onReset={handleReset} />}
+        {currentStep === confirmationStep && (
+          <ConfirmationStep onReset={handleReset} />
+        )}
 
         {currentStep < confirmationStep && (
           <div className="mt-6 flex justify-between">
             {currentStep > 1 ? (
               <Button variant="outline" onClick={handleBack}>
-                <ArrowRight className="h-4 w-4 me-2" />
-                رجوع
+                <ArrowLeft className="h-4 w-4 me-2" />
+                {t("nav.back")}
               </Button>
             ) : (
               <div />
             )}
 
             <Button onClick={handleNext} disabled={submitting}>
-              {submitting && (
-                <Loader2 className="h-4 w-4 animate-spin me-2" />
-              )}
-              {currentStep === submitStep ? "رفع البرومبت" : "التالي"}
+              {submitting && <Loader2 className="h-4 w-4 animate-spin me-2" />}
+              {currentStep === submitStep ? t("nav.submit") : t("nav.next")}
               {!submitting && currentStep < submitStep && (
-                <ArrowLeft className="h-4 w-4 ms-2" />
+                <ArrowRight className="h-4 w-4 ms-2" />
               )}
             </Button>
           </div>

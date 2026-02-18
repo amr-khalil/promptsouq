@@ -9,6 +9,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -16,62 +17,112 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import type { PromptSubmission } from "@/lib/schemas/api";
-import type { Category } from "@/lib/schemas/api";
-import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import { Upload, X } from "lucide-react";
-import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Textarea } from "@/components/ui/textarea";
+import type { Category, PromptSubmission } from "@/lib/schemas/api";
+import { X } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import type { UseFormReturn } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
-const generationTypes = [
-  { value: "text", label: "نص" },
-  { value: "image", label: "صورة" },
-  { value: "code", label: "كود" },
-  { value: "marketing", label: "تسويق" },
-  { value: "design", label: "تصميم" },
+const AI_MODEL_SLUGS = new Set(["gpt", "midjourney", "dalle"]);
+
+const generationTypeKeys = ["text", "image", "video", "audio", "3d"] as const;
+
+const textModels = [
+  "ChatGPT",
+  "Claude",
+  "Gemini",
+  "Grok",
+  "DeepSeek",
+  "Llama",
+  "Mistral",
+  "Perplexity",
 ];
 
-const aiModels = [
-  { value: "chatgpt", label: "ChatGPT" },
-  { value: "claude", label: "Claude" },
-  { value: "midjourney", label: "Midjourney" },
-  { value: "dall-e", label: "DALL-E" },
-  { value: "stable-diffusion", label: "Stable Diffusion" },
-  { value: "gemini", label: "Gemini" },
-  { value: "copilot", label: "Copilot" },
+const imageModels = [
+  "Nano Banana",
+  "ChatGPT",
+  "Midjourney",
+  "Grok",
+  "FLUX",
+  "Meta AI",
+  "DALL-E",
+  "Hunyuan",
+  "Ideogram",
+  "Imagen",
+  "Leonardo AI",
+  "Qwen",
+  "Kling",
+  "Lexica",
+  "Recraft",
+  "Seedream",
+  "Stable Diffusion",
 ];
 
-const difficulties = [
-  { value: "مبتدئ", label: "مبتدئ" },
-  { value: "متقدم", label: "متقدم" },
+const videoModels = [
+  "Veo",
+  "Sora",
+  "Kling",
+  "Pika",
+  "PixVerse",
+  "Meta AI",
+  "Grok",
+  "Hailuo AI",
+  "Midjourney",
+  "Seedance",
+  "Wan",
 ];
+
+const audioModels = ["Suno", "Udio"];
+
+const threeDModels = ["Luma", "Meshy"];
+
+const modelsByType: Record<string, string[]> = {
+  text: textModels,
+  image: imageModels,
+  video: videoModels,
+  audio: audioModels,
+  "3d": threeDModels,
+};
+
+const difficultyKeys = ["beginner", "intermediate", "advanced"] as const;
+const difficultyValues: Record<string, string> = {
+  beginner: "مبتدئ",
+  intermediate: "متوسط",
+  advanced: "متقدم",
+};
 
 interface PromptDetailsStepProps {
   form: UseFormReturn<PromptSubmission>;
 }
 
 export function PromptDetailsStep({ form }: PromptDetailsStepProps) {
+  const { t, i18n } = useTranslation("sell");
   const [categories, setCategories] = useState<Category[]>([]);
   const [tagInput, setTagInput] = useState(() => {
     const initial = form.getValues("tags");
     return initial && initial.length > 0 ? initial.join("، ") : "";
   });
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetch("/api/categories")
       .then((res) => res.json())
-      .then((json) => setCategories(json.data ?? []))
+      .then((json) => {
+        const all: Category[] = json.data ?? [];
+        setCategories(all.filter((c) => !AI_MODEL_SLUGS.has(c.id)));
+      })
       .catch(() => {});
   }, []);
 
   const titleValue = form.watch("title");
   const descValue = form.watch("description");
-  const thumbnailValue = form.watch("thumbnail");
+
   const isFree = form.watch("isFree");
+  const generationType = form.watch("generationType");
+
+  const currentModels = modelsByType[generationType] ?? textModels;
 
   const addTagsFromInput = useCallback(() => {
     const currentTags = form.getValues("tags") ?? [];
@@ -79,7 +130,7 @@ export function PromptDetailsStep({ form }: PromptDetailsStepProps) {
       .split(/[,،]/)
       .map((t) => t.trim())
       .filter((t) => t.length > 0 && !currentTags.includes(t));
-    const merged = [...currentTags, ...newTags].slice(0, 10);
+    const merged = [...currentTags, ...newTags].slice(0, 5);
     form.setValue("tags", merged, { shouldValidate: true });
     setTagInput("");
   }, [tagInput, form]);
@@ -115,36 +166,34 @@ export function PromptDetailsStep({ form }: PromptDetailsStepProps) {
     [addTagsFromInput, tagInput, form],
   );
 
-  const handleThumbnailUpload = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (!file) return;
-      // For now, create a local object URL as preview and store it
-      const url = URL.createObjectURL(file);
-      form.setValue("thumbnail", url, { shouldValidate: true });
-    },
-    [form],
-  );
-
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+      <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <FormField
           control={form.control}
           name="generationType"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>نوع المحتوى</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
+              <FormLabel>{t("details.contentType")}</FormLabel>
+              <Select
+                onValueChange={(val) => {
+                  field.onChange(val);
+                  // Reset AI model when content type changes
+                  form.setValue("aiModel", "", { shouldValidate: false });
+                }}
+                value={field.value}
+              >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="اختر نوع المحتوى" />
+                    <SelectValue
+                      placeholder={t("details.contentTypePlaceholder")}
+                    />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {generationTypes.map((t) => (
-                    <SelectItem key={t.value} value={t.value}>
-                      {t.label}
+                  {generationTypeKeys.map((key) => (
+                    <SelectItem key={key} value={key}>
+                      {t(`details.generationTypes.${key}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -159,17 +208,79 @@ export function PromptDetailsStep({ form }: PromptDetailsStepProps) {
           name="aiModel"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>نموذج الذكاء الاصطناعي</FormLabel>
+              <FormLabel>{t("details.aiModel")}</FormLabel>
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="اختر النموذج" />
+                    <SelectValue
+                      placeholder={t("details.aiModelPlaceholder")}
+                    />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {aiModels.map((m) => (
-                    <SelectItem key={m.value} value={m.value}>
-                      {m.label}
+                  {currentModels.map((model) => (
+                    <SelectItem
+                      key={model}
+                      value={model.toLowerCase().replace(/\s+/g, "-")}
+                    >
+                      {model}
+                    </SelectItem>
+                  ))}
+                  <SelectItem value="other">
+                    {t("details.aiModels.other")}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="category"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("details.category")}</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue
+                      placeholder={t("details.categoryPlaceholder")}
+                    />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {categories.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {i18n.language === "ar" ? c.name : c.nameEn}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="difficulty"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>{t("details.difficulty")}</FormLabel>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue
+                      placeholder={t("details.difficultyPlaceholder")}
+                    />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {difficultyKeys.map((key) => (
+                    <SelectItem key={key} value={difficultyValues[key]}>
+                      {t(`details.difficulties.${key}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -185,16 +296,16 @@ export function PromptDetailsStep({ form }: PromptDetailsStepProps) {
         name="title"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>اسم البرومبت</FormLabel>
+            <FormLabel>{t("details.promptName")}</FormLabel>
             <FormControl>
               <Input
-                placeholder="مثال: شعارات ناشئة نابضة"
-                maxLength={60}
+                placeholder={t("details.promptNamePlaceholder")}
+                maxLength={50}
                 {...field}
               />
             </FormControl>
             <div className="text-xs text-muted-foreground text-left" dir="ltr">
-              {60 - (titleValue?.length ?? 0)} characters left
+              {50 - (titleValue?.length ?? 0)} {t("details.charactersLeft")}
             </div>
             <FormMessage />
           </FormItem>
@@ -206,17 +317,17 @@ export function PromptDetailsStep({ form }: PromptDetailsStepProps) {
         name="description"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>الوصف</FormLabel>
+            <FormLabel>{t("details.description")}</FormLabel>
             <FormControl>
               <Textarea
-                placeholder="صف ما يفعله البرومبت للمشتري المحتمل..."
+                placeholder={t("details.descriptionPlaceholder")}
                 maxLength={500}
                 rows={3}
                 {...field}
               />
             </FormControl>
             <div className="text-xs text-muted-foreground text-left" dir="ltr">
-              {500 - (descValue?.length ?? 0)} characters left
+              {500 - (descValue?.length ?? 0)} {t("details.charactersLeft")}
             </div>
             <FormMessage />
           </FormItem>
@@ -232,106 +343,72 @@ export function PromptDetailsStep({ form }: PromptDetailsStepProps) {
             if (checked) {
               form.setValue("price", 0, { shouldValidate: true });
               form.clearErrors("price");
+            } else {
+              form.setValue("price", 4, { shouldValidate: true });
             }
           }}
         />
         <Label htmlFor="isFree" className="cursor-pointer">
-          برومبت مجاني
+          {t("details.freePrompt")}
         </Label>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
-        {!isFree && (
-          <FormField
-            control={form.control}
-            name="price"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>السعر ($)</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    min={1.99}
-                    max={99.99}
-                    step={0.01}
-                    placeholder="6.99"
-                    dir="ltr"
-                    {...field}
-                    onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        )}
-
+      {!isFree && (
         <FormField
           control={form.control}
-          name="category"
+          name="price"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>التصنيف</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="اختر التصنيف" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {categories.map((c) => (
-                    <SelectItem key={c.id} value={c.id}>
-                      {c.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <FormItem className="max-w-2xl">
+              <FormLabel>{t("details.price")}</FormLabel>
+              <div className="relative mt-8" dir="ltr">
+                <span
+                  className="absolute -top-7 -translate-x-1/2 text-lg font-bold text-primary"
+                  style={{ left: `${(((field.value || 1) - 1) / 14) * 100}%` }}
+                >
+                  ${field.value || 1}
+                </span>
+              </div>
+              <FormControl>
+                <Slider
+                  min={1}
+                  max={15}
+                  step={1}
+                  value={[field.value || 1]}
+                  onValueChange={([val]) => field.onChange(val)}
+                  dir="ltr"
+                />
+              </FormControl>
+              <div
+                className="relative h-6 text-xs text-muted-foreground"
+                dir="ltr"
+              >
+                {Array.from({ length: 15 }, (_, i) => (
+                  <span
+                    key={i + 1}
+                    className="absolute -translate-x-1/2"
+                    style={{ left: `${(i / 14) * 100}%` }}
+                  >
+                    {i + 1}
+                  </span>
+                ))}
+              </div>
               <FormMessage />
             </FormItem>
           )}
         />
-
-        <FormField
-          control={form.control}
-          name="difficulty"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>مستوى الصعوبة</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="اختر المستوى" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {difficulties.map((d) => (
-                    <SelectItem key={d.value} value={d.value}>
-                      {d.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
+      )}
 
       <FormField
         control={form.control}
         name="tags"
         render={() => (
           <FormItem>
-            <FormLabel>الوسوم</FormLabel>
+            <FormLabel>{t("details.tags")}</FormLabel>
             <div className="space-y-2">
               {(form.getValues("tags") ?? []).length > 0 && (
                 <div className="flex flex-wrap gap-1.5">
                   {(form.getValues("tags") ?? []).map((tag) => (
-                    <Badge
-                      key={tag}
-                      variant="secondary"
-                      className="gap-1 pe-1"
-                    >
+                    <Badge key={tag} variant="secondary" className="gap-1 pe-1">
                       {tag}
                       <button
                         type="button"
@@ -346,7 +423,7 @@ export function PromptDetailsStep({ form }: PromptDetailsStepProps) {
               )}
               <FormControl>
                 <Input
-                  placeholder="اكتب وسم ثم اضغط Enter أو فاصلة..."
+                  placeholder={t("details.tagsPlaceholder")}
                   value={tagInput}
                   onChange={(e) => setTagInput(e.target.value)}
                   onKeyDown={handleTagKeyDown}
@@ -355,66 +432,8 @@ export function PromptDetailsStep({ form }: PromptDetailsStepProps) {
               </FormControl>
             </div>
             <div className="text-xs text-muted-foreground">
-              {(form.getValues("tags") ?? []).length}/10 وسوم — افصل بين الوسوم
-              بفاصلة أو اضغط Enter
+              {(form.getValues("tags") ?? []).length}/5 {t("details.tagsHint")}
             </div>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      <FormField
-        control={form.control}
-        name="thumbnail"
-        render={() => (
-          <FormItem>
-            <FormLabel>الصورة المصغرة</FormLabel>
-            <FormControl>
-              <div className="space-y-3">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleThumbnailUpload}
-                />
-                {thumbnailValue ? (
-                  <div className="relative w-full max-w-xs">
-                    <div className="relative aspect-video w-full overflow-hidden rounded-lg border">
-                      <Image
-                        src={thumbnailValue}
-                        alt="صورة مصغرة"
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        form.setValue("thumbnail", "", {
-                          shouldValidate: true,
-                        });
-                        if (fileInputRef.current)
-                          fileInputRef.current.value = "";
-                      }}
-                      className="absolute -top-2 -left-2 rounded-full bg-destructive p-1 text-destructive-foreground shadow-sm hover:bg-destructive/90"
-                    >
-                      <X className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="flex w-full max-w-xs flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-muted-foreground/25 p-8 text-muted-foreground transition-colors hover:border-primary/50 hover:text-primary"
-                  >
-                    <Upload className="h-8 w-8" />
-                    <span className="text-sm">اضغط لرفع صورة</span>
-                    <span className="text-xs">PNG, JPG, WebP</span>
-                  </button>
-                )}
-              </div>
-            </FormControl>
             <FormMessage />
           </FormItem>
         )}

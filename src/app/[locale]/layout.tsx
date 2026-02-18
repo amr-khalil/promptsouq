@@ -14,6 +14,7 @@ import enSearch from "@/i18n/locales/en/search.json";
 import enPrompt from "@/i18n/locales/en/prompt.json";
 import enSubscription from "@/i18n/locales/en/subscription.json";
 import enAuth from "@/i18n/locales/en/auth.json";
+import enSell from "@/i18n/locales/en/sell.json";
 
 import arCommon from "@/i18n/locales/ar/common.json";
 import arHome from "@/i18n/locales/ar/home.json";
@@ -22,6 +23,7 @@ import arSearch from "@/i18n/locales/ar/search.json";
 import arPrompt from "@/i18n/locales/ar/prompt.json";
 import arSubscription from "@/i18n/locales/ar/subscription.json";
 import arAuth from "@/i18n/locales/ar/auth.json";
+import arSell from "@/i18n/locales/ar/sell.json";
 
 const allResources = {
   en: {
@@ -32,6 +34,7 @@ const allResources = {
     prompt: enPrompt,
     subscription: enSubscription,
     auth: enAuth,
+    sell: enSell,
   },
   ar: {
     common: arCommon,
@@ -41,6 +44,7 @@ const allResources = {
     prompt: arPrompt,
     subscription: arSubscription,
     auth: arAuth,
+    sell: arSell,
   },
 };
 
@@ -102,7 +106,7 @@ export default async function LocaleLayout({
     >
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
-        <main className="flex-1">
+        <main className="flex-1 pt-20">
           <Suspense fallback={null}>{children}</Suspense>
         </main>
         <Footer />

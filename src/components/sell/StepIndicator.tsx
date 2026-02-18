@@ -2,19 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
-
-const paidSteps = [
-  { number: "١", label: "تفاصيل البرومبت" },
-  { number: "٢", label: "ملف البرومبت" },
-  { number: "٣", label: "تفعيل المدفوعات" },
-  { number: "٤", label: "تأكيد" },
-];
-
-const freeSteps = [
-  { number: "١", label: "تفاصيل البرومبت" },
-  { number: "٢", label: "ملف البرومبت" },
-  { number: "٣", label: "تأكيد" },
-];
+import { useTranslation } from "react-i18next";
 
 interface StepIndicatorProps {
   currentStep: number;
@@ -22,16 +10,21 @@ interface StepIndicatorProps {
 }
 
 export function StepIndicator({ currentStep, isFree = false }: StepIndicatorProps) {
-  const steps = isFree ? freeSteps : paidSteps;
+  const { t } = useTranslation("sell");
+
+  const paidStepKeys = ["details", "file", "payout", "confirmation"] as const;
+  const freeStepKeys = ["details", "file", "confirmation"] as const;
+  const stepKeys = isFree ? freeStepKeys : paidStepKeys;
+
   return (
     <div className="flex items-center justify-center gap-2 sm:gap-4">
-      {steps.map((step, index) => {
+      {stepKeys.map((key, index) => {
         const stepNumber = index + 1;
         const isCompleted = stepNumber < currentStep;
         const isActive = stepNumber === currentStep;
 
         return (
-          <div key={stepNumber} className="flex items-center gap-2 sm:gap-4">
+          <div key={key} className="flex items-center gap-2 sm:gap-4">
             <div className="flex flex-col items-center gap-1">
               <div
                 className={cn(
@@ -48,7 +41,7 @@ export function StepIndicator({ currentStep, isFree = false }: StepIndicatorProp
                 {isCompleted ? (
                   <Check className="h-4 w-4" />
                 ) : (
-                  step.number
+                  stepNumber
                 )}
               </div>
               <span
@@ -59,10 +52,10 @@ export function StepIndicator({ currentStep, isFree = false }: StepIndicatorProp
                     : "text-muted-foreground",
                 )}
               >
-                {step.label}
+                {t(`steps.${key}`)}
               </span>
             </div>
-            {index < steps.length - 1 && (
+            {index < stepKeys.length - 1 && (
               <div
                 className={cn(
                   "h-px w-6 sm:w-12",
