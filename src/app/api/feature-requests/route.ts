@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { featureRequests, featureVotes } from "@/db/schema";
-import { checkAuth } from "@/lib/auth";
+import { checkAuth, getAuthUser } from "@/lib/auth";
 import { featureRequestListParams, createFeatureRequestBody } from "@/lib/schemas/feature-requests";
 import { apiErrorResponse } from "@/lib/schemas/api";
 import { eq, and, desc, count, sql } from "drizzle-orm";
-import { currentUser } from "@clerk/nextjs/server";
 
 export async function GET(request: NextRequest) {
   const params = featureRequestListParams.safeParse(
@@ -89,8 +88,11 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const user = await currentUser();
-  const authorName = user?.fullName ?? user?.firstName ?? "مستخدم";
+  const user = await getAuthUser();
+  const authorName =
+    user?.firstName && user?.lastName
+      ? `${user.firstName} ${user.lastName}`
+      : user?.firstName ?? "مستخدم";
 
   const [inserted] = await db
     .insert(featureRequests)

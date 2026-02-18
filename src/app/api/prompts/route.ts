@@ -1,13 +1,12 @@
 import { db } from "@/db";
 import { prompts } from "@/db/schema";
-import { checkAuth } from "@/lib/auth";
+import { checkAuth, getAuthUser } from "@/lib/auth";
 import { mapPromptRow } from "@/lib/mappers";
 import {
   apiErrorResponse,
   promptsQuerySchema,
   promptSubmissionSchema,
 } from "@/lib/schemas/api";
-import { currentUser } from "@clerk/nextjs/server";
 import { and, asc, count, desc, eq, gt, gte, inArray, isNull, lte, sql, type SQL } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -199,12 +198,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const user = await currentUser();
+    const user = await getAuthUser();
     const sellerName =
       user?.firstName && user?.lastName
         ? `${user.firstName} ${user.lastName}`
         : user?.firstName ?? "بائع";
-    const sellerAvatar = user?.imageUrl ?? "";
+    const sellerAvatar = user?.avatarUrl ?? "";
 
     const data = parsed.data;
     const effectivePrice = data.isFree ? 0 : data.price;

@@ -4,13 +4,13 @@ import {
   subscriptionPlans,
   userSubscriptions,
 } from "@/db/schema";
-import { auth } from "@clerk/nextjs/server";
+import { checkAuth } from "@/lib/auth";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const { userId } = await auth();
+    const userId = await checkAuth();
 
     if (!userId) {
       return NextResponse.json(

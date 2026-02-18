@@ -2,7 +2,7 @@ import { db } from "@/db";
 import { orderItems, orders, prompts } from "@/db/schema";
 import { mapPromptRow } from "@/lib/mappers";
 import { apiErrorResponse, uuidParamSchema } from "@/lib/schemas/api";
-import { auth } from "@clerk/nextjs/server";
+import { checkAuth } from "@/lib/auth";
 import { and, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -11,7 +11,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { userId } = await auth();
+    const userId = await checkAuth();
 
     if (!userId) {
       return NextResponse.json(

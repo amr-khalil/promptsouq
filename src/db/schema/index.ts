@@ -14,6 +14,7 @@ export { issues } from "./issues";
 export { issueStatusChanges } from "./issue-status-changes";
 export { notifications } from "./notifications";
 export { orders, orderItems } from "./orders";
+export { profiles } from "./profiles";
 export { prompts } from "./prompts";
 export { reviews } from "./reviews";
 export { sellerProfiles } from "./seller-profiles";

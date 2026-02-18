@@ -1,7 +1,7 @@
 "use client";
 
 import { LogOut, MoreVertical, User } from "lucide-react";
-import { useClerk, useUser } from "@clerk/nextjs";
+import { useAuth } from "@/hooks/use-auth";
 import {
   Avatar,
   AvatarFallback,
@@ -24,14 +24,13 @@ import {
 import { useTranslation } from "react-i18next";
 
 export function DashboardNavUser() {
-  const { user } = useUser();
-  const { signOut } = useClerk();
+  const { user, signOut } = useAuth();
   const { isMobile } = useSidebar();
   const { t } = useTranslation("dashboard");
 
-  const name = user?.fullName ?? user?.firstName ?? "";
-  const email = user?.primaryEmailAddress?.emailAddress ?? "";
-  const avatar = user?.imageUrl ?? "";
+  const name = user?.displayName ?? user?.firstName ?? "";
+  const email = user?.email ?? "";
+  const avatar = user?.avatarUrl ?? "";
   const initials = name.charAt(0) || "U";
 
   return (
@@ -86,9 +85,7 @@ export function DashboardNavUser() {
               {t("sidebar.account")}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={() => signOut({ redirectUrl: "/" })}
-            >
+            <DropdownMenuItem onClick={signOut}>
               <LogOut />
               {t("sidebar.signOut")}
             </DropdownMenuItem>

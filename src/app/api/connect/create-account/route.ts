@@ -1,9 +1,8 @@
 import { db } from "@/db";
 import { sellerProfiles } from "@/db/schema";
-import { checkAuth } from "@/lib/auth";
+import { checkAuth, getAuthUser } from "@/lib/auth";
 import { apiErrorResponse, connectAccountSchema } from "@/lib/schemas/api";
 import { stripe } from "@/lib/stripe";
-import { currentUser } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -53,12 +52,12 @@ export async function POST(request: NextRequest) {
     });
 
     // Get user info for display fields
-    const user = await currentUser();
+    const user = await getAuthUser();
     const displayName =
       user?.firstName && user?.lastName
         ? `${user.firstName} ${user.lastName}`
         : user?.firstName ?? "بائع";
-    const avatar = user?.imageUrl ?? "";
+    const avatar = user?.avatarUrl ?? "";
 
     // Upsert seller profile
     await db

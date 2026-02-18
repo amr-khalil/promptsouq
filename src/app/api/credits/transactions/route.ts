@@ -2,13 +2,13 @@ import { db } from "@/db";
 import { creditTransactions } from "@/db/schema";
 import { creditTransactionsQuerySchema } from "@/lib/schemas/credits";
 import { apiErrorResponse } from "@/lib/schemas/api";
-import { auth } from "@clerk/nextjs/server";
+import { checkAuth } from "@/lib/auth";
 import { count, desc, eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
-    const { userId } = await auth();
+    const userId = await checkAuth();
     if (!userId) {
       return NextResponse.json(
         apiErrorResponse("FORBIDDEN", "غير مصرح"),

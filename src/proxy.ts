@@ -1,40 +1,36 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-import { NextResponse, type NextRequest } from "next/server";
 import { cookieName, defaultLocale, type Locale } from "@/i18n/settings";
+import { updateSession } from "@/lib/supabase/middleware";
+import { type NextRequest, NextResponse } from "next/server";
 
-const isPublicRoute = createRouteMatcher([
-  // English (no prefix)
-  "/sign-in(.*)",
-  "/sign-up(.*)",
-  "/",
-  "/market(.*)",
-  "/search(.*)",
-  "/prompt(.*)",
-  "/subscription(.*)",
-  "/ranking(.*)",
-  "/seller(.*)",
-  "/gallery(.*)",
-  "/feature-requests(.*)",
-  "/api(.*)",
-  // Arabic (/ar prefix) — same routes
-  "/ar",
-  "/ar/sign-in(.*)",
-  "/ar/sign-up(.*)",
-  "/ar/market(.*)",
-  "/ar/search(.*)",
-  "/ar/prompt(.*)",
-  "/ar/subscription(.*)",
-  "/ar/ranking(.*)",
-  "/ar/seller(.*)",
-  "/ar/gallery(.*)",
-  "/ar/feature-requests(.*)",
-  // Internal locale segment (after rewrite)
-  "/en(.*)",
+const publicPaths = new Set([
+  "/sign-in",
+  "/sign-up",
+  "/forgot-password",
+  "/reset-password",
+  "/market",
+  "/search",
+  "/subscription",
+  "/ranking",
+  "/gallery",
+  "/feature-requests",
 ]);
+
+function isPublicRoute(pathWithoutLocale: string): boolean {
+  if (pathWithoutLocale === "/") return true;
+  // Check exact and prefix matches for public paths
+  for (const p of publicPaths) {
+    if (pathWithoutLocale === p || pathWithoutLocale.startsWith(`${p}/`)) {
+      return true;
+    }
+  }
+  // Prompt detail pages and seller pages are public
+  if (pathWithoutLocale.startsWith("/prompt")) return true;
+  if (pathWithoutLocale.startsWith("/seller")) return true;
+  return false;
+}
 
 function getLocaleFromAcceptLanguage(req: NextRequest): Locale {
   const header = req.headers.get("accept-language") ?? "";
-  // Check if any Arabic variant is preferred
   const languages = header.split(",").map((l) => l.split(";")[0].trim().toLowerCase());
   for (const lang of languages) {
     if (lang === "ar" || lang.startsWith("ar-")) {
@@ -53,35 +49,61 @@ function isAuthRedirectRoute(pathWithoutLocale: string): boolean {
   );
 }
 
-export default clerkMiddleware(async (auth, req) => {
+export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Skip locale logic for API routes and static files
-  if (pathname.startsWith("/api") || pathname.startsWith("/_next") || pathname.includes(".")) {
-    if (!isPublicRoute(req)) {
-      await auth.protect();
-    }
-    return;
+  // Skip locale logic for API routes, auth callback routes, and static files
+  if (
+    pathname.startsWith("/api") ||
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/auth/") ||
+    pathname.includes(".")
+  ) {
+    const { supabaseResponse } = await updateSession(req);
+    return supabaseResponse;
   }
 
-  // Check auth state (non-throwing) for redirect logic
-  const { userId } = await auth();
+  // Refresh session and get user
+  const { supabaseResponse, user } = await updateSession(req);
+  const userId = user?.id ?? null;
+
+  // Helper to create a redirect that preserves Supabase cookies
+  function redirectWithCookies(url: URL) {
+    const redirect = NextResponse.redirect(url);
+    supabaseResponse.cookies.getAll().forEach((cookie) => {
+      redirect.cookies.set(cookie.name, cookie.value);
+    });
+    return redirect;
+  }
+
+  // Helper to create a rewrite that preserves Supabase cookies
+  function rewriteWithCookies(url: URL) {
+    const rewrite = NextResponse.rewrite(url);
+    supabaseResponse.cookies.getAll().forEach((cookie) => {
+      rewrite.cookies.set(cookie.name, cookie.value);
+    });
+    return rewrite;
+  }
 
   // Already has /ar prefix — Arabic locale
   if (pathname.startsWith("/ar")) {
+    const pathWithoutLocale = pathname.replace(/^\/ar/, "") || "/";
+
     // Redirect authenticated users away from home/auth pages to dashboard
-    if (userId) {
-      const pathWithoutLocale = pathname.replace(/^\/ar/, "") || "/";
-      if (isAuthRedirectRoute(pathWithoutLocale)) {
-        const url = req.nextUrl.clone();
-        url.pathname = "/ar/dashboard";
-        return NextResponse.redirect(url);
-      }
+    if (userId && isAuthRedirectRoute(pathWithoutLocale)) {
+      const url = req.nextUrl.clone();
+      url.pathname = "/ar/dashboard";
+      return redirectWithCookies(url);
     }
-    if (!isPublicRoute(req)) {
-      await auth.protect();
+
+    // Protect non-public routes
+    if (!isPublicRoute(pathWithoutLocale) && !userId) {
+      const url = req.nextUrl.clone();
+      url.pathname = "/ar/sign-in";
+      return redirectWithCookies(url);
     }
-    return;
+
+    return supabaseResponse;
   }
 
   // Explicit /en prefix — redirect to canonical URL without /en
@@ -89,7 +111,7 @@ export default clerkMiddleware(async (auth, req) => {
     const cleanPath = pathname.replace(/^\/en/, "") || "/";
     const url = req.nextUrl.clone();
     url.pathname = cleanPath;
-    return NextResponse.redirect(url, 308);
+    return redirectWithCookies(url);
   }
 
   // No locale prefix — determine locale
@@ -99,10 +121,14 @@ export default clerkMiddleware(async (auth, req) => {
   if (detectedLocale === "ar") {
     // Redirect Arabic users to /ar/...
     const url = req.nextUrl.clone();
-    // If authenticated and on a redirect route, go straight to dashboard
-    const target = userId && isAuthRedirectRoute(pathname) ? "/dashboard" : pathname === "/" ? "" : pathname;
+    const target =
+      userId && isAuthRedirectRoute(pathname)
+        ? "/dashboard"
+        : pathname === "/"
+          ? ""
+          : pathname;
     url.pathname = `/ar${target}`;
-    return NextResponse.redirect(url, 307);
+    return redirectWithCookies(url);
   }
 
   // English — rewrite to /en/... internally (URL unchanged for user)
@@ -110,19 +136,20 @@ export default clerkMiddleware(async (auth, req) => {
   if (userId && isAuthRedirectRoute(pathname)) {
     const url = req.nextUrl.clone();
     url.pathname = "/dashboard";
-    return NextResponse.redirect(url);
+    return redirectWithCookies(url);
+  }
+
+  // Protect non-public routes for English
+  if (!isPublicRoute(pathname) && !userId) {
+    const url = req.nextUrl.clone();
+    url.pathname = "/sign-in";
+    return redirectWithCookies(url);
   }
 
   const url = req.nextUrl.clone();
   url.pathname = `/en${pathname}`;
-  const response = NextResponse.rewrite(url);
-
-  if (!isPublicRoute(req)) {
-    await auth.protect();
-  }
-
-  return response;
-});
+  return rewriteWithCookies(url);
+}
 
 export const config = {
   matcher: [

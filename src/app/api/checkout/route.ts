@@ -2,13 +2,13 @@ import { db } from "@/db";
 import { prompts, sellerProfiles } from "@/db/schema";
 import { checkoutRequestSchema } from "@/lib/schemas/api";
 import { stripe } from "@/lib/stripe";
-import { auth } from "@clerk/nextjs/server";
+import { checkAuth } from "@/lib/auth";
 import { inArray } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = await auth();
+    const userId = await checkAuth();
 
     if (!userId) {
       return NextResponse.json(

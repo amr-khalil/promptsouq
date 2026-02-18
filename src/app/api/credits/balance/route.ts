@@ -1,9 +1,9 @@
 import { getOrCreateCreditBalance } from "@/lib/credits";
-import { auth } from "@clerk/nextjs/server";
+import { checkAuth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  const { userId } = await auth();
+  const userId = await checkAuth();
   if (!userId) {
     return NextResponse.json({ error: "غير مصرح" }, { status: 401 });
   }

@@ -3,7 +3,7 @@ import { prompts } from "@/db/schema";
 import { checkAdmin } from "@/lib/auth";
 import { sendPromptApprovedEmail, sendPromptRejectedEmail } from "@/lib/email";
 import { adminReviewSchema, apiErrorResponse, uuidParamSchema } from "@/lib/schemas/api";
-import { clerkClient } from "@clerk/nextjs/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -95,9 +95,9 @@ export async function POST(
     // Fire-and-forget email notification to seller
     const { sellerId, title: promptTitle } = existing[0];
     if (sellerId) {
-      const clerk = await clerkClient();
-      void clerk.users.getUser(sellerId).then((user) => {
-        const sellerEmail = user.emailAddresses[0]?.emailAddress;
+      const supabaseAdmin = createAdminClient();
+      void supabaseAdmin.auth.admin.getUserById(sellerId).then(({ data }) => {
+        const sellerEmail = data.user?.email;
         if (!sellerEmail) return;
         if (action === "approve") {
           return sendPromptApprovedEmail({ sellerEmail, promptTitle });

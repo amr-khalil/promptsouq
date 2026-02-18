@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { issues, issueStatusChanges } from "@/db/schema";
-import { checkAuth } from "@/lib/auth";
+import { checkAuth, getAuthUser } from "@/lib/auth";
 import { issueListParams, createIssueBody } from "@/lib/schemas/issues";
 import { apiErrorResponse } from "@/lib/schemas/api";
 import { eq, and, desc, count } from "drizzle-orm";
-import { currentUser } from "@clerk/nextjs/server";
 
 export async function GET(request: NextRequest) {
   const userId = await checkAuth();
@@ -114,8 +113,11 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const user = await currentUser();
-  const reporterName = user?.fullName ?? user?.firstName ?? "مستخدم";
+  const user = await getAuthUser();
+  const reporterName =
+    user?.firstName && user?.lastName
+      ? `${user.firstName} ${user.lastName}`
+      : user?.firstName ?? "مستخدم";
 
   const [inserted] = await db
     .insert(issues)

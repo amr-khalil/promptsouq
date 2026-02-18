@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-PromptSouq is an Arabic-first marketplace for AI prompts built with Next.js 16 (App Router), React 19, TypeScript, and Tailwind CSS v4. Features RTL layout, dark/light themes, and Clerk authentication.
+PromptSouq is an Arabic-first marketplace for AI prompts built with Next.js 16 (App Router), React 19, TypeScript, and Tailwind CSS v4. Features RTL layout, dark/light themes, and Supabase Auth.
 
 The project constitution at `.specify/memory/constitution.md` (v1.3.0) is the authoritative source for all development principles. This file summarizes what you need to operate in the codebase.
 
@@ -45,10 +45,10 @@ Schema files: `src/db/schema/`. Migrations output: `drizzle/`. Client init: `src
 ### Routing & Layout
 
 - **Next.js 16 App Router** in `src/app/`
-- Root layout (`src/app/layout.tsx`) wraps: `ClerkProvider` > `ThemeProvider` > `Header` > `Suspense` > children > `Footer`
+- Root layout (`src/app/layout.tsx`) wraps: `ThemeProvider` > `Header` > `Suspense` > children > `Footer`
 - HTML root is `<html lang="ar" dir="rtl">` — all UI text is primarily Arabic
 - Route group `(auth)` for sign-in/sign-up pages (no shared layout)
-- Catch-all routes `[[...sign-in]]` and `[[...sign-up]]` for Clerk page routing
+- Catch-all routes `[[...sign-in]]` and `[[...sign-up]]` for auth page routing
 - Path alias: `@/*` -> `src/*` (single alias covers everything)
 
 ### Server Components & Data Flow — No Server Actions
@@ -57,13 +57,18 @@ Schema files: `src/db/schema/`. Migrations output: `drizzle/`. Client init: `src
 - Server Components fetch from Supabase directly. Client Components call API routes via `fetch()`.
 - Use `"use client"` only at the narrowest boundary needed.
 
-### Authentication (Clerk)
+### Authentication (Supabase Auth)
 
-- Custom sign-in/sign-up pages in `src/app/(auth)/` (not Clerk's hosted UI)
-- OAuth: Google and Facebook via `authenticateWithRedirect()` with SSO callback pages
-- Email/password with optional email code 2FA
-- **Route protection** in `src/proxy.ts` (not `middleware.ts`) — Clerk middleware with public route matcher. Public routes: `/`, `/market`, `/search`, `/prompt`, `/sign-in`, `/sign-up`
-- Always check `isLoaded` before accessing Clerk hooks
+- Custom sign-in/sign-up pages in `src/app/[locale]/(auth)/`
+- OAuth: Google and Facebook via `signInWithOAuth()` with PKCE flow, callback at `/auth/callback`
+- Email/password with email link verification
+- Password reset via `/forgot-password` and `/reset-password`
+- Supabase clients: browser (`src/lib/supabase/client.ts`), server (`src/lib/supabase/server.ts`), admin (`src/lib/supabase/admin.ts`)
+- Auth helpers in `src/lib/auth.ts`: `checkAuth()`, `checkAdmin()`, `getAuthUser()`
+- Custom `useAuth()` hook in `src/hooks/use-auth.ts` replaces all Clerk hooks
+- Admin role via `app_metadata.role` (set via admin client)
+- **Route protection** in `src/proxy.ts` — Supabase session refresh via `updateSession()` + locale detection + public route matcher
+- Always check `isLoaded` before accessing user data
 
 ### Styling & UI
 
@@ -107,14 +112,13 @@ Schema files: `src/db/schema/`. Migrations output: `drizzle/`. Client init: `src
 
 Required in `.env.local`:
 ```
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
-CLERK_SECRET_KEY=
-NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
-NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_SUPABASE_URL=        # Supabase project URL
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=  # Supabase publishable/anon key
+SUPABASE_SERVICE_ROLE_KEY=       # Supabase service role key (server-only)
 DATABASE_URL=                    # Supabase Postgres connection string (for Drizzle)
 ```
 
-Future additions: Supabase anon key, Stripe publishable/secret keys.
+Stripe keys (when payments are enabled): `STRIPE_SECRET_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, `STRIPE_WEBHOOK_SECRET`.
 
 ## Development Workflow
 
@@ -150,6 +154,8 @@ Future additions: Supabase anon key, Stripe publishable/secret keys.
 - Supabase Postgres 17.x via Drizzle ORM + postgres.js (`prepare: false`), Supabase Storage (avatars) (014-seller-admin-dashboards)
 - TypeScript 5.x (strict mode), Node.js 18+ + Next.js 16.x (App Router), React 19.x, Drizzle ORM, Clerk 6.x, Zod 4.x, React Hook Form 7.x, shadcn/ui (New York), i18next + react-i18next, Lucide React, Sonner (toast) (015-community-gallery-feedback)
 - Supabase Postgres 17.x via Drizzle ORM + postgres.js (`prepare: false`), Supabase Storage (`prompt-images` bucket for gallery/issue images) (015-community-gallery-feedback)
+- TypeScript 5.x (strict mode) + Next.js 16.x (App Router), React 19.x, `@supabase/ssr` (new), `@supabase/supabase-js` 2.96.0 (existing), Drizzle ORM 0.45.1, Zod 4.x, React Hook Form 7.x, i18next 25.x (016-supabase-auth-migration)
+- Supabase Postgres 17.x (project `dyaflmsawxpqgmyojtbc`), Supabase Storage (avatars) (016-supabase-auth-migration)
 
 ## Recent Changes
 - 001-api-mock-data: Added TypeScript 5.x (strict mode) + Next.js 16.x (App Router), React 19.x, Zod 4.x

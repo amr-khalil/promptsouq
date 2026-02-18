@@ -1,13 +1,13 @@
 import { db } from "@/db";
 import { creditBalances } from "@/db/schema";
 import { stripe } from "@/lib/stripe";
-import { auth } from "@clerk/nextjs/server";
+import { checkAuth } from "@/lib/auth";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 export async function POST() {
   try {
-    const { userId } = await auth();
+    const userId = await checkAuth();
 
     if (!userId) {
       return NextResponse.json(
