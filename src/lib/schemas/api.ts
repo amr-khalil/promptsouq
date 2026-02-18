@@ -1,5 +1,27 @@
 import { z } from "zod";
 
+// ─── Upload Schemas ──────────────────────────────────────────────
+
+const ALLOWED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+] as const;
+
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10 MB
+
+export const uploadImageSchema = z.object({
+  file: z
+    .instanceof(File)
+    .refine((f) => f.size <= MAX_IMAGE_SIZE, "File exceeds 10 MB limit")
+    .refine(
+      (f) =>
+        (ALLOWED_IMAGE_TYPES as readonly string[]).includes(f.type),
+      "File type not supported. Accepted: JPEG, PNG, GIF, WebP",
+    ),
+});
+
 // ─── Entity Schemas ───────────────────────────────────────────────
 
 const sellerSchema = z.object({
@@ -24,7 +46,7 @@ export const promptSchema = z.object({
   gallery: z.array(z.string()),
   seller: sellerSchema,
   tags: z.array(z.string()),
-  difficulty: z.enum(["مبتدئ", "متقدم"]),
+  difficulty: z.enum(["مبتدئ", "متوسط", "متقدم"]),
   samples: z.array(z.string()),
   fullContent: z.string().optional().nullable(),
   instructions: z.string().optional().nullable(),
@@ -137,7 +159,11 @@ export const purchaseQuerySchema = z.object({
 // ─── Review Submission Schema ─────────────────────────────────────
 
 export const reviewSubmitSchema = z.object({
-  rating: z.number().int().min(1, "يجب اختيار تقييم").max(5, "الحد الأقصى 5 نجوم"),
+  rating: z
+    .number()
+    .int()
+    .min(1, "يجب اختيار تقييم")
+    .max(5, "الحد الأقصى 5 نجوم"),
   comment: z.string().max(1000, "التعليق طويل جداً"),
 });
 
@@ -175,49 +201,140 @@ export const purchaseListItemSchema = z.object({
 
 export const promptSubmissionSchema = z
   .object({
-    title: z.string().min(1, "عنوان البرومبت مطلوب").max(60, "العنوان يجب ألا يتجاوز 60 حرفاً"),
-    titleEn: z.string().max(60),
-    description: z.string().min(1, "الوصف مطلوب").max(500, "الوصف يجب ألا يتجاوز 500 حرف"),
+    title: z
+      .string()
+      .min(5, "اسم البرومبت يجب أن يكون 5 أحرف على الأقل")
+      .max(50, "العنوان يجب ألا يتجاوز 50 حرفاً"),
+    titleEn: z.string().max(50, "العنوان يجب ألا يتجاوز 50 حرفاً"),
+    description: z
+      .string()
+      .min(1, "الوصف مطلوب")
+      .max(500, "الوصف يجب ألا يتجاوز 500 حرف"),
     descriptionEn: z.string().max(500),
     isFree: z.boolean(),
-    price: z.number().max(99.99, "الحد الأقصى للسعر 99.99$"),
+    price: z.number().max(15, "الحد الأقصى للسعر 15$"),
     category: z.string().min(1, "التصنيف مطلوب"),
     aiModel: z.string().min(1, "نموذج الذكاء الاصطناعي مطلوب"),
-    generationType: z.enum(["text", "image", "code", "marketing", "design"], {
+    generationType: z.enum(["text", "image", "video", "audio", "3d"], {
       message: "نوع المحتوى غير صالح",
     }),
     modelVersion: z.string().optional(),
     maxTokens: z.number().int().min(1).max(128000).optional().nullable(),
     temperature: z.number().min(0).max(2).optional().nullable(),
-    difficulty: z.enum(["مبتدئ", "متقدم"], { message: "مستوى الصعوبة غير صالح" }),
-    tags: z.array(z.string()).min(1, "يجب إضافة وسم واحد على الأقل").max(10, "الحد الأقصى 10 وسوم"),
-    thumbnail: z.string().min(1, "الصورة المصغرة مطلوبة"),
+    difficulty: z.enum(["مبتدئ", "متوسط", "متقدم"], {
+      message: "مستوى الصعوبة غير صالح",
+    }),
+    tags: z
+      .array(z.string())
+      .min(1, "يجب إضافة وسم واحد على الأقل")
+      .max(5, "الحد الأقصى 5 وسوم"),
+    thumbnail: z.string().optional(),
     fullContent: z
       .string()
       .min(1, "محتوى البرومبت مطلوب")
-      .max(32768, "محتوى البرومبت طويل جداً")
+      .max(20000, "محتوى البرومبت طويل جداً")
       .refine((val) => /\[.+?\]/.test(val), {
-        message: "يجب أن يحتوي البرومبت على متغير واحد على الأقل بين [أقواس مربعة]",
+        message:
+          "يجب أن يحتوي البرومبت على متغير واحد على الأقل بين [أقواس مربعة]",
       }),
     instructions: z.string().max(2000, "التعليمات طويلة جداً").optional(),
     exampleOutputs: z
-      .array(z.string().min(1, "مثال المخرجات لا يمكن أن يكون فارغاً"))
-      .length(4, "يجب تقديم 4 أمثلة بالضبط"),
+      .array(z.string())
+      .optional(),
     examplePrompts: z
-      .array(z.record(z.string(), z.string()))
-      .length(4, "يجب تقديم 4 أمثلة للمتغيرات بالضبط"),
+      .array(
+        z.object({
+          image: z.string().optional(),
+          variables: z.record(z.string(), z.string()),
+        }),
+      )
+      .optional(),
+    // Image-specific fields
+    imageGenerationType: z.enum(["text-to-image", "image-to-image"]).optional(),
   })
   .superRefine((data, ctx) => {
-    if (!data.isFree && data.price < 1.99) {
+    if (!data.isFree && data.price < 1) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "الحد الأدنى للسعر 1.99$",
+        message: "الحد الأدنى للسعر 1$",
         path: ["price"],
+      });
+    }
+    const promptExCount = data.examplePrompts?.length ?? 0;
+    if (promptExCount < 1) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "يجب تقديم مثال واحد للبرومبت على الأقل",
+        path: ["examplePrompts"],
       });
     }
   });
 
 export type PromptSubmission = z.infer<typeof promptSubmissionSchema>;
+
+/** Client-side schema factory with translated error messages */
+export function createPromptSubmissionSchema(t: (key: string) => string) {
+  return z
+    .object({
+      title: z.string().min(5, t("errors.titleMin")).max(50, t("errors.titleMax")),
+      titleEn: z.string().max(50, t("errors.titleMax")),
+      description: z.string().min(1, t("errors.descriptionRequired")).max(500, t("errors.descriptionMax")),
+      descriptionEn: z.string().max(500),
+      isFree: z.boolean(),
+      price: z.number().max(15, t("errors.priceMax")),
+      category: z.string().min(1, t("errors.categoryRequired")),
+      aiModel: z.string().min(1, t("errors.aiModelRequired")),
+      generationType: z.enum(["text", "image", "video", "audio", "3d"], {
+        message: t("errors.generationTypeInvalid"),
+      }),
+      modelVersion: z.string().optional(),
+      maxTokens: z.number().int().min(1).max(128000).optional().nullable(),
+      temperature: z.number().min(0).max(2).optional().nullable(),
+      difficulty: z.enum(["مبتدئ", "متوسط", "متقدم"], {
+        message: t("errors.difficultyInvalid"),
+      }),
+      tags: z.array(z.string()).min(1, t("errors.tagsMin")).max(5, t("errors.tagsMax")),
+      thumbnail: z.string().optional(),
+      fullContent: z
+        .string()
+        .min(1, t("errors.contentRequired"))
+        .max(20000, t("errors.contentMax"))
+        .refine((val) => /\[.+?\]/.test(val), {
+          message: t("errors.contentVariable"),
+        }),
+      instructions: z.string().max(2000, t("errors.instructionsMax")).optional(),
+      exampleOutputs: z
+        .array(z.string())
+        .optional(),
+      examplePrompts: z
+        .array(
+          z.object({
+            image: z.string().optional(),
+            variables: z.record(z.string(), z.string()),
+          }),
+        )
+        .optional(),
+      // Image-specific fields
+      imageGenerationType: z.enum(["text-to-image", "image-to-image"]).optional(),
+    })
+    .superRefine((data, ctx) => {
+      if (!data.isFree && data.price < 1) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: t("errors.priceMin"),
+          path: ["price"],
+        });
+      }
+      const promptExCount = data.examplePrompts?.length ?? 0;
+      if (promptExCount < 1) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: t("errors.promptExamplesCount"),
+          path: ["examplePrompts"],
+        });
+      }
+    });
+}
 
 // ─── Seller Dashboard Schemas ─────────────────────────────────────
 
@@ -230,7 +347,10 @@ export const sellerPromptsQuerySchema = z.object({
 // ─── Admin Review Schemas ─────────────────────────────────────────
 
 export const adminPromptsQuerySchema = z.object({
-  status: z.enum(["pending", "approved", "rejected"]).optional().default("pending"),
+  status: z
+    .enum(["pending", "approved", "rejected"])
+    .optional()
+    .default("pending"),
   limit: z.coerce.number().int().positive().optional().default(20),
 });
 
@@ -239,10 +359,14 @@ export const adminReviewSchema = z
     action: z.enum(["approve", "reject"], { message: "الإجراء غير صالح" }),
     reason: z.string().max(500, "سبب الرفض طويل جداً").optional(),
   })
-  .refine((data) => data.action !== "reject" || (data.reason && data.reason.length > 0), {
-    message: "يجب تقديم سبب عند رفض البرومبت",
-    path: ["reason"],
-  });
+  .refine(
+    (data) =>
+      data.action !== "reject" || (data.reason && data.reason.length > 0),
+    {
+      message: "يجب تقديم سبب عند رفض البرومبت",
+      path: ["reason"],
+    },
+  );
 
 export type AdminReview = z.infer<typeof adminReviewSchema>;
 
@@ -281,7 +405,12 @@ export const sellerStorefrontSchema = sellerProfileSchema.extend({
 // ─── Error Response Helper ────────────────────────────────────────
 
 export function apiErrorResponse(
-  code: "NOT_FOUND" | "VALIDATION_ERROR" | "INTERNAL_ERROR" | "FORBIDDEN" | "CONFLICT",
+  code:
+    | "NOT_FOUND"
+    | "VALIDATION_ERROR"
+    | "INTERNAL_ERROR"
+    | "FORBIDDEN"
+    | "CONFLICT",
   message: string,
   details?: Record<string, unknown>,
 ) {

@@ -2,53 +2,52 @@
 
 import { cn } from "@/lib/utils";
 import { Check } from "lucide-react";
-
-const paidSteps = [
-  { number: "١", label: "تفاصيل البرومبت" },
-  { number: "٢", label: "ملف البرومبت" },
-  { number: "٣", label: "تفعيل المدفوعات" },
-  { number: "٤", label: "تأكيد" },
-];
-
-const freeSteps = [
-  { number: "١", label: "تفاصيل البرومبت" },
-  { number: "٢", label: "ملف البرومبت" },
-  { number: "٣", label: "تأكيد" },
-];
+import { useTranslation } from "react-i18next";
 
 interface StepIndicatorProps {
   currentStep: number;
   isFree?: boolean;
+  paymentActivated?: boolean;
 }
 
-export function StepIndicator({ currentStep, isFree = false }: StepIndicatorProps) {
-  const steps = isFree ? freeSteps : paidSteps;
+export function StepIndicator({ currentStep, isFree = false, paymentActivated = false }: StepIndicatorProps) {
+  const { t } = useTranslation("sell");
+
+  // Paid: Payment → Details → Content. Free: Details → Content.
+  const paidStepKeys = ["payout", "details", "content"] as const;
+  const freeStepKeys = ["details", "content"] as const;
+  const stepKeys = isFree ? freeStepKeys : paidStepKeys;
+
   return (
     <div className="flex items-center justify-center gap-2 sm:gap-4">
-      {steps.map((step, index) => {
+      {stepKeys.map((key, index) => {
         const stepNumber = index + 1;
         const isCompleted = stepNumber < currentStep;
         const isActive = stepNumber === currentStep;
+        // Show green checkmark on payment step when activated (even if active)
+        const isPaymentDone = !isFree && key === "payout" && paymentActivated;
 
         return (
-          <div key={stepNumber} className="flex items-center gap-2 sm:gap-4">
+          <div key={key} className="flex items-center gap-2 sm:gap-4">
             <div className="flex flex-col items-center gap-1">
               <div
                 className={cn(
                   "flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-colors sm:h-10 sm:w-10",
-                  isCompleted &&
+                  isPaymentDone &&
+                    "bg-green-500 text-white",
+                  !isPaymentDone && isCompleted &&
                     "bg-primary text-primary-foreground",
-                  isActive &&
+                  !isPaymentDone && isActive &&
                     "bg-primary text-primary-foreground ring-2 ring-primary/30 ring-offset-2 ring-offset-background",
-                  !isCompleted &&
+                  !isPaymentDone && !isCompleted &&
                     !isActive &&
                     "bg-muted text-muted-foreground",
                 )}
               >
-                {isCompleted ? (
+                {isPaymentDone || isCompleted ? (
                   <Check className="h-4 w-4" />
                 ) : (
-                  step.number
+                  stepNumber
                 )}
               </div>
               <span
@@ -59,10 +58,10 @@ export function StepIndicator({ currentStep, isFree = false }: StepIndicatorProp
                     : "text-muted-foreground",
                 )}
               >
-                {step.label}
+                {t(`steps.${key}`)}
               </span>
             </div>
-            {index < steps.length - 1 && (
+            {index < stepKeys.length - 1 && (
               <div
                 className={cn(
                   "h-px w-6 sm:w-12",

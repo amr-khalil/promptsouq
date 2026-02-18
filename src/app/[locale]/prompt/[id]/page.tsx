@@ -2,9 +2,10 @@
 
 import { FavoriteButton } from "@/components/dashboard/FavoriteButton";
 import { GenerateButton } from "@/components/generation/GenerateButton";
-import { PromptCard } from "@/components/PromptCard";
+import { LocaleLink } from "@/components/LocaleLink";
 import { ContentLockOverlay } from "@/components/prompt/ContentLockOverlay";
 import { PromptGallery } from "@/components/PromptGallery";
+import { PromptGridCard } from "@/components/PromptGridCard";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,16 +16,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Prompt, Review } from "@/lib/schemas/api";
 import { useCartStore } from "@/stores/cart-store";
 import { useAuth } from "@clerk/nextjs";
+import { CheckCircle2, Share2, ShoppingCart, Star } from "lucide-react";
 import {
-  CheckCircle2,
-  Share2,
-  ShoppingCart,
-  Star,
-} from "lucide-react";
-import { LocaleLink } from "@/components/LocaleLink";
-import { notFound, useParams, useRouter, useSearchParams } from "next/navigation";
-import { useTranslation } from "react-i18next";
+  notFound,
+  useParams,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 
 export default function PromptDetails() {
@@ -142,7 +142,13 @@ export default function PromptDetails() {
   // Track free prompt access (fire-and-forget)
   const accessTrackedRef = useRef(false);
   useEffect(() => {
-    if (!isSignedIn || !prompt?.isFree || prompt.contentLocked || accessTrackedRef.current) return;
+    if (
+      !isSignedIn ||
+      !prompt?.isFree ||
+      prompt.contentLocked ||
+      accessTrackedRef.current
+    )
+      return;
     accessTrackedRef.current = true;
     fetch("/api/free-access", {
       method: "POST",
@@ -280,9 +286,15 @@ export default function PromptDetails() {
           {/* Tabs */}
           <Tabs defaultValue="description" className="mb-8">
             <TabsList className="w-full justify-start">
-              <TabsTrigger value="description">{t("prompt:tabs.description")}</TabsTrigger>
-              <TabsTrigger value="samples">{t("prompt:tabs.samples")}</TabsTrigger>
-              <TabsTrigger value="reviews">{t("prompt:tabs.reviews")}</TabsTrigger>
+              <TabsTrigger value="description">
+                {t("prompt:tabs.description")}
+              </TabsTrigger>
+              <TabsTrigger value="samples">
+                {t("prompt:tabs.samples")}
+              </TabsTrigger>
+              <TabsTrigger value="reviews">
+                {t("prompt:tabs.reviews")}
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="description" className="mt-6">
@@ -297,7 +309,9 @@ export default function PromptDetails() {
                 <Separator />
 
                 <div>
-                  <h3 className="font-bold mb-2">{t("prompt:useCases.title")}</h3>
+                  <h3 className="font-bold mb-2">
+                    {t("prompt:useCases.title")}
+                  </h3>
                   <ul className="space-y-2">
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
@@ -323,7 +337,9 @@ export default function PromptDetails() {
                 <Separator />
 
                 <div>
-                  <h3 className="font-bold mb-2">{t("prompt:recommendedModel.title")}</h3>
+                  <h3 className="font-bold mb-2">
+                    {t("prompt:recommendedModel.title")}
+                  </h3>
                   <p className="text-muted-foreground">{prompt.aiModel}</p>
                 </div>
 
@@ -334,17 +350,21 @@ export default function PromptDetails() {
                   </>
                 )}
 
-                {!prompt.contentLocked && (purchased || prompt.isFree) && prompt.fullContent && (
-                  <>
-                    <Separator />
-                    <div>
-                      <h3 className="font-bold mb-2">{t("prompt:fullContent.title")}</h3>
-                      <div className="bg-muted p-4 rounded-lg font-mono text-sm whitespace-pre-wrap">
-                        {prompt.fullContent}
+                {!prompt.contentLocked &&
+                  (purchased || prompt.isFree) &&
+                  prompt.fullContent && (
+                    <>
+                      <Separator />
+                      <div>
+                        <h3 className="font-bold mb-2">
+                          {t("prompt:fullContent.title")}
+                        </h3>
+                        <div className="bg-muted p-4 rounded-lg font-mono text-sm whitespace-pre-wrap">
+                          {prompt.fullContent}
+                        </div>
                       </div>
-                    </div>
-                  </>
-                )}
+                    </>
+                  )}
               </div>
             </TabsContent>
 
@@ -422,9 +442,13 @@ export default function PromptDetails() {
                 <div className="mb-6">
                   <div className="flex items-center gap-3 mb-2">
                     {prompt.isFree ? (
-                      <Badge className="bg-green-600 px-3 py-1 text-base text-white hover:bg-green-700">{t("common:labels.free")}</Badge>
+                      <Badge className="bg-green-600 px-3 py-1 text-base text-white hover:bg-green-700">
+                        {t("common:labels.free")}
+                      </Badge>
                     ) : (
-                      <span className="text-3xl font-bold">${prompt.price}</span>
+                      <span className="text-3xl font-bold">
+                        ${prompt.price}
+                      </span>
                     )}
                   </div>
                   <div className="flex flex-wrap gap-2 mb-4">
@@ -456,30 +480,38 @@ export default function PromptDetails() {
                   </div>
                 )}
 
-                {isSignedIn && (purchased || prompt.isFree) && !prompt.contentLocked && (
-                  <div className="mt-3">
-                    <GenerateButton
-                      promptId={prompt.id}
-                      promptContent={prompt.fullContent || prompt.description}
-                      userOwnsPrompt={true}
-                      creditBalance={creditBalance}
-                    />
-                  </div>
-                )}
+                {isSignedIn &&
+                  (purchased || prompt.isFree) &&
+                  !prompt.contentLocked && (
+                    <div className="mt-3">
+                      <GenerateButton
+                        promptId={prompt.id}
+                        promptContent={prompt.fullContent || prompt.description}
+                        userOwnsPrompt={true}
+                        creditBalance={creditBalance}
+                      />
+                    </div>
+                  )}
 
                 <Separator className="my-6" />
 
                 <div className="space-y-3 text-sm">
                   <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">{t("common:labels.category")}</span>
+                    <span className="text-muted-foreground">
+                      {t("common:labels.category")}
+                    </span>
                     <Badge variant="secondary">{prompt.category}</Badge>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">{t("common:labels.sales")}</span>
+                    <span className="text-muted-foreground">
+                      {t("common:labels.sales")}
+                    </span>
                     <span className="font-bold">{prompt.sales}</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">{t("common:labels.rating")}</span>
+                    <span className="text-muted-foreground">
+                      {t("common:labels.rating")}
+                    </span>
                     <div className="flex items-center gap-1">
                       <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
                       <span className="font-bold">{prompt.rating}</span>
@@ -534,10 +566,13 @@ export default function PromptDetails() {
       {/* Related Prompts */}
       {relatedPrompts.length > 0 && (
         <div className="mt-16">
-          <h2 className="text-2xl font-bold mb-6">{t("prompt:relatedPrompts.title")}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <h2 className="text-2xl font-bold mb-6 text-white flex items-center gap-2">
+            <span className="w-2 h-8 bg-[#faff00] rounded-full block" />
+            {t("prompt:relatedPrompts.title")}
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 max-w-5xl">
             {relatedPrompts.map((relatedPrompt) => (
-              <PromptCard key={relatedPrompt.id} prompt={relatedPrompt} />
+              <PromptGridCard key={relatedPrompt.id} prompt={relatedPrompt} />
             ))}
           </div>
         </div>

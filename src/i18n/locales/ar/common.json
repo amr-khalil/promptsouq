@@ -2,7 +2,7 @@
   "header": {
     "logo": "سوقبرومبت",
     "nav": {
-      "browse": "تصفح",
+      "browse": "السوق",
       "community": "المجتمع",
       "blog": "المدونة"
     },
@@ -73,6 +73,7 @@
     "signupFree": "إنشاء حساب مجاني",
     "signIn": "تسجيل الدخول",
     "createAccount": "إنشاء حساب",
+    "exploreMarket": "استكشف السوق",
     "backHome": "العودة للرئيسية",
     "backToSignIn": "العودة لتسجيل الدخول",
     "back": "العودة",
@@ -140,5 +141,17 @@
     "recentSearches": "عمليات البحث الأخيرة",
     "trendingSearches": "الأكثر بحثاً",
     "removeSearch": "إزالة"
+  },
+  "cart": {
+    "title": "سلة المشتريات",
+    "description": "أضف البرومبتات وأتمم الشراء",
+    "empty": "السلة فارغة",
+    "emptyHint": "ابدأ بإضافة البرومبتات!",
+    "total": "المجموع",
+    "checkout": "إتمام الشراء",
+    "securePayment": "دفع آمن عبر Stripe",
+    "removedFromCart": "تم الحذف من السلة",
+    "addToCartTitle": "أضف إلى السلة",
+    "inCartTitle": "في السلة"
   }
 }

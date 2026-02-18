@@ -2,7 +2,7 @@
   "header": {
     "logo": "SouqPrompt",
     "nav": {
-      "browse": "Browse",
+      "browse": "Market",
       "community": "Community",
       "blog": "Blog"
     },
@@ -73,6 +73,7 @@
     "signupFree": "Create Free Account",
     "signIn": "Sign In",
     "createAccount": "Create Account",
+    "exploreMarket": "Explore Market",
     "backHome": "Back to Home",
     "backToSignIn": "Back to Sign In",
     "back": "Back",
@@ -140,5 +141,17 @@
     "recentSearches": "Recent Searches",
     "trendingSearches": "Trending Searches",
     "removeSearch": "Remove"
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "description": "Add prompts and complete your purchase",
+    "empty": "Cart is empty",
+    "emptyHint": "Start adding prompts!",
+    "total": "Total",
+    "checkout": "Checkout",
+    "securePayment": "Secure payment via Stripe",
+    "removedFromCart": "Removed from cart",
+    "addToCartTitle": "Add to Cart",
+    "inCartTitle": "In Cart"
   }
 }
