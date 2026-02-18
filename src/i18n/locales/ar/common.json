@@ -8,7 +8,20 @@
     },
     "auth": {
       "signIn": "تسجيل دخول",
-      "sellPrompt": "بيع برومبت"
+      "sellPrompt": "بيع برومبت",
+      "signOut": "تسجيل خروج"
+    },
+    "profile": {
+      "dashboard": "لوحة التحكم",
+      "myPurchases": "مشترياتي",
+      "myPrompts": "برومبتاتي",
+      "earnings": "المبيعات والأرباح",
+      "sellerProfile": "ملف البائع",
+      "adminPanel": "لوحة الإدارة",
+      "moderation": "مراجعة المحتوى",
+      "orders": "الطلبات",
+      "analytics": "الإحصائيات",
+      "settings": "الإعدادات"
     }
   },
   "footer": {
@@ -45,7 +58,10 @@
   "nav": {
     "home": "الرئيسية",
     "market": "السوق",
-    "search": "البحث"
+    "search": "البحث",
+    "gallery": "المعرض",
+    "featureRequests": "طلبات الميزات",
+    "notifications": "الإشعارات"
   },
   "buttons": {
     "start": "ابدأ",

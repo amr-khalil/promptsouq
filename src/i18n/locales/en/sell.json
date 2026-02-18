@@ -1,7 +1,9 @@
 {
   "header": {
     "title": "Sell Prompt",
-    "subtitle": "Share your creations and start earning money from your prompts"
+    "subtitle": "Share your creations and start earning money from your prompts",
+    "editTitle": "Edit Prompt",
+    "editSubtitle": "Update your prompt details and resubmit for review"
   },
   "steps": {
     "payment": "Payment",
@@ -22,7 +24,8 @@
     "uploadSuccess": "Prompt uploaded successfully!",
     "connectionError": "A server connection error occurred",
     "minPrice": "Minimum price is $1",
-    "reviewFileFields": "Please review prompt file fields"
+    "reviewFileFields": "Please review prompt file fields",
+    "updateSuccess": "Prompt updated successfully!"
   },
   "errors": {
     "titleRequired": "Prompt title is required",

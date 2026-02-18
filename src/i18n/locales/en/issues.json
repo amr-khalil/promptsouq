@@ -1,0 +1,30 @@
+{
+  "title": "Issues",
+  "submit": "Report Issue",
+  "form": {
+    "title": "Issue Title",
+    "titlePlaceholder": "Write a clear title for the issue",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe the issue in detail...",
+    "image": "Screenshot (optional)",
+    "submit": "Submit Report",
+    "success": "Report submitted successfully"
+  },
+  "status": {
+    "open": "Open",
+    "in_progress": "In Progress",
+    "resolved": "Resolved"
+  },
+  "myIssues": "My Issues",
+  "adminIssues": "Issue Management",
+  "statusChange": {
+    "noteLabel": "Note",
+    "notePlaceholder": "Write a note about the status change...",
+    "submit": "Update Status",
+    "success": "Issue status updated"
+  },
+  "empty": "No issues",
+  "all": "All",
+  "sortNewest": "Newest",
+  "sortOldest": "Oldest"
+}

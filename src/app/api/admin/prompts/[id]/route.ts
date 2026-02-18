@@ -84,19 +84,22 @@ export async function DELETE(
       );
     }
 
-    const deleted = await db
-      .delete(prompts)
+    const [updated] = await db
+      .update(prompts)
+      .set({ deletedAt: new Date() })
       .where(eq(prompts.id, parsed.data))
-      .returning({ id: prompts.id });
+      .returning({ id: prompts.id, deletedAt: prompts.deletedAt });
 
-    if (deleted.length === 0) {
+    if (!updated) {
       return NextResponse.json(
         apiErrorResponse("NOT_FOUND", "البرومبت غير موجود"),
         { status: 404 },
       );
     }
 
-    return NextResponse.json({ data: { id: deleted[0].id } });
+    return NextResponse.json({
+      data: { id: updated.id, deletedAt: updated.deletedAt?.toISOString() },
+    });
   } catch {
     return NextResponse.json(
       apiErrorResponse("INTERNAL_ERROR", "حدث خطأ داخلي في الخادم"),

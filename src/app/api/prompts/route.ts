@@ -8,7 +8,7 @@ import {
   promptSubmissionSchema,
 } from "@/lib/schemas/api";
 import { currentUser } from "@clerk/nextjs/server";
-import { and, asc, count, desc, eq, gt, gte, inArray, lte, sql, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, gt, gte, inArray, isNull, lte, sql, type SQL } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
     // Default sort: "relevant" when search present, "trending" otherwise
     const effectiveSortBy = rawSortBy ?? (search ? "relevant" : "trending");
 
-    const conditions: SQL[] = [eq(prompts.status, "approved")];
+    const conditions: SQL[] = [eq(prompts.status, "approved"), isNull(prompts.deletedAt)];
 
     // Seller filter
     if (sellerId) {

@@ -103,7 +103,7 @@ export default function SignUp() {
               console.log(session?.currentTask);
               return;
             }
-            router.push("/");
+            router.push("/dashboard");
           },
         });
       } else {
@@ -129,7 +129,7 @@ export default function SignUp() {
       .authenticateWithRedirect({
         strategy,
         redirectUrl: "/sign-up/sso-callback",
-        redirectUrlComplete: "/",
+        redirectUrlComplete: "/dashboard",
       })
       .catch((err: unknown) => {
         console.error(JSON.stringify(err, null, 2));

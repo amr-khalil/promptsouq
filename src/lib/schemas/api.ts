@@ -402,6 +402,48 @@ export const sellerStorefrontSchema = sellerProfileSchema.extend({
   joinedAt: z.string(),
 });
 
+// ─── Admin Dashboard Schemas ─────────────────────────────────────
+
+export const adminOrdersQuerySchema = z.object({
+  status: z.enum(["completed", "refunded"]).optional(),
+  sellerId: z.string().optional(),
+  dateFrom: z.string().optional(),
+  dateTo: z.string().optional(),
+  limit: z.coerce.number().int().min(1).max(100).optional().default(20),
+  offset: z.coerce.number().int().min(0).optional().default(0),
+});
+
+export const adminSettingsUpdateSchema = z.object({
+  commissionRate: z
+    .number()
+    .min(0.01, "الحد الأدنى للعمولة 1%")
+    .max(0.50, "الحد الأقصى للعمولة 50%"),
+});
+
+export type AdminSettingsUpdate = z.infer<typeof adminSettingsUpdateSchema>;
+
+// ─── Seller Dashboard Schemas (New) ─────────────────────────────
+
+export const sellerEarningsQuerySchema = z.object({
+  limit: z.coerce.number().int().min(1).max(100).optional().default(20),
+  offset: z.coerce.number().int().min(0).optional().default(0),
+});
+
+export const sellerProfileUpdateSchema = z.object({
+  displayName: z
+    .string()
+    .min(2, "الاسم يجب أن يكون حرفين على الأقل")
+    .max(50, "الاسم يجب ألا يتجاوز 50 حرفاً"),
+  bio: z
+    .string()
+    .max(500, "النبذة يجب ألا تتجاوز 500 حرف")
+    .optional()
+    .nullable(),
+  avatar: z.string().url("رابط الصورة غير صالح").optional(),
+});
+
+export type SellerProfileUpdate = z.infer<typeof sellerProfileUpdateSchema>;
+
 // ─── Error Response Helper ────────────────────────────────────────
 
 export function apiErrorResponse(

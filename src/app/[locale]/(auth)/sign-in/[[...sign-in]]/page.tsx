@@ -52,7 +52,7 @@ export default function SignIn() {
               console.log(session?.currentTask);
               return;
             }
-            router.push("/");
+            router.push("/dashboard");
           },
         });
       } else if (signInAttempt.status === "needs_second_factor") {
@@ -106,7 +106,7 @@ export default function SignIn() {
               console.log(session?.currentTask);
               return;
             }
-            router.push("/");
+            router.push("/dashboard");
           },
         });
       } else {
@@ -132,7 +132,7 @@ export default function SignIn() {
       .authenticateWithRedirect({
         strategy,
         redirectUrl: "/sign-in/sso-callback",
-        redirectUrlComplete: "/",
+        redirectUrlComplete: "/dashboard",
       })
       .catch((err: unknown) => {
         console.error(JSON.stringify(err, null, 2));

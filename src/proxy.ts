@@ -13,6 +13,8 @@ const isPublicRoute = createRouteMatcher([
   "/subscription(.*)",
   "/ranking(.*)",
   "/seller(.*)",
+  "/gallery(.*)",
+  "/feature-requests(.*)",
   "/api(.*)",
   // Arabic (/ar prefix) — same routes
   "/ar",
@@ -24,6 +26,8 @@ const isPublicRoute = createRouteMatcher([
   "/ar/subscription(.*)",
   "/ar/ranking(.*)",
   "/ar/seller(.*)",
+  "/ar/gallery(.*)",
+  "/ar/feature-requests(.*)",
   // Internal locale segment (after rewrite)
   "/en(.*)",
 ]);
@@ -40,6 +44,15 @@ function getLocaleFromAcceptLanguage(req: NextRequest): Locale {
   return defaultLocale;
 }
 
+// Routes that authenticated users should be redirected away from
+function isAuthRedirectRoute(pathWithoutLocale: string): boolean {
+  return (
+    pathWithoutLocale === "/" ||
+    pathWithoutLocale.startsWith("/sign-in") ||
+    pathWithoutLocale.startsWith("/sign-up")
+  );
+}
+
 export default clerkMiddleware(async (auth, req) => {
   const { pathname } = req.nextUrl;
 
@@ -51,8 +64,20 @@ export default clerkMiddleware(async (auth, req) => {
     return;
   }
 
-  // Already has /ar prefix — Arabic locale, pass through to [locale] segment
+  // Check auth state (non-throwing) for redirect logic
+  const { userId } = await auth();
+
+  // Already has /ar prefix — Arabic locale
   if (pathname.startsWith("/ar")) {
+    // Redirect authenticated users away from home/auth pages to dashboard
+    if (userId) {
+      const pathWithoutLocale = pathname.replace(/^\/ar/, "") || "/";
+      if (isAuthRedirectRoute(pathWithoutLocale)) {
+        const url = req.nextUrl.clone();
+        url.pathname = "/ar/dashboard";
+        return NextResponse.redirect(url);
+      }
+    }
     if (!isPublicRoute(req)) {
       await auth.protect();
     }
@@ -74,11 +99,20 @@ export default clerkMiddleware(async (auth, req) => {
   if (detectedLocale === "ar") {
     // Redirect Arabic users to /ar/...
     const url = req.nextUrl.clone();
-    url.pathname = `/ar${pathname === "/" ? "" : pathname}`;
+    // If authenticated and on a redirect route, go straight to dashboard
+    const target = userId && isAuthRedirectRoute(pathname) ? "/dashboard" : pathname === "/" ? "" : pathname;
+    url.pathname = `/ar${target}`;
     return NextResponse.redirect(url, 307);
   }
 
   // English — rewrite to /en/... internally (URL unchanged for user)
+  // Redirect authenticated users away from home/auth pages to dashboard
+  if (userId && isAuthRedirectRoute(pathname)) {
+    const url = req.nextUrl.clone();
+    url.pathname = "/dashboard";
+    return NextResponse.redirect(url);
+  }
+
   const url = req.nextUrl.clone();
   url.pathname = `/en${pathname}`;
   const response = NextResponse.rewrite(url);
