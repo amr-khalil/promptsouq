@@ -3,6 +3,12 @@
     "buyer": "Buyer",
     "seller": "Seller",
     "admin": "Admin",
+    "profile": "Profile",
+    "purchases": "Purchases",
+    "credits": "Credits",
+    "generations": "Generations",
+    "favorites": "Favorites",
+    "reportIssues": "Report Issues",
     "myPrompts": "My Prompts",
     "salesEarnings": "Sales & Earnings",
     "sellerProfile": "Seller Profile",
@@ -13,7 +19,12 @@
     "issues": "Issues",
     "orders": "Orders",
     "analytics": "Analytics",
-    "settings": "Settings"
+    "settings": "Settings",
+    "backToMarket": "Back to Market",
+    "dashboard": "Dashboard",
+    "signOut": "Sign Out",
+    "account": "Account",
+    "notifications": "Notifications"
   },
   "seller": {
     "prompts": {

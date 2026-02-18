@@ -3,6 +3,12 @@
     "buyer": "المشتري",
     "seller": "البائع",
     "admin": "الإدارة",
+    "profile": "الملف الشخصي",
+    "purchases": "المشتريات",
+    "credits": "الرصيد",
+    "generations": "التوليدات",
+    "favorites": "المفضلة",
+    "reportIssues": "البلاغات",
     "myPrompts": "برومبتاتي",
     "salesEarnings": "المبيعات والأرباح",
     "sellerProfile": "ملف البائع",
@@ -13,7 +19,12 @@
     "issues": "إدارة البلاغات",
     "orders": "الطلبات",
     "analytics": "الإحصائيات",
-    "settings": "الإعدادات"
+    "settings": "الإعدادات",
+    "backToMarket": "العودة للسوق",
+    "dashboard": "لوحة التحكم",
+    "signOut": "تسجيل الخروج",
+    "account": "الحساب",
+    "notifications": "الإشعارات"
   },
   "seller": {
     "prompts": {

@@ -1,10 +1,7 @@
-import { Footer } from "@/components/Footer";
-import { Header } from "@/components/Header";
 import { I18nProvider } from "@/i18n/client";
 import { type Locale, defaultLocale, locales } from "@/i18n/settings";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { Suspense } from "react";
 
 // Import all resources for client-side hydration
 import enCommon from "@/i18n/locales/en/common.json";
@@ -120,13 +117,7 @@ export default async function LocaleLayout({
       resources={resources}
       fallbackResources={fallbackResources}
     >
-      <div className="min-h-screen flex flex-col bg-background">
-        <Header />
-        <main className="flex-1 pt-20">
-          <Suspense fallback={null}>{children}</Suspense>
-        </main>
-        <Footer />
-      </div>
+      {children}
     </I18nProvider>
   );
 }
