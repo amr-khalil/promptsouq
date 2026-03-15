@@ -156,6 +156,8 @@ Stripe keys (when payments are enabled): `STRIPE_SECRET_KEY`, `NEXT_PUBLIC_STRIP
 - Supabase Postgres 17.x via Drizzle ORM + postgres.js (`prepare: false`), Supabase Storage (`prompt-images` bucket for gallery/issue images) (015-community-gallery-feedback)
 - TypeScript 5.x (strict mode) + Next.js 16.x (App Router), React 19.x, `@supabase/ssr` (new), `@supabase/supabase-js` 2.96.0 (existing), Drizzle ORM 0.45.1, Zod 4.x, React Hook Form 7.x, i18next 25.x (016-supabase-auth-migration)
 - Supabase Postgres 17.x (project `dyaflmsawxpqgmyojtbc`), Supabase Storage (avatars) (016-supabase-auth-migration)
+- TypeScript 5.x (strict), Node.js 18+ + Playwright (screenshot automation), Next.js 16.x (app under test) (017-readme-blog-tutorial)
+- File system only — Markdown files + PNG screenshots in `docs/` (017-readme-blog-tutorial)
 
 ## Recent Changes
 - 001-api-mock-data: Added TypeScript 5.x (strict mode) + Next.js 16.x (App Router), React 19.x, Zod 4.x
